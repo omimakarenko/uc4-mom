@@ -255,3 +255,4 @@ Built for the Faderfox UC4. Not affiliated with Faderfox.
 - **Project** menu: save/open a whole-device project or a single-setup project (`.uc4proj.json`: SysEx plus notes and labels).
 
 The dump format comes from vehka/uc4-tool (`docs/sysex-format.md`).
+- **Controller view** (first button in the header): a tree on the left (project, setups, encoder groups, fader/button groups), a drawing of the UC4 in the middle (encoders, buttons, faders and Fader 9, each with its label or what it sends) and an inspector on the right. Click an element to edit it; click a tree node to switch setup or group and to write its label and description.

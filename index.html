@@ -431,8 +431,13 @@
 
 
         /* Group blocks (focused view) */
-        .tooltip-content { white-space: pre-line; }
-        .tooltip { max-width: 380px; }
+        .tooltip { max-width: 340px; }
+        .tt-desc { color: var(--text); }
+        .tt-sep { border: none; border-top: 1px solid var(--border-light); margin: 0.45rem 0; }
+        .tt-opt { display: flex; gap: 0.6rem; padding: 0.25rem 0; border-top: 1px solid var(--border); }
+        .tt-sep + .tt-opt { border-top: none; }
+        .tt-opt b { color: var(--accent); min-width: 3.3rem; flex-shrink: 0; }
+        .tt-opt span { color: var(--text-dim); }
         .group-block { border: 1px solid var(--border); background: var(--bg-panel); margin-bottom: 1.25rem; }
         .group-block.enc { border-top: 3px solid var(--encoder); }
         .group-block.fad { border-top: 3px solid var(--fader); }
@@ -475,7 +480,9 @@
         .step-btn:hover { color: var(--bg-dark); background: var(--accent); border-color: var(--accent); }
         body.preview-mode .step-btn, body.preview-mode .batch-cb { pointer-events: none; opacity: 0.5; }
         /* batch bar */
-        .batch-bar { position: sticky; top: 0; z-index: 45; background: var(--bg-panel); border-bottom: 2px solid var(--accent); padding: 0.6rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+        .batch-bar { position: fixed; left: 0; right: 0; bottom: 63px; z-index: 60; max-height: 45vh; overflow-y: auto; background: var(--bg-panel); border-top: 2px solid var(--accent); padding: 0.6rem 1.5rem; box-shadow: 0 -6px 16px rgba(0,0,0,0.35); }
+        body.batch-open .main-content { padding-bottom: calc(72px + var(--batch-h, 0px)); }
+        @media (max-width: 640px) { .batch-bar { bottom: 40px; } }
         .bb-head { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; margin-bottom: 0.4rem; }
         .bb-head b { color: var(--accent); }
         .bb-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.3rem 0; border-top: 1px solid var(--border); font-size: 0.75rem; }
@@ -2999,6 +3006,54 @@
         /* Group tabs live in the blocks now */
         .nav-bar .nav-section:has(#encoderGroupTabs), .nav-bar .nav-section:has(#faderGroupTabs) { display: none; }
         .view-toggle .view-btn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
+    
+        /* Controller view */
+        body[data-view="controller"] #notesBar { display: none; }
+        .cv { display: grid; grid-template-columns: 240px minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
+        .cv-tree, .cv-inspector { background: var(--bg-panel); border: 1px solid var(--border); position: sticky; top: 0.5rem; max-height: calc(100vh - 210px); overflow: auto; }
+        .cv-tree { padding: 0.4rem 0; }
+        .cv-node { display: flex; align-items: center; gap: 0.3rem; padding: 0.22rem 0.5rem; font-size: 0.75rem; cursor: pointer; color: var(--text-dim); white-space: nowrap; overflow: hidden; }
+        .cv-node:hover { background: var(--bg-input); }
+        .cv-node.cur { color: var(--text); }
+        .cv-node.active { background: rgba(0, 212, 170, 0.14); color: var(--accent); }
+        .cv-node .cv-txt { overflow: hidden; text-overflow: ellipsis; }
+        .cv-node .cv-lab { color: var(--text-muted); margin-left: 0.3rem; }
+        .cv-arrow { width: 0.9rem; text-align: center; color: var(--text-muted); flex-shrink: 0; }
+        .cv-main { min-width: 0; }
+        .cv-head { display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.6rem; }
+        .cv-head b { color: var(--text); }
+        .cv-device { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.9rem 1rem 0.4rem; }
+        .cv-rowtitle { display: flex; align-items: center; gap: 0.6rem; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 0 0 0.35rem; }
+        .cv-row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 0.9rem; }
+        .cv-row.fad { grid-template-columns: repeat(8, minmax(0, 1fr)) 1px minmax(0, 1fr); }
+        .cv-sep { background: var(--border-light); }
+        .cv-el { cursor: pointer; text-align: center; padding: 0.4rem 0.15rem 0.3rem; border: 1px solid transparent; border-radius: 6px; min-width: 0; }
+        .cv-el:hover { border-color: var(--border-light); }
+        .cv-el.sel { border-color: var(--accent); background: rgba(0, 212, 170, 0.1); }
+        .cv-el.bsel { box-shadow: inset 0 0 0 2px var(--warning); }
+        .cv-knob { width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 0.35rem; border: 2px solid var(--encoder); background: radial-gradient(circle at 35% 30%, var(--bg-input), var(--bg-control)); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--text-dim); position: relative; }
+        .cv-knob::after { content: ''; position: absolute; top: 3px; width: 3px; height: 9px; background: var(--encoder); border-radius: 2px; }
+        .cv-btn { width: 42px; height: 24px; border-radius: 5px; margin: 0.35rem auto 0.55rem; border: 2px solid var(--green-btn); background: var(--bg-control); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--text-dim); }
+        .cv-fader { width: 12px; height: 64px; margin: 0.2rem auto 0.4rem; background: var(--bg-input); border: 1px solid var(--border-light); border-radius: 6px; position: relative; }
+        .cv-fader::after { content: ''; position: absolute; left: -9px; right: -9px; top: 36%; height: 14px; background: var(--fader); border-radius: 3px; }
+        .cv-fader span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: var(--text-muted); margin-top: 0.1rem; }
+        .cv-l1 { font-size: 0.7rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.7rem; }
+        .cv-el:not(.fdr) .cv-l1 { margin-top: 0; }
+        .cv-l2 { font-size: 0.62rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cv-inspector { padding: 0.75rem; }
+        .cv-ins-title { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; }
+        .cv-ins-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.6rem; }
+        .cv-ins-field input, .cv-ins-field textarea { background: var(--bg-input); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 0.78rem; padding: 0.35rem 0.5rem; width: 100%; }
+        .cv-ins-card + .cv-ins-card { margin-top: 0.75rem; }
+        .cv-inspector .control-card { padding: 0.6rem 0.5rem; }
+        .cv-inspector .control-header { margin-bottom: 0.4rem; padding-bottom: 0.3rem; }
+        .cv-inspector .param-row { gap: 0.3rem; margin-bottom: 0.3rem; }
+        .cv-inspector .param-label { width: 2.5rem; font-size: 0.62rem; }
+        .cv-inspector .param-input input, .cv-inspector .param-input select { padding: 0.25rem 0.3rem; font-size: 0.72rem; }
+        .cv-inspector .param-input input[type="number"] { text-align: center; }
+        .cv-inspector .step-btn { width: 0.95rem; height: 1.5rem; font-size: 0.75rem; }
+        .cv-inspector .param-input.with-step { gap: 1px; }
+        @media (max-width: 1100px) { .cv { grid-template-columns: 200px minmax(0, 1fr); } .cv-inspector { grid-column: 1 / -1; position: static; max-height: none; } }
     </style>
 </head>
 <body>
@@ -3022,6 +3077,7 @@
     <header class="header">
         <div class="logo">UC4 <span>Mom</span></div>
         <div class="view-toggle">
+            <button class="view-btn" id="controllerViewBtn" onclick="setView('controller')">Controller</button>
             <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
             <button class="view-btn" id="overviewBtn" onclick="setView('overview')">Overview</button>
         </div>
@@ -3925,91 +3981,83 @@ ${last ? `Last Error:
         const TOOLTIPS = {
             // Parameter labels - keyed by controlType.paramName
             labels: {
-                'encoder.chan': "MIDI channel (1-16). Controls which channel receives encoder messages.",
-                'encoder.cc': "Controller number (0-127). The MIDI CC number sent when encoder is turned. For CCAh mode, also occupies CC+32 for the LSB.",
-                'encoder.type': "Message type sent when encoder is turned.",
-                'encoder.acc': "Acceleration sensitivity. Higher values = faster response to quick turns.",
-                'encoder.disp': "Display mode. How values appear on the UC4's 7-segment display.",
-                'encoder.min': "Minimum output value (0-127). Encoder won't send values below this.",
-                'encoder.max': "Maximum output value (0-127). Encoder won't send values above this.",
+                'encoder.chan': "MIDI channel, 1-16.",
+                'encoder.cc': "CC number, 0-127. CCAh also uses CC+32.",
+                'encoder.type': "What the encoder sends when turned.",
+                'encoder.acc': "How much faster quick turns go.",
+                'encoder.disp': "How the value shows on the UC4 display.",
+                'encoder.min': "Lowest value it sends.",
+                'encoder.max': "Highest value it sends.",
                 
-                'fader.chan': "MIDI channel (1-16). Controls which channel receives fader messages.",
-                'fader.cc': "Controller number (0-127). The MIDI CC number sent when fader is moved.",
-                'fader.type': "Message type sent when fader is moved.",
-                'fader.mode': "Pickup behaviour. How the fader responds when position doesn't match current value.",
-                'fader.disp': "Display mode. How values appear on the UC4's 7-segment display.",
-                'fader.min': "Value sent at bottom position (0-127). Fader travel maps to Min→Max range.",
-                'fader.max': "Value sent at top position (0-127). Set Min > Max to invert fader direction.",
+                'fader.chan': "MIDI channel, 1-16.",
+                'fader.cc': "CC number, 0-127.",
+                'fader.type': "What the fader sends.",
+                'fader.mode': "What happens when the fader is not at the current value.",
+                'fader.disp': "How the value shows on the UC4 display.",
+                'fader.min': "Value at the bottom. Min above Max flips the fader.",
+                'fader.max': "Value at the top.",
                 
-                'fader9.chan': "MIDI channel (1-16). Controls which channel receives expression pedal messages.",
-                'fader9.cc': "Controller number (0-127). Typically CC 11 (Expression) or CC 7 (Volume).",
-                'fader9.mode': "Pickup behaviour. Jump sends immediately; Snap waits to catch current value.",
-                'fader9.min': "Value sent at heel position (0-127).",
-                'fader9.max': "Value sent at toe position (0-127). Set Min > Max to invert pedal direction.",
+                'fader9.chan': "MIDI channel, 1-16.",
+                'fader9.cc': "CC number, 0-127. Often 11 (expression) or 7 (volume).",
+                'fader9.mode': "What happens when the pedal is not at the current value.",
+                'fader9.min': "Value at heel.",
+                'fader9.max': "Value at toe. Min above Max flips it.",
                 
-                'push.chan': "MIDI channel (1-16). Controls which channel receives button messages.",
-                'push.note': "Note or CC number (0-127). The MIDI note/CC sent when button is pressed.",
-                'push.type': "Message type sent when button is pressed/released.",
-                'push.mode': "Button behaviour. Momentary sends on press/release; Toggle latches on/off.",
-                'push.lo': "Lower/release value (0-127). Sent on release (Momentary) or when toggled off.",
-                'push.hi': "Upper/press value (0-127). Sent on press (Momentary) or when toggled on.",
+                'push.chan': "MIDI channel, 1-16.",
+                'push.note': "Note or CC number, 0-127.",
+                'push.type': "What the button sends.",
+                'push.mode': "Momentary: only while held. Toggle: latches on and off.",
+                'push.lo': "Value sent on release (or toggle off).",
+                'push.hi': "Value sent on press (or toggle on).",
                 
-                'green.chan': "MIDI channel (1-16). Controls which channel receives button messages.",
-                'green.note': "Note or CC number (0-127). Also used for LED feedback on same number.",
-                'green.type': "Message type sent when button is pressed/released.",
-                'green.mode': "Button behaviour. Momentary sends on press/release; Toggle latches on/off.",
-                'green.led': "LED illumination mode. Controls when the green button lights up.",
-                'green.lo': "Lower/release value (0-127). Sent on release (Momentary) or when toggled off.",
-                'green.hi': "Upper/press value (0-127). Sent on press (Momentary) or when toggled on."
+                'green.chan': "MIDI channel, 1-16.",
+                'green.note': "Note or CC number, 0-127. The LED follows the same number.",
+                'green.type': "What the button sends.",
+                'green.mode': "Momentary: only while held. Toggle: latches on and off.",
+                'green.led': "When the green LED lights.",
+                'green.lo': "Value sent on release (or toggle off).",
+                'green.hi': "Value sent on press (or toggle on)."
             },
             
             // Dropdown options - keyed by optionGroup.optionValue
             options: {
-                // Encoder types
-                'encoderType.CCr1': "Relative mode 1. Sends 1 for clockwise, 127 for counter-clockwise. Best for Ableton Live, Bitwig. Endless rotation.",
-                'encoderType.CCr2': "Relative mode 2. Sends 65 for clockwise, 63 for counter-clockwise. Alternative relative format. Endless rotation.",
-                'encoderType.CCAb': "Absolute 7-bit CC. Standard MIDI CC (0-127). Value jumps to match encoder position. Factory default.",
-                'encoderType.PrGC': "Program Change. Sends MIDI program change (0-127 internally, some instruments display 1-128). Turn to increment/decrement.",
-                'encoderType.CCAh': "Absolute 14-bit high-resolution CC. Uses CC N (MSB) and CC N+32 (LSB) for 16384 steps. CC must be 0-31. Best for sensitive parameters.",
-                'encoderType.Pbnd': "Pitch Bend. Sends 14-bit Pitch Bend message on the selected MIDI channel (-8192 to +8191). No CC number needed.",
-                'encoderType.AFtt': "Aftertouch (Channel Pressure). Sends channel pressure (0-127). Use for expression control.",
+                'encoderType.CCr1': "Relative. 1 = right, 127 = left. For Ableton, Bitwig.",
+                'encoderType.CCr2': "Relative. 65 = right, 63 = left.",
+                'encoderType.CCAb': "Absolute CC, 0-127. Default.",
+                'encoderType.PrGC': "Program change.",
+                'encoderType.CCAh': "Absolute 14-bit CC, finer steps. CC must be 0-31.",
+                'encoderType.Pbnd': "Pitch bend. No CC number.",
+                'encoderType.AFtt': "Channel aftertouch.",
                 
-                // Fader types
-                'faderType.CCAb': "Absolute 7-bit CC. Standard MIDI CC (0-127). Factory default. Most common choice.",
-                'faderType.PrGC': "Program Change. Sends MIDI program change (0-127). Fader position selects program.",
-                'faderType.Pbnd': "Pitch Bend. Sends 14-bit Pitch Bend message on the selected MIDI channel. Full range mapped to fader travel. No CC number needed.",
-                'faderType.AFtt': "Aftertouch (Channel Pressure). Sends channel pressure. Fader controls expression amount.",
+                'faderType.CCAb': "Absolute CC, 0-127. Default.",
+                'faderType.PrGC': "Program change.",
+                'faderType.Pbnd': "Pitch bend. No CC number.",
+                'faderType.AFtt': "Channel aftertouch.",
                 
-                // Acceleration (shared global group)
-                'acc.0': "No acceleration. 1:1 response regardless of turn speed. Most precise, slowest to traverse full range.",
-                'acc.1': "Low acceleration. Slight speed boost for faster turns. Good balance of precision and speed.",
-                'acc.2': "Medium acceleration. Moderate speed boost. Faster traversal with some precision trade-off.",
-                'acc.3': "Maximum acceleration. Fastest response to quick turns. Best for quickly sweeping values. Factory default.",
+                'acc.0': "None. 1:1, most precise.",
+                'acc.1': "Low.",
+                'acc.2': "Medium.",
+                'acc.3': "Maximum. Default.",
                 
-                // Display modes (shared global group)
-                'display.OFF': "Display disabled. 7-segment shows nothing when this control is active.",
-                'display.Std': "Standard display. Shows current value 0-127 on the 7-segment. Factory default.",
-                'display.bPoL': "Bipolar display. Shows value as ±63, centered at 64. Good for pan or bipolar parameters.",
+                'display.OFF': "Nothing shown.",
+                'display.Std': "Value 0-127. Default.",
+                'display.bPoL': "Value -63 to +63.",
                 
-                // Fader modes (shared by faders 1-8 and fader 9)
-                'faderMode.Jump': "Immediate response. Sends current position when moved. May cause value jumps.",
-                'faderMode.Snap': "Pickup mode. Only sends after position catches current value. Prevents jumps.",
+                'faderMode.Jump': "Sends at once. Values can jump.",
+                'faderMode.Snap': "Waits until it reaches the value. No jumps.",
                 
-                // Button types (shared by push and green buttons)
-                'buttonType.OFF': "Button disabled. No MIDI message sent when pressed.",
-                'buttonType.Note': "Note On/Off. Sends Note On (Hi velocity) on press, Note Off (Lo) on release. Factory default. Best for triggering clips/samples in DAWs.",
-                'buttonType.CC': "Control Change. Sends CC with Hi value on press, Lo on release. Good for momentary effects.",
-                'buttonType.PrGC': "Program Change. Sends program change (0-127) on press. Lo value typically ignored.",
-                'buttonType.AFtt': "Aftertouch. Sends channel pressure Hi on press, Lo on release.",
+                'buttonType.OFF': "Does nothing.",
+                'buttonType.Note': "Note on and off. Default.",
+                'buttonType.CC': "CC: Hi on press, Lo on release.",
+                'buttonType.PrGC': "Program change on press.",
+                'buttonType.AFtt': "Aftertouch: Hi on press, Lo on release.",
                 
-                // Button modes (shared by push and green buttons)
-                'buttonMode.Momentary': "Gate mode. Hi on press, Lo on release. Active only while held.",
-                'buttonMode.Toggle': "Latch mode. First press sends Hi, next press sends Lo. Alternates each press.",
+                'buttonMode.Momentary': "Hi on press, Lo on release.",
+                'buttonMode.Toggle': "Press once = Hi, press again = Lo.",
                 
-                // Green LED modes
-                'greenLed.OFF': "LED always off. Button never illuminates.",
-                'greenLed.Std': "Standard. LED reflects button state AND responds to incoming MIDI feedback. Factory default.",
-                'greenLed.EXt': "External only. LED controlled only by incoming MIDI. Button presses don't change LED. Best for DAW sync."
+                'greenLed.OFF': "Always off.",
+                'greenLed.Std': "Follows the button and incoming MIDI. Default.",
+                'greenLed.EXt': "Only incoming MIDI lights it. For DAW sync."
             }
         };
         
@@ -5869,6 +5917,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function setView(view) {
             currentView = view;
+            document.body.dataset.view = view;
+            document.getElementById('controllerViewBtn').classList.toggle('active', view === 'controller');
             document.getElementById('focusedViewBtn').classList.toggle('active', view === 'focused');
             document.getElementById('overviewBtn').classList.toggle('active', view === 'overview');
             
@@ -5885,6 +5935,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             if (!rawBuffer) return;
             if (currentView === 'focused') {
                 renderFocusedView();
+            } else if (currentView === 'controller') {
+                renderControllerView();
             } else {
                 renderOverview();
             }
@@ -8409,17 +8461,27 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             return TOOLTIPS.labels[key] || null;
         }
         // Hover text for labels that used to open a click panel: description + all options
+        // Tooltip text -> HTML: '---' is a separator, '* Name|text' is an option row
+        function ttHtml(text) {
+            return String(text).split('\n').map(line => {
+                if (line === '---') return '<hr class="tt-sep">';
+                if (line.startsWith('\u2022 ')) {
+                    const [n, ...rest] = line.slice(2).split('|');
+                    return `<div class="tt-opt"><b>${escapeHtml(n)}</b><span>${escapeHtml(rest.join('|'))}</span></div>`;
+                }
+                return `<div class="tt-desc">${escapeHtml(line)}</div>`;
+            }).join('');
+        }
         function optTooltipText(key) {
             const [, group, type, lbl] = key.split('|');
             const lines = [];
             const desc = TOOLTIPS.labels[`${type}.${lbl}`];
-            if (desc) lines.push(desc, '');
-            lines.push((OPTION_GROUP_TITLES[group] || 'Options') + ':');
+            if (desc) lines.push(desc, '---');
             for (const [k, v] of Object.entries(TOOLTIPS.options)) {
                 if (!k.startsWith(group + '.')) continue;
                 let name = k.slice(group.length + 1);
                 if (group === 'acc') name = 'Acc' + name;
-                lines.push(`\u2022 ${name}: ${v}`);
+                lines.push(`\u2022 ${name}|${v}`);
             }
             return lines.join('\n');
         }
@@ -8438,7 +8500,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             const doShow = () => {
                 // Set content first (for ARIA)
-                tooltipContent.textContent = text;
+                tooltipContent.innerHTML = ttHtml(text);
                 
                 // Position tooltip
                 positionTooltip(labelEl);
@@ -14007,10 +14069,19 @@ ${description}
         });
 
         // ---- selection ----
+        function keepVisible(el) {
+            if (!el) return;
+            const bar = document.getElementById('batchBar');
+            if (!bar || bar.style.display === 'none') return;
+            const limit = window.innerHeight - 63 - bar.offsetHeight - 16;
+            const r = el.getBoundingClientRect();
+            if (r.bottom > limit) window.scrollBy(0, r.bottom - limit);
+        }
         function batchToggle(type, group, idx, param, on) {
             const k = batchKey(type, group, idx, param);
             if (on) batchSel.set(k, { type, group, idx, param }); else batchSel.delete(k);
             syncBatchUI();
+            keepVisible(document.querySelector(`.batch-cb[data-k="${k}"]`));
         }
         function chipCells(chip) {
             const type = chip.dataset.ctype, group = +chip.dataset.group, param = chip.dataset.param, n = +chip.dataset.count;
@@ -14031,6 +14102,7 @@ ${description}
                 if (allOn) batchSel.delete(k); else batchSel.set(k, { type: c[0], group: c[1], idx: c[2], param });
             }
             syncBatchUI();
+            keepVisible(chip);
         }
         function batchBlockChannel(kind) {
             // channel of every control of the block (encoders+push, or faders+fader9+green)
@@ -14062,6 +14134,7 @@ ${description}
                 ch.classList.toggle('on', all);
             });
             renderBatchBar();
+            if (document.getElementById('cvPanel')) cvRenderPanel();
         }
 
         // ---- batch bar ----
@@ -14086,7 +14159,11 @@ ${description}
             const bar = document.getElementById('batchBar');
             if (!bar) return;
             const cells = [...batchSel.entries()].filter(([k]) => k.startsWith(currentSetup + '|')).map(([, c]) => c);
-            if (!cells.length || currentView !== 'focused') { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+            if (!cells.length || (currentView !== 'focused' && currentView !== 'controller')) {
+                bar.style.display = 'none'; bar.innerHTML = '';
+                document.body.classList.remove('batch-open');
+                return;
+            }
             const kinds = new Map();
             for (const c of cells) {
                 const kd = batchKindOf(c);
@@ -14135,6 +14212,8 @@ ${description}
             bar.style.display = 'block';
             bar.innerHTML = `<div class="bb-head"><b>${cells.length} selected</b>
                 <button class="btn" onclick="batchClear()">Clear</button></div>${rows}`;
+            document.documentElement.style.setProperty('--batch-h', bar.offsetHeight + 'px');
+            document.body.classList.add('batch-open');
         }
         function batchRowOf(btn) { return btn.closest('.bb-row'); }
         function batchMutate(kind, fn, desc) {
@@ -14268,6 +14347,232 @@ ${description}
             syncBatchUI();
         }
 
+
+        // ============================================================
+        // Controller view: explorer tree, device drawing, inspector
+        // ============================================================
+        const cv = { sel: null, node: null, open: new Set(['root']), lastSetup: -1 };
+
+        function cvEncSummary(d) {
+            switch (ENCODER_TYPES[d.type]) {
+                case 'CCr1': case 'CCr2': return `rel ${d.cc}`;
+                case 'CCAb': return `CC ${d.cc}`;
+                case 'CCAh': return `CC ${d.cc}+`;
+                case 'PrGC': return 'PC';
+                case 'Pbnd': return 'PB';
+                case 'AFtt': return 'AT';
+                default: return '';
+            }
+        }
+        function cvFaderSummary(d) {
+            switch (FADER_TYPES[d.type]) {
+                case 'CCAb': return `CC ${d.cc}`;
+                case 'PrGC': return 'PC';
+                case 'Pbnd': return 'PB';
+                case 'AFtt': return 'AT';
+                default: return '';
+            }
+        }
+        function cvBtnSummary(d) {
+            switch (d.typeNibble) {
+                case 0x00: return 'off';
+                case 0x10: return `N ${d.cc}`;
+                case 0x20: return `CC ${d.cc}`;
+                case 0x30: return 'PC';
+                case 0x40: return 'AT';
+                default: return '';
+            }
+        }
+        function cvGroupOf(type) { return (type === 'encoder' || type === 'push') ? encoderGroup : faderGroup; }
+        function cvHasBatch(type, idx) {
+            const g = cvGroupOf(type);
+            const prefixes = [`${currentSetup}|${type}|${g}|${idx}|`];
+            if (type === 'encoder') prefixes.push(`${currentSetup}|push|${g}|${idx}|`);
+            for (const k of batchSel.keys()) if (prefixes.some(pf => k.startsWith(pf))) return true;
+            return false;
+        }
+
+        function cvElHtml(type, idx) {
+            const g = cvGroupOf(type);
+            const label = noteGet('ctl', ctlKey(type, g, idx), 'label');
+            let sum, sub = '', cls = '', visual;
+            if (type === 'encoder') {
+                const d = getEncoderData(currentSetup, g, idx), pd = getPushData(currentSetup, g, idx);
+                sum = `ch${d.channel} ${cvEncSummary(d)}`;
+                sub = `push ${cvBtnSummary(pd)}`;
+                visual = `<div class="cv-knob">${idx + 1}</div>`;
+            } else if (type === 'green') {
+                const d = getGreenData(currentSetup, g, idx);
+                sum = `ch${d.channel} ${cvBtnSummary(d)}`;
+                visual = `<div class="cv-btn">${idx + 1}</div>`;
+            } else if (type === 'fader') {
+                const d = getFaderData(currentSetup, g, idx);
+                sum = `ch${d.channel} ${cvFaderSummary(d)}`;
+                cls = ' fdr';
+                visual = `<div class="cv-fader"><span>${idx + 1}</span></div>`;
+            } else {
+                const d = getFader9Data(currentSetup, g);
+                sum = `ch${d.channel} CC ${d.cc}`;
+                cls = ' fdr';
+                visual = `<div class="cv-fader"><span>9</span></div>`;
+            }
+            const l1 = label || sum;
+            const l2 = label ? sum : sub;
+            const sel = cv.sel && cv.sel.type === type && cv.sel.idx === idx ? ' sel' : '';
+            const bs = cvHasBatch(type, idx) ? ' bsel' : '';
+            return `<div class="cv-el${cls}${sel}${bs}" onclick="cvSelectEl('${type}', ${idx})" title="${escapeHtml(label ? label + ' - ' + sum : sum)}">
+                ${visual}<div class="cv-l1">${escapeHtml(l1)}</div><div class="cv-l2">${escapeHtml(l2)}</div></div>`;
+        }
+
+        function cvRenderPanel() {
+            const el = document.getElementById('cvPanel');
+            if (!el) return;
+            const row = (type, n) => Array.from({ length: n }, (_, i) => cvElHtml(type, i)).join('');
+            const grpName = (g) => getGroupName(currentSetup, g);
+            const setupLbl = setupLabels.get(currentSetup);
+            el.innerHTML = `
+                <div class="cv-head">
+                    <span><b>Setup ${currentSetup + 1}</b>${setupLbl ? ' ' + escapeHtml(setupLbl) : ''}</span>
+                    <span>Encoders: <b>${encoderGroup + 1} ${escapeHtml(grpName(encoderGroup))}</b></span>
+                    <span>Faders &amp; buttons: <b>${faderGroup + 1} ${escapeHtml(grpName(faderGroup))}</b></span>
+                </div>
+                <div class="cv-device">
+                    <div class="cv-rowtitle">Encoders <button type="button" class="gb-chip" data-block="enc" onclick="batchBlockChannel('enc')" title="Select Chan of every encoder and push button in this group">All Chan</button></div>
+                    <div class="cv-row">${row('encoder', 8)}</div>
+                    <div class="cv-rowtitle">Buttons</div>
+                    <div class="cv-row">${row('green', 8)}</div>
+                    <div class="cv-rowtitle">Faders <button type="button" class="gb-chip" data-block="fad" onclick="batchBlockChannel('fad')" title="Select Chan of every fader, button and Fader 9 in this group">All Chan</button></div>
+                    <div class="cv-row fad">${row('fader', 8)}<div class="cv-sep"></div>${cvElHtml('fader9', 0)}</div>
+                </div>`;
+            // chips state
+            document.querySelectorAll('#cvPanel .gb-chip[data-block]').forEach(ch => {
+                const kind = ch.dataset.block, g = kind === 'enc' ? encoderGroup : faderGroup;
+                const list = kind === 'enc' ? [['encoder', 8], ['push', 8]] : [['fader', 8], ['green', 8]];
+                let all = true;
+                for (const [t, n] of list) for (let i = 0; i < n; i++) if (!batchSel.has(batchKey(t, g, i, 'channel'))) all = false;
+                if (kind === 'fad' && !batchSel.has(batchKey('fader9', g, 0, 'channel'))) all = false;
+                ch.classList.toggle('on', all);
+            });
+        }
+
+        function cvRenderTree() {
+            const el = document.getElementById('cvTree');
+            if (!el) return;
+            const node = cv.node ? cv.node.kind : null;
+            const arrow = (id, has) => has ? `<span class="cv-arrow" onclick="event.stopPropagation(); cvToggle('${id}')">${cv.open.has(id) ? '&#9662;' : '&#9656;'}</span>` : '<span class="cv-arrow"></span>';
+            const pad = (d) => `style="padding-left:${0.5 + d * 0.9}rem"`;
+            let h = `<div class="cv-node ${node === 'project' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('root')">${arrow('root', true)}<span class="cv-txt">Project${projectMeta.label ? ` <span class="cv-lab">${escapeHtml(projectMeta.label)}</span>` : ''}</span></div>`;
+            if (cv.open.has('root')) {
+                for (let i = 0; i < 18; i++) {
+                    const isCur = i === currentSetup;
+                    const lab = setupLabels.get(i);
+                    const sid = `s${i}`;
+                    h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(1)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt">${i + 1}${lab ? ` <span class="cv-lab">${escapeHtml(lab)}</span>` : ''}</span></div>`;
+                    if (!cv.open.has(sid)) continue;
+                    for (const [half, title, gcur] of [['e', 'Encoders', encoderGroup], ['f', 'Faders &amp; buttons', faderGroup]]) {
+                        const fid = `s${i}${half}`;
+                        h += `<div class="cv-node" ${pad(2)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
+                        if (!cv.open.has(fid)) continue;
+                        for (let g = 0; g < 8; g++) {
+                            const active = isCur && g === gcur;
+                            const meta = metaSetup(i, false);
+                            const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
+                            const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
+                            const nm = getGroupName(i, g);
+                            h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(3)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
+                        }
+                    }
+                }
+            }
+            el.innerHTML = h;
+        }
+
+        function cvRenderInspector() {
+            const el = document.getElementById('cvInspector');
+            if (!el) return;
+            el.innerHTML = '';
+            if (cv.sel) {
+                const t = cv.sel.type, i = cv.sel.idx;
+                const title = { encoder: `Encoder ${i + 1}`, green: `Button ${i + 1}`, fader: `Fader ${i + 1}`, fader9: 'Fader 9' }[t];
+                el.insertAdjacentHTML('beforeend', `<div class="cv-ins-title">${title}</div>`);
+                const wrap = document.createElement('div');
+                const cards = t === 'encoder' ? [createEncoderCard(i), createPushCard(i)]
+                            : t === 'green' ? [createGreenCard(i)]
+                            : t === 'fader' ? [createFaderCard(i)] : [createFader9Card()];
+                for (const c of cards) { const d = document.createElement('div'); d.className = 'cv-ins-card'; d.appendChild(c); wrap.appendChild(d); }
+                el.appendChild(wrap);
+                return;
+            }
+            const kind = cv.node ? cv.node.kind : 'setup';
+            const spec = {
+                project: { scope: 'project', key: '', title: 'Project' },
+                setup: { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
+                enc: { scope: 'enc', key: String(encoderGroup), title: `Encoders, group ${encoderGroup + 1}` },
+                fad: { scope: 'fad', key: String(faderGroup), title: `Faders & buttons, group ${faderGroup + 1}` }
+            }[kind];
+            const lbl = noteGet(spec.scope, spec.key, 'label'), dsc = noteGet(spec.scope, spec.key, 'description');
+            const grp = kind === 'enc' ? encoderGroup : kind === 'fad' ? faderGroup : null;
+            el.innerHTML = `<div class="cv-ins-title">${escapeHtml(spec.title)}</div>
+                <div class="cv-ins-field"><input type="text" placeholder="Label" maxlength="${spec.scope === 'setup' ? 24 : 60}" value="${escapeHtml(lbl)}"
+                    oninput="noteSet('${spec.scope}','${spec.key}','label',this.value); cvAfterNote()"></div>
+                <div class="cv-ins-field"><textarea rows="4" placeholder="Description" maxlength="1000"
+                    oninput="noteSet('${spec.scope}','${spec.key}','description',this.value)">${escapeHtml(dsc)}</textarea></div>
+                ${grp !== null ? `<button type="button" class="btn" onclick="showGroupNameEditor(currentSetup, ${grp})" title="The 4-character name stored on the UC4">UC4 name: ${escapeHtml(getGroupName(currentSetup, grp))}</button>` : ''}`;
+        }
+
+        function cvAfterNote() { cvRenderTree(); cvRenderPanel(); }
+
+        function renderControllerView() {
+            if (!cv.sel && !cv.node) cv.node = { kind: 'setup' };
+            if (cv.lastSetup !== currentSetup) {
+                cv.open.add(`s${currentSetup}`); cv.open.add(`s${currentSetup}e`); cv.open.add(`s${currentSetup}f`);
+                cv.lastSetup = currentSetup;
+            }
+            const main = document.getElementById('mainContent');
+            main.innerHTML = `<div class="cv">
+                <aside class="cv-tree" id="cvTree"></aside>
+                <section class="cv-main" id="cvPanel"></section>
+                <aside class="cv-inspector" id="cvInspector"></aside></div>`;
+            cvRenderTree(); cvRenderPanel(); cvRenderInspector();
+            const insp = document.getElementById('cvInspector');
+            const refresh = () => setTimeout(() => { cvRenderPanel(); }, 0);
+            insp.addEventListener('change', refresh);
+            insp.addEventListener('input', (e) => { if (e.target.classList.contains('ctl-note-name')) refresh(); });
+            insp.addEventListener('click', (e) => { if (e.target.closest('.step-btn')) refresh(); });
+            syncBatchUI();
+        }
+
+        function cvSelectEl(type, idx) {
+            cv.sel = { type, idx };
+            cv.node = null;
+            cvRenderPanel();
+            cvRenderInspector();
+            cvRenderTree();
+        }
+        function cvToggle(id) {
+            if (cv.open.has(id)) cv.open.delete(id); else cv.open.add(id);
+            cvRenderTree();
+        }
+        function cvClickNode(id) {
+            cv.sel = null;
+            if (id === 'root') {
+                cv.node = { kind: 'project' };
+                cv.open.add('root');
+            } else {
+                const i = parseInt(id.slice(1), 10);
+                cv.node = { kind: 'setup' };
+                cv.open.add(id); cv.open.add(`${id}e`); cv.open.add(`${id}f`);
+                if (i !== currentSetup) { selectSetup(i); return; }
+            }
+            cvRenderTree(); cvRenderPanel(); cvRenderInspector();
+        }
+        function cvLeaf(setup, half, g) {
+            cv.sel = null;
+            cv.node = { kind: half === 'e' ? 'enc' : 'fad' };
+            if (setup !== currentSetup) selectSetup(setup);
+            if (half === 'e') selectEncoderGroup(g); else selectFaderGroup(g);
+        }
+
         // ---- light / dark theme ----
         function applyTheme(t) {
             document.documentElement.dataset.theme = t;
@@ -14280,6 +14585,7 @@ ${description}
         }
         function toggleTheme() { applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'); }
         applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+        document.body.dataset.view = 'focused';
 
         initUI();
         initTooltipSystem();
