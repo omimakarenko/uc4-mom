@@ -429,6 +429,63 @@
         .dev-dots { display: inline-block; min-width: 1.4em; text-align: left; }
         .dev-elapsed { color: var(--text-muted); margin-left: 0.5rem; }
 
+
+        /* Group blocks (focused view) */
+        .tooltip-content { white-space: pre-line; }
+        .tooltip { max-width: 380px; }
+        .group-block { border: 1px solid var(--border); background: var(--bg-panel); margin-bottom: 1.25rem; }
+        .group-block.enc { border-top: 3px solid var(--encoder); }
+        .group-block.fad { border-top: 3px solid var(--fader); }
+        .gb-head { display: flex; align-items: center; gap: 0.9rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .group-block.collapsed .gb-head { border-bottom: none; }
+        .gb-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+        .group-block.enc .gb-label { color: var(--encoder); }
+        .group-block.fad .gb-label { color: var(--fader); }
+        .gb-tabs { display: flex; gap: 0.25rem; flex-wrap: wrap; flex: 1; min-width: 0; }
+        .gb-tab { font-family: inherit; font-size: 0.75rem; padding: 0.3rem 0.65rem; background: var(--bg-input); color: var(--text-dim); border: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
+        .gb-tab:hover { color: var(--text); border-color: var(--border-light); }
+        .gb-tab .gb-num { color: var(--text-muted); margin-right: 0.3rem; }
+        .gb-tab.active { background: var(--accent); color: var(--bg-dark); border-color: var(--accent); font-weight: 700; }
+        .gb-tab.active .gb-num { color: var(--bg-dark); }
+        .gb-tools { margin-left: auto; display: flex; gap: 0.25rem; }
+        .gb-tools button { font-family: inherit; background: var(--bg-input); color: var(--text-dim); border: 1px solid var(--border); cursor: pointer; padding: 0.25rem 0.6rem; font-size: 0.85rem; }
+        .gb-tools button:hover { color: var(--text); border-color: var(--accent); }
+        .gb-body { padding: 0.75rem; }
+        .group-block.collapsed .gb-body { display: none; }
+        .gb-sec { margin-bottom: 1rem; }
+        .gb-sec:last-child { margin-bottom: 0; }
+        .gb-sec-title { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+        .gb-sec-title h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+        .gb-sec-title h3.encoders { color: var(--encoder); }
+        .gb-sec-title h3.push { color: var(--push); }
+        .gb-sec-title h3.faders { color: var(--fader); }
+        .gb-sec-title h3.green { color: var(--green-btn); }
+        .gb-chips { display: flex; gap: 0.25rem; align-items: center; flex-wrap: wrap; font-size: 0.68rem; color: var(--text-muted); }
+        .gb-chip { font-family: inherit; font-size: 0.68rem; padding: 0.1rem 0.45rem; background: transparent; color: var(--text-dim); border: 1px solid var(--border); cursor: pointer; text-transform: uppercase; }
+        .gb-chip:hover { border-color: var(--accent); color: var(--text); }
+        .gb-chip.on { background: var(--accent); color: var(--bg-dark); border-color: var(--accent); }
+        .gb-row8 { display: grid; grid-template-columns: repeat(8, minmax(165px, 1fr)); gap: 1rem; overflow-x: auto; padding-bottom: 0.25rem; }
+        .gb-row9 { display: grid; grid-template-columns: repeat(8, minmax(165px, 1fr)) 1px minmax(165px, 1fr); gap: 1rem; overflow-x: auto; padding-bottom: 0.25rem; }
+        .fader-sep { background: var(--border-light); width: 1px; }
+        /* batch checkbox and step buttons */
+        .batch-cb { width: 0.85rem; height: 0.85rem; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; margin: 0; }
+        .param-input.with-step { display: flex; gap: 2px; align-items: center; }
+        .param-input.with-step input, .param-input.with-step select { flex: 1; width: auto; min-width: 0; }
+        .step-btn { font-family: inherit; width: 1.15rem; height: 1.6rem; flex-shrink: 0; padding: 0; line-height: 1; background: var(--bg-input); color: var(--text-dim); border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; }
+        .step-btn:hover { color: var(--bg-dark); background: var(--accent); border-color: var(--accent); }
+        body.preview-mode .step-btn, body.preview-mode .batch-cb { pointer-events: none; opacity: 0.5; }
+        /* batch bar */
+        .batch-bar { position: sticky; top: 0; z-index: 45; background: var(--bg-panel); border-bottom: 2px solid var(--accent); padding: 0.6rem 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+        .bb-head { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; margin-bottom: 0.4rem; }
+        .bb-head b { color: var(--accent); }
+        .bb-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.3rem 0; border-top: 1px solid var(--border); font-size: 0.75rem; }
+        .bb-label { width: 9rem; color: var(--text); }
+        .bb-label i { color: var(--text-muted); font-style: normal; }
+        .bb-row input, .bb-row select { font-family: inherit; font-size: 0.75rem; background: var(--bg-input); color: var(--text); border: 1px solid var(--border); padding: 0.25rem 0.4rem; }
+        .bb-row input[type="number"] { width: 4.2rem; }
+        .bb-sep { width: 1px; height: 1.4rem; background: var(--border-light); margin: 0 0.4rem; }
+        .bb-row label { color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem; }
+
         /* Group Name Editor Modal */
         .group-name-dialog input {
             font-family: var(--font-mono);
@@ -2925,6 +2982,19 @@
         /* Keep the status bar (device status chip) above the fixed footer */
         @media (min-width: 641px) { .status-bar { bottom: 24px; z-index: 51; } }
         .main-content { padding-bottom: 72px; }
+    
+        /* Compact cards inside the group blocks: room for checkbox and +/- */
+        .group-block .control-card { padding: 0.6rem 0.5rem; }
+        .group-block .control-header { margin-bottom: 0.4rem; padding-bottom: 0.3rem; }
+        .group-block .param-row { gap: 0.3rem; margin-bottom: 0.3rem; }
+        .group-block .param-label { width: 2.5rem; font-size: 0.62rem; }
+        .group-block .param-input input, .group-block .param-input select { padding: 0.25rem 0.3rem; font-size: 0.72rem; }
+        .group-block .param-input input[type="number"] { text-align: center; }
+        .group-block .step-btn { width: 0.95rem; height: 1.5rem; font-size: 0.75rem; }
+        .group-block .param-input.with-step { gap: 1px; }
+        .gb-row8 { grid-template-columns: repeat(8, minmax(158px, 1fr)); gap: 0.6rem; }
+        .gb-row9 { grid-template-columns: repeat(8, minmax(144px, 1fr)) 1px minmax(144px, 1fr); gap: 0.6rem; }
+        .group-block .ctl-note { margin: 0.25rem 0 0.4rem; }
     </style>
 </head>
 <body>
@@ -3037,6 +3107,8 @@
         <summary>Notes <span class="notes-hint">names and descriptions are saved in the project file, not on the UC4</span></summary>
         <div class="notes-grid" id="notesGrid"></div>
     </details>
+    
+    <div class="batch-bar" id="batchBar" style="display:none"></div>
     
     <main class="main-content" id="mainContent">
         <div class="no-data">
@@ -4516,7 +4588,7 @@ ${last ? `Last Error:
             updateImportDropdownState();
         }
         
-        function renderFocusedView() {
+        function renderFocusedViewOld() {
             const main = document.getElementById('mainContent');
             main.innerHTML = '';
             
@@ -4758,7 +4830,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
-            attachCardNote(card, ctlKey('encoder', encoderGroup, idx));
+            finishCard(card, 'encoder', encoderGroup, idx);
             return card;
         }
         
@@ -4825,7 +4897,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
-            attachCardNote(card, ctlKey('push', encoderGroup, idx));
+            finishCard(card, 'push', encoderGroup, idx);
             return card;
         }
         
@@ -4902,7 +4974,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
-            attachCardNote(card, ctlKey('green', faderGroup, idx));
+            finishCard(card, 'green', faderGroup, idx);
             return card;
         }
         
@@ -4979,7 +5051,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
-            attachCardNote(card, ctlKey('fader', faderGroup, idx));
+            finishCard(card, 'fader', faderGroup, idx);
             return card;
         }
         
@@ -5038,7 +5110,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
-            attachCardNote(card, ctlKey('fader9', faderGroup, 0));
+            finishCard(card, 'fader9', faderGroup, 0);
             return card;
         }
         
@@ -5725,6 +5797,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         // ============================================================
         
         function selectSetup(idx) {
+            if (typeof batchSel !== 'undefined') batchSel.clear();
             currentSetup = parseInt(idx);
             updateGroupNames();
             updateLibrarySourceBadge();
@@ -5820,6 +5893,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             } else {
                 renderOverview();
             }
+            renderBatchBar();
         }
         
         // ============================================================
@@ -8336,7 +8410,23 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         tooltipState.isTouch = ('ontouchstart' in window) || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
         
         function getTooltipText(key) {
+            if (key && key.startsWith('opt|')) return optTooltipText(key);
             return TOOLTIPS.labels[key] || null;
+        }
+        // Hover text for labels that used to open a click panel: description + all options
+        function optTooltipText(key) {
+            const [, group, type, lbl] = key.split('|');
+            const lines = [];
+            const desc = TOOLTIPS.labels[`${type}.${lbl}`];
+            if (desc) lines.push(desc, '');
+            lines.push((OPTION_GROUP_TITLES[group] || 'Options') + ':');
+            for (const [k, v] of Object.entries(TOOLTIPS.options)) {
+                if (!k.startsWith(group + '.')) continue;
+                let name = k.slice(group.length + 1);
+                if (group === 'acc') name = 'Acc' + name;
+                lines.push(`\u2022 ${name}: ${v}`);
+            }
+            return lines.join('\n');
         }
         
         function showTooltip(labelEl, key, immediate = false) {
@@ -13256,7 +13346,7 @@ ${description}
                 btn.textContent = r.active ? (pct !== null ? `Receiving ${pct}%` : 'Receiving...') : 'Import';
                 btn.classList.toggle('rx-active', !!r.active);
             }
-            if (r.active) setDeviceStatus(pct !== null ? `UC4: receiving ${pct}%` : 'UC4: receiving...', 'busy', 'receive');
+            if (r.active) { setDeviceStatus(pct !== null ? `UC4: receiving ${pct}%` : 'UC4: receiving...', 'busy', 'receive'); startWaitTicker(); }
             refreshWaitLine();
             const box = document.getElementById('deviceRxProgress');
             if (!box) return;
@@ -13304,7 +13394,7 @@ ${description}
             return checks;
         }
 
-        function midiSendDump(bytes, what) {
+        function midiSendDump(bytes, what, quiet) {
             const out = midiState.access && midiState.outputs.find(p => p.id === midiState.outId);
             if (!out) { showToast('No MIDI output selected', 'error'); return false; }
             try {
@@ -13314,41 +13404,69 @@ ${description}
                 return false;
             }
             midiState.lastSent = { what, size: bytes.length, port: out.name, time: new Date(), parsed: uc4ParseDump(bytes) };
-            showToast(`Sent ${what} (${bytes.length.toLocaleString()} bytes) to ${out.name}`, 'success');
+            if (!quiet) showToast(`Sent ${what} (${bytes.length.toLocaleString()} bytes) to ${out.name}`, 'success');
             return true;
         }
+
+        // The UC4 gives no feedback while it receives, so progress is an estimate from the data size
+        // (assumed MIDI-cable speed). The UC4 display shows the real progress.
+        const UC4_SEND_RATE = 3125;   // bytes per second
 
         function deviceSendSelected(scope) {
             if (!rawBuffer || midiState.sending) return;
             if (!midiState.sendConfirm) { showToast('Tick the confirmation box first', 'info'); return; }
+            let bytes, what;
+            try {
+                what = scope === 'all' ? 'all 18 setups' : `Setup ${currentSetup + 1}`;
+                bytes = scope === 'all' ? uc4BuildFullDump() : uc4BuildOneSetupDump(currentSetup);
+            } catch (e) {
+                showToast('Send failed: ' + e.message, 'error');
+                return;
+            }
+            midiState.sendStatus = null;
+            if (!midiSendDump(bytes, what, true)) {
+                midiState.sendStatus = { ok: false, scope, what, time: new Date() };
+                setDeviceStatus('UC4: send failed', 'bad', 'upload');
+                renderDeviceDialog();
+                return;
+            }
             midiState.sendingScope = scope;
             midiState.sending = true;
-            midiState.sendStatus = null;
-            setDeviceStatus('UC4: sending...', 'busy', 'upload');
-            const upBtn = document.getElementById('uploadBtn');
-            if (upBtn) { upBtn.textContent = 'Sending...'; upBtn.classList.add('rx-active'); }
+            midiState.sendConfirm = false;   // must be ticked again for the next send
+            midiState.sendInfo = { what, scope, size: bytes.length, t0: Date.now(), ms: Math.max(1500, bytes.length / UC4_SEND_RATE * 1000) };
+            clearInterval(midiState.sendTimer);
+            midiState.sendTimer = setInterval(sendTick, 150);
             renderDeviceDialog();
-            setTimeout(() => {
-                let ok = false, what = '';
-                try {
-                    what = scope === 'all' ? 'all 18 setups' : `Setup ${currentSetup + 1}`;
-                    const bytes = scope === 'all' ? uc4BuildFullDump() : uc4BuildOneSetupDump(currentSetup);
-                    ok = midiSendDump(bytes, what);
-                } catch (e) {
-                    showToast('Send failed: ' + e.message, 'error');
-                }
-                midiState.sending = false;
-                midiState.sendConfirm = false;   // must be ticked again for the next send
-                midiState.sendStatus = { ok, scope, what, time: new Date() };
-                const upBtn2 = document.getElementById('uploadBtn');
-                if (upBtn2) { upBtn2.textContent = 'Upload'; upBtn2.classList.remove('rx-active'); }
-                setDeviceStatus(ok
-                    ? `UC4: sent ${what} at ${new Date().toLocaleTimeString()} - UC4 display shows SE.. if stored`
-                    : 'UC4: send failed', ok ? 'ok' : 'bad', 'upload');
-                renderDeviceDialog();
-                const st = document.querySelector('#deviceModal .dev-ok, #deviceModal .dev-sec:last-child .dev-bad');
-                if (st) st.scrollIntoView({ block: 'nearest' });
-            }, 400);
+            sendTick();
+        }
+
+        function sendTick() {
+            const i = midiState.sendInfo;
+            if (!i) { clearInterval(midiState.sendTimer); return; }
+            const f = Math.min(1, (Date.now() - i.t0) / i.ms);
+            const pct = Math.round(f * 100);
+            setDeviceStatus(`UC4: sending ${i.what} ~${pct}%`, 'busy', 'upload');
+            const up = document.getElementById('uploadBtn');
+            if (up) { up.textContent = `Sending ${pct}%`; up.classList.add('rx-active'); }
+            const bar = document.getElementById('deviceSendBar');
+            if (bar) bar.style.width = pct + '%';
+            const txt = document.getElementById('deviceSendText');
+            if (txt) txt.textContent = `Sending ${i.what}... about ${pct}% (estimate, ${Math.max(0, Math.ceil((1 - f) * i.ms / 1000))} s left)`;
+            if (f >= 1) { clearInterval(midiState.sendTimer); finishSend(); }
+        }
+
+        function finishSend() {
+            const i = midiState.sendInfo;
+            midiState.sendInfo = null;
+            midiState.sending = false;
+            midiState.sendStatus = { ok: true, scope: i.scope, what: i.what, time: new Date() };
+            const up = document.getElementById('uploadBtn');
+            if (up) { up.textContent = 'Upload'; up.classList.remove('rx-active'); }
+            setDeviceStatus(`UC4: sent ${i.what} at ${new Date().toLocaleTimeString()} - UC4 display shows SE.. if stored`, 'ok', 'upload');
+            showToast(`Finished sending ${i.what} (${i.size.toLocaleString()} bytes)`, 'success');
+            renderDeviceDialog();
+            const st = document.querySelector('#deviceModal .dev-ok');
+            if (st) st.scrollIntoView({ block: 'nearest' });
         }
 
         function deviceSaveCurrent(scope) {
@@ -13442,7 +13560,7 @@ ${description}
                     <div class="dev-title">Receive from UC4</div>
                     ${connected ? `<div class="dev-listen" id="deviceWaitLine"></div>` : ''}
                     <div class="dev-note">On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc: the selected setup) or <b>encoder 8</b> (SndA: all 18 setups) until the UC4 display starts counting.</div>
-                    <div class="dev-note">Chrome hands a SysEx to the page only after it has arrived completely, so this window cannot show a percentage or the exact moment the UC4 starts. The line above keeps moving while the browser is listening. When the whole dump is in, it turns into the green result below and the status line at the bottom keeps the result.</div>
+                    <div class="dev-note">Chrome hands a SysEx to the page only after it has arrived completely (checked on a real UC4: nothing arrives before the full dump), so the browser cannot see when the UC4 starts sending or how far it is. The UC4 display counts while it sends. As soon as the whole dump is in, it shows up here as a green result and in the status line at the bottom.</div>
                     <div id="deviceRxProgress" class="dev-progress"></div>
                     ${recvHtml}
                 </div>`;
@@ -13451,7 +13569,7 @@ ${description}
                 if (s.sendStatus) {
                     const st = s.sendStatus;
                     sendStatusHtml = st.ok
-                        ? `<div class="dev-card dev-ok"><b>&#10003; Sent ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes).
+                        ? `<div class="dev-card dev-ok"><b>&#10003; Finished sending ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes, end of transfer estimated).
                             <div class="dev-note">The browser cannot see whether the UC4 accepted it, but the UC4 display tells you. <b>Stored:</b> after a single-setup dump the display shows the number of the setup it was stored in (for example SE06). <b>Not stored:</b> the display stays on rC00 (or shows what it showed before). The flashing dot on the display only means MIDI is arriving, it does not mean the data was taken.
                             <br>To verify what is inside: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). Import &gt; From UC4 compares what comes back with what was sent.</div></div>`
                         : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
@@ -13468,7 +13586,7 @@ ${description}
                         <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected('all')">${s.sending && s.sendingScope === 'all' ? 'Sending...' : 'Send all 18 setups to UC4'}</button>
                     </div>
                     <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; use Import > From UC4 once to take your UC4\'s own value)'}.</div>
-                    ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Sending to UC4...</div><div class="dev-bar"><div class="dev-bar-anim"></div></div></div>' : ''}
+                    ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> <span id="deviceSendText">Sending...</span></div><div class="dev-bar"><div id="deviceSendBar" style="width:0%"></div></div><div class="dev-note">The UC4 does not report progress to the browser, so this bar is an estimate from the data size. The UC4 display shows the real progress.</div></div>' : ''}
                     ${sendStatusHtml}
                 </div>`;
             }
@@ -13492,20 +13610,20 @@ ${description}
             const el = document.getElementById('deviceWaitLine');
             if (!el) return;
             const r = midiState.rx;
-            const dots = '.'.repeat(1 + (midiState.waitTick || 0) % 3);
             if (r.active) {
+                const dots = '.'.repeat(1 + (midiState.waitTick || 0) % 3);
                 const pct = r.expected ? ` ${Math.min(100, Math.round(r.len / r.expected * 100))}%` : '';
                 el.innerHTML = `<span class="dev-pulse"></span> <b>Loading from UC4</b><span class="dev-dots">${dots}</span>${pct}`;
             } else {
-                const label = midiState.last ? 'Waiting for the next dump' : 'Waiting for the UC4 dump';
-                el.innerHTML = `<span class="dev-pulse"></span> ${label}<span class="dev-dots">${dots}</span><span class="dev-elapsed">${fmtElapsed(Date.now() - (midiState.waitSince || Date.now()))}</span>`;
+                const port = (midiState.inputs.find(p => p.id === midiState.inId) || {}).name || 'no input';
+                el.innerHTML = `<span class="dev-pulse idle"></span> Ready, listening on ${escapeHtml(port)}`;
             }
         }
         function startWaitTicker() {
             if (midiState.waitTimer) return;
             midiState.waitTimer = setInterval(() => {
                 const modal = document.getElementById('deviceModal');
-                if (!modal || midiState.dialogMode !== 'receive' || !document.getElementById('deviceWaitLine')) {
+                if (!modal || midiState.dialogMode !== 'receive' || !document.getElementById('deviceWaitLine') || !midiState.rx.active) {
                     clearInterval(midiState.waitTimer); midiState.waitTimer = null; return;
                 }
                 midiState.waitTick = (midiState.waitTick || 0) + 1;
@@ -13544,8 +13662,8 @@ ${description}
         // Notes live in the project, never on the UC4. Structure:
         //   projectMeta = { name, description, setups: { "<setupIdx>": {
         //       name, description,
-        //       enc: { "<group>": {name, description} },      // encoder screen
-        //       fad: { "<group>": {name, description} },      // fader/button screen
+        //       enc: { "<group>": {name, description} },      // encoder group
+        //       fad: { "<group>": {name, description} },      // fader/button group
         //       ctl: { "encoder:g:i" | "push:g:i" | "green:g:i" | "fader:g:i" | "fader9:g": {name, description} } } } }
         const META_KEY = 'uc4_mom_meta';
         let projectMeta = { name: '', description: '', setups: {} };
@@ -13631,8 +13749,8 @@ ${description}
             const cols = [
                 { scope: 'project', key: '', title: 'Project (whole device)' },
                 { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
-                { scope: 'enc', key: String(encoderGroup), title: `Encoder screen ${encoderGroup + 1} (${getGroupName(currentSetup, encoderGroup)})` },
-                { scope: 'fad', key: String(faderGroup), title: `Fader/button screen ${faderGroup + 1} (${getGroupName(currentSetup, faderGroup)})` }
+                { scope: 'enc', key: String(encoderGroup), title: `Encoder group ${encoderGroup + 1} (UC4 name: ${getGroupName(currentSetup, encoderGroup)})` },
+                { scope: 'fad', key: String(faderGroup), title: `Fader/button group ${faderGroup + 1} (UC4 name: ${getGroupName(currentSetup, faderGroup)})` }
             ];
             grid.innerHTML = cols.map(c => `
                 <div class="notes-col">
@@ -13813,6 +13931,351 @@ ${description}
             }
             e.target.value = '';
         });
+
+
+        // ============================================================
+        // Group blocks, step buttons, batch editing
+        // ============================================================
+        const CARD_PARAMS = {};                 // controlType -> Map(param -> label)
+        const batchSel = new Map();             // key -> { type, group, idx, param }
+        const BATCH_ORDER = ['encoder', 'push', 'green', 'fader', 'fader9'];
+        const BATCH_NUMERIC = new Set(['cc', 'min', 'max', 'lower', 'upper']);
+        const PARAM_LABEL = { channel: 'Chan', cc: 'CC / Note', min: 'Min', max: 'Max', lower: 'Lo', upper: 'Hi',
+                              type: 'Type', typeNibble: 'Type', mode: 'Mode', display: 'Disp / LED', acc: 'Acc' };
+        const TYPE_LABEL = { encoder: 'Encoder', push: 'Push', green: 'Green button', fader: 'Fader', fader9: 'Fader 9' };
+        const PARAM_CALL_RE = /update(?:Encoder|Push|Green|Fader9|Fader)\((?:\d+,\s*)?'(\w+)'/;
+        let blockCollapsed = {};
+        try { blockCollapsed = JSON.parse(localStorage.getItem('uc4_mom_blocks')) || {}; } catch (e) { blockCollapsed = {}; }
+
+        function batchKey(type, group, idx, param) { return `${currentSetup}|${type}|${group}|${idx}|${param}`; }
+
+        function finishCard(card, type, group, idx) {
+            card.dataset.ctype = type;
+            card.dataset.group = group;
+            card.dataset.idx = idx;
+            attachCardNote(card, ctlKey(type, group, idx));
+            decorateParamRows(card, type, group, idx);
+        }
+
+        function decorateParamRows(card, type, group, idx) {
+            const params = (CARD_PARAMS[type] = CARD_PARAMS[type] || new Map());
+            card.querySelectorAll('.param-row').forEach(row => {
+                const input = row.querySelector('input[type="number"], select');
+                if (!input) return;
+                const m = PARAM_CALL_RE.exec(input.getAttribute('onchange') || '');
+                if (!m) return;
+                const param = m[1];
+                row.dataset.param = param;
+                const label = row.querySelector('.param-label');
+                if (label && label.classList.contains('has-options')) {
+                    // same hover behaviour as the other labels (no click panel)
+                    const g = label.dataset.infoGroup;
+                    label.classList.remove('has-options');
+                    label.classList.add('has-tooltip');
+                    label.dataset.tooltipKey = `opt|${g}|${type}|${label.textContent.trim().toLowerCase()}`;
+                }
+                if (label) params.set(param, label.textContent.trim());
+                const k = batchKey(type, group, idx, param);
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.className = 'batch-cb';
+                cb.dataset.k = k;
+                cb.title = 'Select this parameter for batch editing';
+                cb.checked = batchSel.has(k);
+                cb.onchange = () => batchToggle(type, group, idx, param, cb.checked);
+                row.insertBefore(cb, row.firstChild);
+                const box = row.querySelector('.param-input');
+                box.classList.add('with-step');
+                box.insertAdjacentHTML('beforeend',
+                    '<button type="button" class="step-btn" data-d="-1" title="-1 (Shift: -10)" tabindex="-1">&minus;</button>' +
+                    '<button type="button" class="step-btn" data-d="1" title="+1 (Shift: +10)" tabindex="-1">+</button>');
+            });
+        }
+
+        function stepElement(el, d) {
+            if (el.tagName === 'SELECT') {
+                const i = Math.max(0, Math.min(el.options.length - 1, el.selectedIndex + d));
+                if (i === el.selectedIndex) return;
+                el.selectedIndex = i;
+            } else {
+                const min = el.min === '' ? 0 : +el.min, max = el.max === '' ? 127 : +el.max;
+                const v = Math.max(min, Math.min(max, (parseInt(el.value, 10) || 0) + d));
+                if (String(v) === el.value) return;
+                el.value = v;
+            }
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        document.addEventListener('click', (e) => {
+            const b = e.target.closest('.step-btn');
+            if (!b) return;
+            const el = b.closest('.param-input').querySelector('input[type="number"], select');
+            if (!el) return;
+            const big = e.shiftKey && el.tagName === 'INPUT';
+            stepElement(el, parseInt(b.dataset.d, 10) * (big ? 10 : 1));
+        });
+
+        // ---- selection ----
+        function batchToggle(type, group, idx, param, on) {
+            const k = batchKey(type, group, idx, param);
+            if (on) batchSel.set(k, { type, group, idx, param }); else batchSel.delete(k);
+            syncBatchUI();
+        }
+        function chipCells(chip) {
+            const type = chip.dataset.ctype, group = +chip.dataset.group, param = chip.dataset.param, n = +chip.dataset.count;
+            const cells = [];
+            for (let i = 0; i < n; i++) cells.push([type, group, i]);
+            if (chip.dataset.withf9 === '1' && CARD_PARAMS.fader9 && CARD_PARAMS.fader9.has(param)) cells.push(['fader9', group, 0]);
+            return { cells, param };
+        }
+        function chipIsOn(chip) {
+            const { cells, param } = chipCells(chip);
+            return cells.length > 0 && cells.every(c => batchSel.has(batchKey(c[0], c[1], c[2], param)));
+        }
+        function batchChipClick(chip) {
+            const { cells, param } = chipCells(chip);
+            const allOn = cells.every(c => batchSel.has(batchKey(c[0], c[1], c[2], param)));
+            for (const c of cells) {
+                const k = batchKey(c[0], c[1], c[2], param);
+                if (allOn) batchSel.delete(k); else batchSel.set(k, { type: c[0], group: c[1], idx: c[2], param });
+            }
+            syncBatchUI();
+        }
+        function batchBlockChannel(kind) {
+            // channel of every control of the block (encoders+push, or faders+fader9+green)
+            const g = kind === 'enc' ? encoderGroup : faderGroup;
+            const cells = kind === 'enc'
+                ? [['encoder', 8], ['push', 8]]
+                : [['fader', 8], ['green', 8]];
+            const list = [];
+            for (const [t, n] of cells) for (let i = 0; i < n; i++) list.push([t, g, i]);
+            if (kind === 'fad') list.push(['fader9', g, 0]);
+            const allOn = list.every(c => batchSel.has(batchKey(c[0], c[1], c[2], 'channel')));
+            for (const c of list) {
+                const k = batchKey(c[0], c[1], c[2], 'channel');
+                if (allOn) batchSel.delete(k); else batchSel.set(k, { type: c[0], group: c[1], idx: c[2], param: 'channel' });
+            }
+            syncBatchUI();
+        }
+        function batchClear() { batchSel.clear(); syncBatchUI(); }
+        function syncBatchUI() {
+            document.querySelectorAll('.batch-cb').forEach(cb => { cb.checked = batchSel.has(cb.dataset.k); });
+            document.querySelectorAll('.gb-chip[data-ctype]').forEach(ch => ch.classList.toggle('on', chipIsOn(ch)));
+            const bc = document.querySelectorAll('.gb-chip[data-block]');
+            bc.forEach(ch => {
+                const kind = ch.dataset.block, g = kind === 'enc' ? encoderGroup : faderGroup;
+                const list = kind === 'enc' ? [['encoder', 8], ['push', 8]] : [['fader', 8], ['green', 8]];
+                let all = true;
+                for (const [t, n] of list) for (let i = 0; i < n; i++) if (!batchSel.has(batchKey(t, g, i, 'channel'))) all = false;
+                if (kind === 'fad' && !batchSel.has(batchKey('fader9', g, 0, 'channel'))) all = false;
+                ch.classList.toggle('on', all);
+            });
+            renderBatchBar();
+        }
+
+        // ---- batch bar ----
+        function batchCells(kind) {
+            const out = [];
+            for (const [k, c] of batchSel) {
+                if (!k.startsWith(currentSetup + '|')) continue;
+                if (batchKindOf(c) === kind) out.push(c);
+            }
+            out.sort((a, b) => BATCH_ORDER.indexOf(a.type) - BATCH_ORDER.indexOf(b.type) || a.group - b.group || a.idx - b.idx);
+            return out;
+        }
+        function batchKindOf(c) {
+            return (c.param === 'channel' || BATCH_NUMERIC.has(c.param)) ? c.param : `${c.type}.${c.param}`;
+        }
+        function batchOptionsFor(type, param) {
+            const sel = document.querySelector(`.control-card[data-ctype="${type}"] .param-row[data-param="${param}"] select`);
+            if (!sel) return [];
+            return Array.from(sel.options).map(o => ({ value: o.value, text: o.textContent }));
+        }
+        function renderBatchBar() {
+            const bar = document.getElementById('batchBar');
+            if (!bar) return;
+            const cells = [...batchSel.entries()].filter(([k]) => k.startsWith(currentSetup + '|')).map(([, c]) => c);
+            if (!cells.length || currentView !== 'focused') { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+            const kinds = new Map();
+            for (const c of cells) {
+                const kd = batchKindOf(c);
+                if (!kinds.has(kd)) kinds.set(kd, []);
+                kinds.get(kd).push(c);
+            }
+            const order = ['channel', 'cc', 'min', 'max', 'lower', 'upper'];
+            const sorted = [...kinds.keys()].sort((a, b) => {
+                const ia = order.indexOf(a), ib = order.indexOf(b);
+                return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b);
+            });
+            const rows = sorted.map(kd => {
+                const list = kinds.get(kd);
+                const first = list[0];
+                const numeric = BATCH_NUMERIC.has(first.param);
+                const isChan = first.param === 'channel';
+                let label = PARAM_LABEL[first.param] || first.param;
+                if (!isChan && !numeric) label = `${TYPE_LABEL[first.type]} ${label}`;
+                const cur = getControlData(first.type, currentSetup, first.group, first.idx);
+                let editor;
+                if (numeric) {
+                    editor = `<input type="number" class="bb-val" min="0" max="127" value="${cur[first.param] ?? 0}">`;
+                } else if (isChan) {
+                    editor = `<select class="bb-val">${Array.from({ length: 16 }, (_, i) => `<option value="${i + 1}" ${cur.channel === i + 1 ? 'selected' : ''}>${i + 1}</option>`).join('')}</select>`;
+                } else {
+                    const opts = batchOptionsFor(first.type, first.param);
+                    editor = `<select class="bb-val">${opts.map(o => `<option value="${escapeHtml(o.value)}" ${String(cur[first.param]) === o.value ? 'selected' : ''}>${escapeHtml(o.text)}</option>`).join('')}</select>`;
+                }
+                const kdAttr = escapeHtml(kd);
+                const stepHtml = (numeric || isChan) ? `
+                    <span class="bb-sep"></span>
+                    <button class="btn" onclick="batchApplyStep('${kdAttr}', -1, this)" title="Subtract the step from every selected value">&minus;</button>
+                    <button class="btn" onclick="batchApplyStep('${kdAttr}', 1, this)" title="Add the step to every selected value">+</button>
+                    <label>step <input type="number" class="bb-step" min="1" max="127" value="1"></label>
+                    <span class="bb-sep"></span>
+                    <label>sequence: start <input type="number" class="bb-start" min="${isChan ? 1 : 0}" max="${isChan ? 16 : 127}" value="${isChan ? (cur.channel || 1) : (cur[first.param] ?? 0)}"></label>
+                    <label>every <input type="number" class="bb-seqstep" min="-127" max="127" value="1"></label>
+                    <button class="btn" onclick="batchApplySeq('${kdAttr}', this)" title="First selected gets 'start', each next one adds 'every'">Fill</button>` : '';
+                return `<div class="bb-row" data-kind="${kdAttr}">
+                    <span class="bb-label">${escapeHtml(label)} <i>&times;${list.length}</i></span>
+                    ${editor}
+                    <button class="btn btn-primary" onclick="batchApplySet('${kdAttr}', this)" title="Set every selected value to this">Set all</button>
+                    ${stepHtml}
+                </div>`;
+            }).join('');
+            bar.style.display = 'block';
+            bar.innerHTML = `<div class="bb-head"><b>${cells.length} selected</b>
+                <span>change them together, or tick/untick single boxes on the cards</span>
+                <button class="btn" onclick="batchClear()">Clear selection</button></div>${rows}`;
+        }
+        function batchRowOf(btn) { return btn.closest('.bb-row'); }
+        function batchMutate(kind, fn, desc) {
+            const cells = batchCells(kind);
+            if (!cells.length) return;
+            const actions = [];
+            cells.forEach((c, n) => {
+                const data = getControlData(c.type, currentSetup, c.group, c.idx);
+                const before = { ...data };
+                const nv = fn(before[c.param], n, c);
+                if (nv === undefined || nv === before[c.param]) return;
+                const after = { ...data, [c.param]: nv };
+                setControlDataSilent(c.type, currentSetup, c.group, c.idx, after);
+                actions.push({ controlType: c.type, setupIdx: currentSetup, group: c.group, index: c.idx, before, after });
+            });
+            if (!actions.length) { showToast('Nothing to change', 'info'); return; }
+            recordUndo({ type: 'batch', description: `${desc} (${actions.length})`, actions });
+            markModified();
+            scheduleConflictRebuild();
+            renderCurrentView();
+        }
+        function batchBounds(kind) {
+            return kind === 'channel' ? [1, 16] : [0, 127];
+        }
+        const clampTo = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+        function batchApplySet(kind, btn) {
+            const row = batchRowOf(btn);
+            const v = parseInt(row.querySelector('.bb-val').value, 10);
+            if (Number.isNaN(v)) return;
+            const [lo, hi] = batchBounds(kind);
+            batchMutate(kind, () => clampTo(v, lo, hi), `Set ${kind} to ${v}`);
+        }
+        function batchApplyStep(kind, dir, btn) {
+            const row = batchRowOf(btn);
+            const step = Math.max(1, parseInt(row.querySelector('.bb-step').value, 10) || 1) * dir;
+            const [lo, hi] = batchBounds(kind);
+            batchMutate(kind, (v) => clampTo(v + step, lo, hi), `${kind} ${step > 0 ? '+' : ''}${step}`);
+        }
+        function batchApplySeq(kind, btn) {
+            const row = batchRowOf(btn);
+            const start = parseInt(row.querySelector('.bb-start').value, 10);
+            const every = parseInt(row.querySelector('.bb-seqstep').value, 10) || 0;
+            if (Number.isNaN(start)) return;
+            const [lo, hi] = batchBounds(kind);
+            batchMutate(kind, (v, n) => clampTo(start + n * every, lo, hi), `${kind} sequence from ${start}`);
+        }
+
+        // ---- group blocks ----
+        function toggleBlock(kind) {
+            blockCollapsed[kind] = !blockCollapsed[kind];
+            try { localStorage.setItem('uc4_mom_blocks', JSON.stringify(blockCollapsed)); } catch (e) {}
+            const b = document.querySelector(`.group-block[data-block="${kind}"]`);
+            if (b) {
+                b.classList.toggle('collapsed', !!blockCollapsed[kind]);
+                const arrow = b.querySelector('.gb-collapse');
+                if (arrow) arrow.innerHTML = blockCollapsed[kind] ? '&#9656;' : '&#9662;';
+            }
+        }
+
+        function buildChips(type, group, count, withF9) {
+            const params = CARD_PARAMS[type];
+            if (!params) return '';
+            const chips = Array.from(params.entries()).map(([param, label]) =>
+                `<button type="button" class="gb-chip" data-ctype="${type}" data-group="${group}" data-param="${param}" data-count="${count}" data-withf9="${withF9 ? 1 : 0}"
+                    title="Select/unselect ${escapeHtml(label)} on all ${count}${withF9 ? ' (+ Fader 9)' : ''} controls"
+                    onclick="batchChipClick(this)">${escapeHtml(label)}</button>`).join('');
+            return `<span class="gb-chips">select all:${chips}</span>`;
+        }
+
+        function buildGroupBlock(kind) {
+            const isEnc = kind === 'enc';
+            const active = isEnc ? encoderGroup : faderGroup;
+            const selFn = isEnc ? 'selectEncoderGroup' : 'selectFaderGroup';
+            const block = document.createElement('section');
+            block.className = `group-block ${kind}${blockCollapsed[kind] ? ' collapsed' : ''}`;
+            block.dataset.block = kind;
+            const tabs = Array.from({ length: 8 }, (_, g) => {
+                const name = getGroupName(currentSetup, g);
+                return `<button type="button" class="gb-tab ${g === active ? 'active' : ''}" onclick="${selFn}(${g})"
+                    title="Group ${g + 1}, name on the UC4: ${escapeHtml(name)}"><span class="gb-num">${g + 1}</span>${escapeHtml(name)}</button>`;
+            }).join('');
+            const head = document.createElement('div');
+            head.className = 'gb-head';
+            head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders' : 'Faders &amp; buttons'}</div>
+                <div class="gb-tabs">${tabs}</div>
+                <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">select all Chan</button>
+                <div class="gb-tools">
+                    <button type="button" onclick="showGroupNameEditor(currentSetup, ${isEnc ? 'encoderGroup' : 'faderGroup'})" title="Rename this group (4 characters, stored on the UC4)">&#9998;</button>
+                    <button type="button" class="gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>
+                </div>`;
+            block.appendChild(head);
+            const body = document.createElement('div');
+            body.className = 'gb-body';
+            const section = (title, cls, inner, chips) => {
+                const sec = document.createElement('div');
+                sec.className = 'gb-sec';
+                sec.innerHTML = `<div class="gb-sec-title"><h3 class="${cls}">${title}</h3>${chips}</div>`;
+                sec.appendChild(inner);
+                return sec;
+            };
+            if (isEnc) {
+                const g1 = document.createElement('div'); g1.className = 'gb-row8';
+                for (let i = 0; i < 8; i++) g1.appendChild(createEncoderCard(i));
+                body.appendChild(section('Encoders', 'encoders', g1, buildChips('encoder', encoderGroup, 8, false)));
+                const g2 = document.createElement('div'); g2.className = 'gb-row8';
+                for (let i = 0; i < 8; i++) g2.appendChild(createPushCard(i));
+                body.appendChild(section('Push buttons', 'push', g2, buildChips('push', encoderGroup, 8, false)));
+            } else {
+                const g1 = document.createElement('div'); g1.className = 'gb-row9';
+                for (let i = 0; i < 8; i++) g1.appendChild(createFaderCard(i));
+                const sep = document.createElement('div'); sep.className = 'fader-sep'; g1.appendChild(sep);
+                g1.appendChild(createFader9Card());
+                body.appendChild(section('Faders 1-8 and Fader 9', 'faders', g1, buildChips('fader', faderGroup, 8, true)));
+                const g2 = document.createElement('div'); g2.className = 'gb-row8';
+                for (let i = 0; i < 8; i++) g2.appendChild(createGreenCard(i));
+                body.appendChild(section('Green buttons', 'green', g2, buildChips('green', faderGroup, 8, false)));
+            }
+            block.appendChild(body);
+            return block;
+        }
+
+        function renderFocusedView() {
+            const main = document.getElementById('mainContent');
+            main.innerHTML = '';
+            for (const k of Object.keys(CARD_PARAMS)) delete CARD_PARAMS[k];
+            // cards are built first so the chips know the parameters
+            const encBlock = buildGroupBlock('enc');
+            const fadBlock = buildGroupBlock('fad');
+            main.appendChild(encBlock);
+            main.appendChild(fadBlock);
+            syncBatchUI();
+        }
 
         // ---- light / dark theme ----
         function applyTheme(t) {
