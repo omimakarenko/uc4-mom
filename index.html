@@ -334,6 +334,30 @@
             margin-top: 1rem;
         }
         
+
+        /* Device dialog (Web MIDI) */
+        .device-dialog {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            padding: 1.25rem 1.5rem;
+            width: min(640px, 94vw);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .dev-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .dev-head h3 { font-family: var(--font-display); color: var(--accent); font-size: 1.1rem; }
+        .dev-sec { border-top: 1px solid var(--border); padding: 0.9rem 0; }
+        .dev-title { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+        .dev-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0; }
+        .dev-row label { display: flex; gap: 0.4rem; align-items: center; font-size: 0.8rem; color: var(--text-dim); }
+        .dev-row select { max-width: 260px; }
+        .dev-note { font-size: 0.78rem; color: var(--text-dim); margin: 0.4rem 0; line-height: 1.5; }
+        .dev-note b { color: var(--text); }
+        .dev-card { background: var(--bg-input); border: 1px solid var(--border); padding: 0.7rem; margin: 0.5rem 0; font-size: 0.8rem; }
+        .dev-bad { border-color: var(--error); color: var(--error); }
+        .dev-progress { font-size: 0.8rem; color: var(--warning); min-height: 1.1em; }
+        .dev-confirm { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.78rem; color: var(--warning); margin: 0.5rem 0; cursor: pointer; }
+
         /* Group Name Editor Modal */
         .group-name-dialog input {
             font-family: var(--font-mono);
@@ -2858,7 +2882,7 @@
             <div class="import-dropdown" id="importDropdown">
                 <button class="btn import-dropdown-btn" onclick="toggleImportDropdown(event)">Import</button>
                 <div class="import-dropdown-menu">
-                    <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeImportDropdown();">Import SysEx</div>
+                    <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeImportDropdown();" title="All 18 setups (100,640 bytes) or one setup (5,072 bytes)">Import SysEx (all or one setup)</div>
                     <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeImportDropdown();">Import JSON</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeImportDropdown();">Browse Library...</div>
@@ -2866,6 +2890,7 @@
             </div>
             <button class="btn" id="exportBtn" onclick="exportSysEx()" disabled>Export SysEx</button>
             <button class="btn" id="exportJsonBtn" onclick="exportJSON()" disabled>Export JSON</button>
+            <button class="btn" id="deviceBtn" onclick="openDeviceDialog()" title="Receive from / send to the UC4 over USB MIDI">Device</button>
             <span class="btn-divider"></span>
             <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">↶ Undo</button>
             <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">↷ Redo</button>
@@ -5698,79 +5723,73 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             try {
                 const buffer = await file.arrayBuffer();
-                const bytes = new Uint8Array(buffer);
-                
-                // Log the load attempt
-                logAction(Action.LOAD_SYSEX, { filename: file.name, bytes: bytes.length });
-                
-                // Validate using unified function
-                const validation = validateSyx(bytes);
-                if (!validation.valid) {
-                    showError(validation.code, validation.message, validation.detail);
-                    return;
-                }
-                
-                rawBuffer = bytes;
-                sectionIndex = buildIndex(rawBuffer);
-                
-                // Initialize factory templates from this SysEx
-                initFactoryTemplates();
-                
-                // Store original for reset
-                originalBuffer = new Uint8Array(rawBuffer);
-                
-                // Clear previous session - new import is clean slate
-                clearSession();
-                
-                // Clear undo/redo stacks
-                undoStack.length = 0;
-                redoStack.length = 0;
-                updateUndoRedoUI();
-                
-                // Enable UI
-                document.getElementById('setupSelect').disabled = false;
-                document.getElementById('setupSelect').value = '0';
-                document.getElementById('exportBtn').disabled = false;
-                document.getElementById('exportJsonBtn').disabled = false;
-                document.getElementById('manageSetupsBtn').disabled = false;
-                document.getElementById('libraryBtn').disabled = false;
-                updateImportDropdownState();
-                updateLibrarySourceBadge();
-                
-                currentSetup = 0;
-                encoderGroup = 0;
-                faderGroup = 0;
-                isModified = false;
-                dirtyBanks.clear();
-                
-                // Clear setup labels on fresh import
-                setupLabels.clear();
-                librarySourceMap.clear();
-                differsFromFactoryCache.clear();
-                
-                // Auto-label setups that match factory Ableton configs
-                checkAllAbletonLabels();
-                
-                updateGroupTabs('encoderGroupTabs', 0);
-                updateGroupTabs('faderGroupTabs', 0);
-                updateGroupNames();
-                updateStatus('loaded', `Loaded: ${file.name}`);
-                document.getElementById('fileInfo').textContent = `${file.name} (${rawBuffer.length.toLocaleString()} bytes)`;
-                
-                // Build initial conflict map
-                rebuildConflictMap();
-                
-                // Refresh all setup-related UI
-                const allSetups = Array.from({ length: 18 }, (_, i) => i);
-                afterSetupStateMutation(allSetups);
-                
-                renderFocusedView();
+                deviceFirmware = null;  // firmware tag comes from the loaded file again
+                loadSysexBytes(new Uint8Array(buffer), file.name);
             } catch (err) {
                 showError(ErrorCode.FILE_READ_FAILED, 'Error loading file: ' + err.message);
             }
             
             e.target.value = '';
         });
+        
+        // Replace the editor contents with a validated full dump
+        function applyLoadedBuffer(bytes, fileName) {
+            rawBuffer = bytes;
+            sectionIndex = buildIndex(rawBuffer);
+        
+            // Initialize factory templates from this SysEx
+            initFactoryTemplates();
+        
+            // Store original for reset
+            originalBuffer = new Uint8Array(rawBuffer);
+        
+            // Clear previous session - new import is clean slate
+            clearSession();
+        
+            // Clear undo/redo stacks
+            undoStack.length = 0;
+            redoStack.length = 0;
+            updateUndoRedoUI();
+        
+            // Enable UI
+            document.getElementById('setupSelect').disabled = false;
+            document.getElementById('setupSelect').value = '0';
+            document.getElementById('exportBtn').disabled = false;
+            document.getElementById('exportJsonBtn').disabled = false;
+            document.getElementById('manageSetupsBtn').disabled = false;
+            document.getElementById('libraryBtn').disabled = false;
+            updateImportDropdownState();
+            updateLibrarySourceBadge();
+        
+            currentSetup = 0;
+            encoderGroup = 0;
+            faderGroup = 0;
+            isModified = false;
+            dirtyBanks.clear();
+        
+            // Clear setup labels on fresh import
+            setupLabels.clear();
+            librarySourceMap.clear();
+            differsFromFactoryCache.clear();
+        
+            // Auto-label setups that match factory Ableton configs
+            checkAllAbletonLabels();
+        
+            updateGroupTabs('encoderGroupTabs', 0);
+            updateGroupTabs('faderGroupTabs', 0);
+            updateGroupNames();
+            updateStatus('loaded', `Loaded: ${fileName}`);
+            document.getElementById('fileInfo').textContent = `${fileName} (${rawBuffer.length.toLocaleString()} bytes)`;
+        
+            // Build initial conflict map
+            rebuildConflictMap();
+        
+            // Refresh all setup-related UI
+            const allSetups = Array.from({ length: 18 }, (_, i) => i);
+            afterSetupStateMutation(allSetups);
+        
+            renderFocusedView();
+        }
         
         function exportSysEx() {
             if (!rawBuffer) return;
@@ -12706,6 +12725,540 @@ ${description}
             return text.slice(0, maxLen - 3) + '...';
         }
         
+        // ============================================================
+        // Device I/O: UC4 dump codec, single-setup SysEx, Web MIDI
+        // ============================================================
+        // Dump format (reverse-engineered by vehka/uc4-tool, see docs):
+        //   F0 00 00 00, tokens A(device) B(type 2=one setup,3=all) C,D(firmware),
+        //   blocks [I J M... K L + 30x00], O, F7. Every value is a 3-byte token:
+        //   tag, 0x20|hi nibble, 0x10|lo nibble.
+
+        const UC4_ONE_LEN = 5072;
+        const UC4_FULL_LEN = 100640;
+        const UC4_ADDR_NAMES = 0x1480;     // 32 bytes per setup
+        const UC4_ADDR_FADER9 = 0x1700;    // 64 bytes per setup
+        const UC4_ADDR_CONTROLS = 0x1C00;  // 0x500 bytes per setup (20 rows x 64)
+
+        function uc4Tok(tag, v) {
+            return [tag, 0x20 | ((v >> 4) & 0x0F), 0x10 | (v & 0x0F)];
+        }
+
+        // Parse a UC4 dump. Returns { kind: 'one'|'all', fwMajor, fwMinor, blocks:[{addr, values}] }
+        // or { error: string }.
+        function uc4ParseDump(bytes) {
+            if (!bytes || bytes.length < 16 || bytes[0] !== 0xF0 || bytes[bytes.length - 1] !== 0xF7) {
+                return { error: 'Not a SysEx message (missing F0/F7)' };
+            }
+            if (bytes[1] !== 0 || bytes[2] !== 0 || bytes[3] !== 0) {
+                return { error: 'Not a Faderfox dump (unexpected header)' };
+            }
+            const hdr = {};
+            const blocks = [];
+            let cur = null;
+            let ended = false;
+            let i = 4;
+            const end = bytes.length - 1;
+            while (i < end) {
+                const t = bytes[i];
+                if (t === 0x00) { i++; continue; }
+                if (i + 2 >= bytes.length) return { error: 'Truncated dump' };
+                const v = ((bytes[i + 1] & 0x0F) << 4) | (bytes[i + 2] & 0x0F);
+                switch (t) {
+                    case 0x41: hdr.device = v; break;
+                    case 0x42: hdr.type = v; break;
+                    case 0x43: hdr.fwMajor = v; break;
+                    case 0x44: hdr.fwMinor = v; break;
+                    case 0x49: cur = { hi: v, lo: 0, values: [], ck: 0 }; break;
+                    case 0x4A: if (!cur) return { error: 'Corrupt dump (address without block)' }; cur.lo = v; break;
+                    case 0x4D: if (!cur) return { error: 'Corrupt dump (data without block)' }; cur.values.push(v); break;
+                    case 0x4B: if (!cur) return { error: 'Corrupt dump' }; cur.ck = v << 8; break;
+                    case 0x4C:
+                        if (!cur) return { error: 'Corrupt dump' };
+                        cur.ck |= v;
+                        {
+                            let sum = 0;
+                            for (const x of cur.values) sum += x;
+                            if ((sum & 0xFFFF) !== cur.ck) {
+                                return { error: `Checksum mismatch in block at 0x${((cur.hi << 8) | cur.lo).toString(16)}` };
+                            }
+                        }
+                        blocks.push({ addr: (cur.hi << 8) | cur.lo, values: cur.values });
+                        cur = null;
+                        break;
+                    case 0x4F: ended = true; break;
+                    default:
+                        return { error: `Unknown token 0x${t.toString(16)} at byte ${i}` };
+                }
+                i += 3;
+            }
+            if (!ended) return { error: 'Dump has no end marker (incomplete?)' };
+            if (hdr.device !== 6) return { error: 'Not a UC4 dump (device id ' + hdr.device + ')' };
+            if (hdr.type !== 2 && hdr.type !== 3) return { error: 'Unknown dump type ' + hdr.type };
+            return {
+                kind: hdr.type === 2 ? 'one' : 'all',
+                fwMajor: hdr.fwMajor, fwMinor: hdr.fwMinor,
+                blocks
+            };
+        }
+
+        function uc4ParseHeaderOnly(bytes) {
+            // Header is fixed layout: F0 00 00 00 A(3) B(3) C(3) D(3)
+            if (bytes[4] !== 0x41 || bytes[7] !== 0x42 || bytes[10] !== 0x43 || bytes[13] !== 0x44) return null;
+            const val = (i) => ((bytes[i + 1] & 0x0F) << 4) | (bytes[i + 2] & 0x0F);
+            return { type: val(7), major: val(10), minor: val(13) };
+        }
+        function uc4FwString(fw) {
+            if (!fw) return '?';
+            const p2 = (n) => String(n).padStart(2, '0');
+            return `${p2(fw.major ?? fw.fwMajor)}.${p2(fw.minor ?? fw.fwMinor)}`;
+        }
+
+        function uc4Locate(addr) {
+            if (!sectionIndex) return null;
+            const sec = sectionIndex[addr >> 8];
+            const bnk = sec && sec[addr & 0xC0];
+            return bnk ? { bnk, idx: addr & 0x3F, secId: addr >> 8, bank: addr & 0xC0 } : null;
+        }
+        function uc4ReadAbs(addr) {
+            const loc = uc4Locate(addr);
+            return loc ? decodeValue(rawBuffer, loc.bnk.dataOffset, loc.idx) : null;
+        }
+        function uc4WriteAbs(addr, value, setupIdx) {
+            const loc = uc4Locate(addr);
+            if (!loc) throw new Error(`Address 0x${addr.toString(16)} is not present in the loaded dump`);
+            encodeValue(rawBuffer, loc.bnk.dataOffset, loc.idx, value);
+            dirtyBanks.add(`${setupIdx}-${loc.secId}-${loc.bank}`);
+        }
+
+        // Region geometry: returns { stride, source setup index } for a block address.
+        function uc4RegionOf(addr) {
+            if (addr >= UC4_ADDR_CONTROLS) {
+                return { stride: 0x500, src: Math.floor((addr - UC4_ADDR_CONTROLS) / 0x500) };
+            }
+            if (addr >= UC4_ADDR_FADER9) {
+                return { stride: 0x40, src: Math.floor((addr - UC4_ADDR_FADER9) / 0x40) };
+            }
+            return { stride: 0x20, src: Math.floor((addr - UC4_ADDR_NAMES) / 0x20) };
+        }
+
+        // Build a dump from [{addr, values}] blocks. type: 2 = one setup, 3 = all.
+        function uc4BuildDump(type, blocks, fw) {
+            const out = [0xF0, 0x00, 0x00, 0x00];
+            out.push(...uc4Tok(0x41, 6), ...uc4Tok(0x42, type),
+                     ...uc4Tok(0x43, fw.major), ...uc4Tok(0x44, fw.minor));
+            for (const b of blocks) {
+                out.push(...uc4Tok(0x49, b.addr >> 8), ...uc4Tok(0x4A, b.addr & 0xFF));
+                let sum = 0;
+                for (const v of b.values) { out.push(...uc4Tok(0x4D, v)); sum += v; }
+                sum &= 0xFFFF;
+                out.push(...uc4Tok(0x4B, sum >> 8), ...uc4Tok(0x4C, sum & 0xFF));
+                for (let z = 0; z < 30; z++) out.push(0);
+            }
+            out.push(...uc4Tok(0x4F, 6), 0xF7);
+            return new Uint8Array(out);
+        }
+
+        function uc4CurrentFirmware() {
+            return (deviceFirmware) || (rawBuffer && uc4ParseHeaderOnly(rawBuffer)) || { major: 2, minor: 3 };
+        }
+
+        // Dump of one setup, same layout as the UC4's own "Sndc" output.
+        function uc4BuildOneSetupDump(setupIdx) {
+            const spec = [{ addr: UC4_ADDR_NAMES + setupIdx * 0x20, n: 32 },
+                          { addr: UC4_ADDR_FADER9 + setupIdx * 0x40, n: 64 }];
+            for (let k = 0; k < 20; k++) {
+                spec.push({ addr: UC4_ADDR_CONTROLS + setupIdx * 0x500 + k * 0x40, n: 64 });
+            }
+            const blocks = spec.map(s => {
+                const values = [];
+                for (let j = 0; j < s.n; j++) {
+                    const v = uc4ReadAbs(s.addr + j);
+                    if (v === null) throw new Error(`Cannot read 0x${(s.addr + j).toString(16)}`);
+                    values.push(v);
+                }
+                return { addr: s.addr, values };
+            });
+            return uc4BuildDump(2, blocks, uc4CurrentFirmware());
+        }
+
+        // Full dump = loaded buffer with fresh checksums (does not touch the live buffer).
+        function uc4BuildFullDump() {
+            const out = new Uint8Array(rawBuffer);
+            for (const key of dirtyBanks) {
+                const [, secId, bank] = key.split('-').map(Number);
+                const sec = sectionIndex[secId];
+                if (sec && sec[bank]) recalcBankChecksum(out, sec[bank].dataOffset);
+            }
+            return out;
+        }
+
+        // Write a parsed one-setup dump into setup slot targetIdx (undoable).
+        function importSingleSetupDump(parsed, targetIdx) {
+            if (previewMode) { showToast('Exit preview first', 'info'); return false; }
+            const before = captureSetupSnapshot(targetIdx);
+            const labelBefore = setupLabels.get(targetIdx) || null;
+            suppressModified = true;
+            try {
+                for (const b of parsed.blocks) {
+                    const reg = uc4RegionOf(b.addr);
+                    const base = b.addr + (targetIdx - reg.src) * reg.stride;
+                    for (let j = 0; j < b.values.length; j++) uc4WriteAbs(base + j, b.values[j], targetIdx);
+                }
+            } finally {
+                suppressModified = false;
+            }
+            dirtySinceLoad = true;
+            markModified();
+            invalidateDiffCache([targetIdx]);
+            afterSetupStateMutation([targetIdx]);
+            recordUndo({
+                type: 'setup-import',
+                description: `Import device dump to Setup ${targetIdx + 1}`,
+                targetIdx,
+                beforeSnapshot: before,
+                afterSnapshot: captureSetupSnapshot(targetIdx),
+                labelBefore,
+                labelAfter: setupLabels.get(targetIdx) || null
+            });
+            return true;
+        }
+
+        function downloadBytes(bytes, filename) {
+            const blob = new Blob([bytes], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ---- Import a single-setup .syx / received dump into a chosen slot ----
+        function promptSingleSetupImport(bytes, sourceLabel) {
+            const parsed = uc4ParseDump(bytes);
+            if (parsed.error || parsed.kind !== 'one') {
+                showError(ErrorCode.SYSEX_WRONG_LENGTH, parsed.error || 'This is not a single-setup dump');
+                return;
+            }
+            const srcNameBlock = parsed.blocks.find(b => b.addr >= UC4_ADDR_NAMES && b.addr < UC4_ADDR_FADER9);
+            const srcSetup = srcNameBlock ? uc4RegionOf(srcNameBlock.addr).src + 1 : null;
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'singleImportModal';
+            overlay.style.zIndex = 10003;
+            overlay.innerHTML = `
+                <div class="modal-dialog">
+                    <h3>Import setup dump</h3>
+                    <p>${escapeHtml(sourceLabel)}: one setup${srcSetup ? ` (from UC4 setup ${srcSetup})` : ''}, firmware ${uc4FwString(parsed)}.</p>
+                    <label style="margin:0.5rem 0;">Replace setup
+                        <select id="singleImportTarget">
+                            ${Array.from({ length: 18 }, (_, i) => {
+                                const l = setupLabels.get(i);
+                                return `<option value="${i}" ${i === currentSetup ? 'selected' : ''}>${i + 1}${l ? ': ' + escapeHtml(l) : ''}</option>`;
+                            }).join('')}
+                        </select>
+                    </label>
+                    <p>The selected setup is overwritten in the editor (Undo works). Nothing is sent to the device.</p>
+                    <div class="modal-actions">
+                        <button class="btn" id="singleImportCancel">Cancel</button>
+                        <button class="btn btn-primary" id="singleImportOk">Import</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+            overlay.querySelector('#singleImportCancel').onclick = () => overlay.remove();
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            overlay.querySelector('#singleImportOk').onclick = () => {
+                const t = parseInt(overlay.querySelector('#singleImportTarget').value, 10);
+                overlay.remove();
+                if (importSingleSetupDump(parsed, t)) showToast(`Imported to Setup ${t + 1}`, 'success');
+            };
+        }
+
+        // ---- Web MIDI ----
+        let deviceFirmware = null;   // { major, minor } from the last dump received from the UC4
+        const midiState = {
+            access: null, inputs: [], outputs: [], inId: '', outId: '',
+            error: '', rx: { active: false, parts: [], len: 0, expected: 0, lastUi: 0 },
+            last: null,       // last complete dump received: { bytes, parsed, time }
+            lastSent: null
+        };
+
+        function midiSupported() { return typeof navigator !== 'undefined' && !!navigator.requestMIDIAccess; }
+
+        async function midiConnect() {
+            midiState.error = '';
+            if (!midiSupported()) {
+                midiState.error = 'Web MIDI is not available in this browser. Use Chrome or Edge.';
+                renderDeviceDialog();
+                return;
+            }
+            try {
+                midiState.access = await navigator.requestMIDIAccess({ sysex: true });
+                midiState.access.onstatechange = () => { midiRefreshPorts(); renderDeviceDialog(); };
+                midiRefreshPorts();
+            } catch (e) {
+                midiState.error = 'MIDI access was denied: ' + (e && e.message ? e.message : e);
+            }
+            renderDeviceDialog();
+        }
+
+        function midiRefreshPorts() {
+            const a = midiState.access;
+            if (!a) return;
+            midiState.inputs = Array.from(a.inputs.values());
+            midiState.outputs = Array.from(a.outputs.values());
+            const pick = (list, cur) => {
+                if (cur && list.some(p => p.id === cur)) return cur;
+                const m = list.find(p => /faderfox|uc4/i.test(p.name || ''));
+                return m ? m.id : (list[0] ? list[0].id : '');
+            };
+            midiState.inId = pick(midiState.inputs, midiState.inId);
+            midiState.outId = pick(midiState.outputs, midiState.outId);
+            midiAttachInput();
+        }
+
+        function midiAttachInput() {
+            for (const p of midiState.inputs) p.onmidimessage = null;
+            const sel = midiState.inputs.find(p => p.id === midiState.inId);
+            if (sel) sel.onmidimessage = midiOnMessage;
+            midiResetRx();
+        }
+
+        function midiSelectPorts() {
+            const i = document.getElementById('midiInSel'), o = document.getElementById('midiOutSel');
+            if (i) midiState.inId = i.value;
+            if (o) midiState.outId = o.value;
+            midiAttachInput();
+            renderDeviceDialog();
+        }
+
+        function midiResetRx() {
+            midiState.rx = { active: false, parts: [], len: 0, expected: 0, lastUi: 0 };
+        }
+
+        function midiOnMessage(ev) {
+            const d = ev.data;
+            if (!d || !d.length) return;
+            const rx = midiState.rx;
+            if (!rx.active) {
+                if (d[0] !== 0xF0) return;          // ordinary knob / button traffic
+                midiResetRx();
+                midiState.rx.active = true;
+                midiState.rx.t0 = performance.now();
+            } else if (d[0] === 0xF0) {
+                midiResetRx();                       // a new sysex started: drop the partial one
+                midiState.rx.active = true;
+                midiState.rx.t0 = performance.now();
+            } else if (d[0] >= 0x80 && d[0] < 0xF8) {
+                midiResetRx();                       // interrupted by a channel message
+                return;
+            } else if (d[0] >= 0xF8) {
+                return;                              // realtime byte between chunks
+            }
+            const r = midiState.rx;
+            const chunk = new Uint8Array(d);
+            r.parts.push(chunk);
+            r.len += chunk.length;
+            if (!r.expected && r.len >= 10) {
+                const head = r.parts.length === 1 ? r.parts[0] : null;
+                if (head && head[7] === 0x42) {
+                    const t = head[9] & 0x0F;
+                    r.expected = t === 2 ? UC4_ONE_LEN : (t === 3 ? UC4_FULL_LEN : 0);
+                }
+            }
+            if (chunk.indexOf(0xF7) !== -1) {
+                const all = new Uint8Array(r.len);
+                let o = 0;
+                for (const p of r.parts) { all.set(p, o); o += p.length; }
+                midiResetRx();
+                midiHandleDump(all);
+                return;
+            }
+            const now = performance.now();
+            if (now - r.lastUi > 100) { r.lastUi = now; updateRxProgress(); }
+        }
+
+        function midiHandleDump(raw) {
+            // Strip realtime bytes that may have slipped into the stream.
+            const bytes = raw.some(b => b >= 0xF8) ? raw.filter(b => b < 0xF8) : raw;
+            const parsed = uc4ParseDump(bytes);
+            if (parsed.error) {
+                midiState.last = { bytes, error: parsed.error, time: new Date() };
+                showToast('Received data is not a valid UC4 dump: ' + parsed.error, 'error');
+            } else {
+                deviceFirmware = { major: parsed.fwMajor, minor: parsed.fwMinor };
+                midiState.last = { bytes, parsed, time: new Date() };
+                showToast(parsed.kind === 'all' ? 'Received all 18 setups from UC4' : 'Received one setup from UC4', 'success');
+            }
+            if (!document.getElementById('deviceModal')) openDeviceDialog(); else renderDeviceDialog();
+        }
+
+        function updateRxProgress() {
+            const el = document.getElementById('deviceRxProgress');
+            if (!el) return;
+            const r = midiState.rx;
+            if (!r.active) { el.textContent = ''; return; }
+            el.textContent = r.expected
+                ? `Receiving... ${Math.min(100, Math.round(r.len / r.expected * 100))}% (${r.len.toLocaleString()} / ${r.expected.toLocaleString()} bytes)`
+                : `Receiving... ${r.len.toLocaleString()} bytes`;
+        }
+
+        function midiSendDump(bytes, what) {
+            const out = midiState.access && midiState.outputs.find(p => p.id === midiState.outId);
+            if (!out) { showToast('No MIDI output selected', 'error'); return false; }
+            try {
+                out.send(bytes);
+            } catch (e) {
+                showToast('Send failed: ' + (e && e.message ? e.message : e), 'error');
+                return false;
+            }
+            midiState.lastSent = { what, size: bytes.length, port: out.name, time: new Date() };
+            showToast(`Sent ${what} (${bytes.length.toLocaleString()} bytes) to ${out.name}`, 'success');
+            return true;
+        }
+
+        function deviceSendSelected() {
+            if (!rawBuffer) return;
+            const scope = (document.querySelector('input[name="devSendScope"]:checked') || {}).value || 'one';
+            const chk = document.getElementById('devSendConfirm');
+            if (!chk || !chk.checked) { showToast('Tick the confirmation box first', 'info'); return; }
+            if (scope === 'all') midiSendDump(uc4BuildFullDump(), 'all 18 setups');
+            else midiSendDump(uc4BuildOneSetupDump(currentSetup), `Setup ${currentSetup + 1}`);
+            renderDeviceDialog();
+        }
+
+        function deviceSaveCurrent(scope) {
+            if (!rawBuffer) return;
+            const name = scope === 'all' ? 'uc4_all_setups' : `uc4_setup_${String(currentSetup + 1).padStart(2, '0')}`;
+            promptFilename(name + '.syx', scope === 'all' ? 'Save all setups' : `Save Setup ${currentSetup + 1}`, (filename) => {
+                downloadBytes(scope === 'all' ? uc4BuildFullDump() : uc4BuildOneSetupDump(currentSetup), filename);
+            });
+        }
+
+        function deviceUseReceived(action) {
+            const last = midiState.last;
+            if (!last || !last.parsed) return;
+            if (action === 'save') {
+                const base = last.parsed.kind === 'all' ? 'uc4_all_setups' : 'uc4_setup';
+                promptFilename(base + '.syx', 'Save received dump', (f) => downloadBytes(last.bytes, f));
+            } else if (action === 'load') {
+                loadSysexBytes(last.bytes, 'received from UC4');
+                closeDeviceDialog();
+            } else if (action === 'import') {
+                promptSingleSetupImport(last.bytes, 'Received from UC4');
+            }
+        }
+
+        function closeDeviceDialog() {
+            const m = document.getElementById('deviceModal');
+            if (m) m.remove();
+        }
+
+        function openDeviceDialog() {
+            if (document.getElementById('deviceModal')) return;
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'deviceModal';
+            overlay.onclick = (e) => { if (e.target === overlay) closeDeviceDialog(); };
+            document.body.appendChild(overlay);
+            renderDeviceDialog();
+        }
+
+        function renderDeviceDialog() {
+            const overlay = document.getElementById('deviceModal');
+            if (!overlay) return;
+            const s = midiState;
+            const opt = (list, sel) => list.length
+                ? list.map(p => `<option value="${escapeHtml(p.id)}" ${p.id === sel ? 'selected' : ''}>${escapeHtml(p.name || p.id)}</option>`).join('')
+                : '<option value="">(none)</option>';
+            const connected = !!s.access;
+            const last = s.last;
+            let recvHtml = '';
+            if (last && last.error) {
+                recvHtml = `<div class="dev-card dev-bad">Received ${last.bytes.length.toLocaleString()} bytes, but it is not a valid UC4 dump: ${escapeHtml(last.error)}</div>`;
+            } else if (last) {
+                const p = last.parsed;
+                recvHtml = `<div class="dev-card">
+                    <div>Received <b>${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b>,
+                    ${last.bytes.length.toLocaleString()} bytes, firmware ${uc4FwString(p)}, ${last.time.toLocaleTimeString()}.</div>
+                    <div class="dev-row">
+                        ${p.kind === 'all'
+                            ? '<button class="btn btn-primary" onclick="deviceUseReceived(\'load\')">Load into editor</button>'
+                            : '<button class="btn btn-primary" onclick="deviceUseReceived(\'import\')">Import into a setup...</button>'}
+                        <button class="btn" onclick="deviceUseReceived('save')">Save .syx</button>
+                    </div></div>`;
+            }
+            const sentHtml = s.lastSent
+                ? `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>` : '';
+            overlay.innerHTML = `
+                <div class="device-dialog">
+                    <div class="dev-head"><h3>UC4 Device</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
+
+                    <div class="dev-sec">
+                        <div class="dev-title">1. Connection</div>
+                        ${connected ? `
+                        <div class="dev-row">
+                            <label>In <select id="midiInSel" onchange="midiSelectPorts()">${opt(s.inputs, s.inId)}</select></label>
+                            <label>Out <select id="midiOutSel" onchange="midiSelectPorts()">${opt(s.outputs, s.outId)}</select></label>
+                        </div>
+                        <div class="dev-note">${s.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'UC4 found.' : 'No port named UC4/Faderfox found. Check the USB cable, close other MIDI programs, then reselect.'}</div>
+                        ` : `
+                        <div class="dev-row"><button class="btn btn-primary" onclick="midiConnect()">Connect MIDI</button></div>
+                        <div class="dev-note">The browser will ask for MIDI access with SysEx. Works in Chrome and Edge. Close other programs that hold the UC4 port (Ableton, SysEx Librarian, MIDI-OX).</div>
+                        `}
+                        ${s.error ? `<div class="dev-card dev-bad">${escapeHtml(s.error)}</div>` : ''}
+                    </div>
+
+                    <div class="dev-sec">
+                        <div class="dev-title">2. Receive from UC4 (backup / read)</div>
+                        <div class="dev-note">The editor listens while this window is open or closed. On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc, current setup) or <b>encoder 8</b> (SndA, all setups) until the display counts.</div>
+                        <div id="deviceRxProgress" class="dev-progress"></div>
+                        ${recvHtml}
+                    </div>
+
+                    <div class="dev-sec">
+                        <div class="dev-title">3. Send to UC4</div>
+                        <div class="dev-row">
+                            <label><input type="radio" name="devSendScope" value="one" checked> Current setup (${currentSetup + 1})</label>
+                            <label><input type="radio" name="devSendScope" value="all"> All 18 setups</label>
+                        </div>
+                        <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>hold encoder 7</b> until the display shows <b>rC00</b>. A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send.</div>
+                        <label class="dev-confirm"><input type="checkbox" id="devSendConfirm"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
+                        <div class="dev-row">
+                            <button class="btn btn-primary" ${connected && s.outId && rawBuffer ? '' : 'disabled'} onclick="deviceSendSelected()">Send to UC4</button>
+                            <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('one')">Save current setup .syx</button>
+                            <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('all')">Save all .syx</button>
+                        </div>
+                        <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; connect and receive once to use your UC4\'s own value)'}.</div>
+                        ${sentHtml}
+                    </div>
+                </div>`;
+            updateRxProgress();
+        }
+
+        // Refactored loader: used by the file input and by "Load into editor".
+        function loadSysexBytes(bytes, fileName) {
+            if (bytes.length === UC4_ONE_LEN) {
+                promptSingleSetupImport(bytes, fileName);
+                return;
+            }
+            logAction(Action.LOAD_SYSEX, { filename: fileName, bytes: bytes.length });
+            const validation = validateSyx(bytes);
+            if (!validation.valid) {
+                showError(validation.code, validation.message, validation.detail);
+                return;
+            }
+            const parsedHead = uc4ParseDump(bytes);
+            if (parsedHead.error) {
+                showError(ErrorCode.SYSEX_WRONG_LENGTH, 'Invalid UC4 dump: ' + parsedHead.error);
+                return;
+            }
+            if (parsedHead.kind !== 'all') {
+                showError(ErrorCode.SYSEX_WRONG_LENGTH, 'This file is a single-setup dump with unexpected size');
+                return;
+            }
+            applyLoadedBuffer(bytes, fileName);
+        }
+
         initUI();
         initTooltipSystem();
         
