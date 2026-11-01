@@ -3031,15 +3031,6 @@
         .cv-el:hover { border-color: var(--border-light); }
         .cv-el.sel { border-color: var(--accent); background: rgba(0, 212, 170, 0.1); }
         .cv-el.bsel { box-shadow: inset 0 0 0 2px var(--warning); }
-        .cv-knob { width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 0.35rem; border: 2px solid var(--encoder); background: radial-gradient(circle at 35% 30%, var(--bg-input), var(--bg-control)); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: var(--text-dim); position: relative; }
-        .cv-knob::after { content: ''; position: absolute; top: 3px; width: 3px; height: 9px; background: var(--encoder); border-radius: 2px; }
-        .cv-btn { width: 42px; height: 24px; border-radius: 5px; margin: 0.35rem auto 0.55rem; border: 2px solid var(--green-btn); background: var(--bg-control); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: var(--text-dim); }
-        .cv-fader { width: 12px; height: 64px; margin: 0.2rem auto 0.4rem; background: var(--bg-input); border: 1px solid var(--border-light); border-radius: 6px; position: relative; }
-        .cv-fader::after { content: ''; position: absolute; left: -9px; right: -9px; top: 36%; height: 14px; background: var(--fader); border-radius: 3px; }
-        .cv-fader span { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: var(--text-muted); margin-top: 0.1rem; }
-        .cv-l1 { font-size: 0.7rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.7rem; }
-        .cv-el:not(.fdr) .cv-l1 { margin-top: 0; }
-        .cv-l2 { font-size: 0.62rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .cv-inspector { padding: 0.75rem; }
         .cv-ins-title { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.6rem; }
         .cv-ins-field { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.6rem; }
@@ -3054,6 +3045,64 @@
         .cv-inspector .step-btn { width: 0.95rem; height: 1.5rem; font-size: 0.75rem; }
         .cv-inspector .param-input.with-step { gap: 1px; }
         @media (max-width: 1100px) { .cv { grid-template-columns: 200px minmax(0, 1fr); } .cv-inspector { grid-column: 1 / -1; position: static; max-height: none; } }
+    
+        /* Less decoration: neutral lines, color only for state */
+        .control-card.encoder, .control-card.push, .control-card.green, .control-card.fader { border-left: 1px solid var(--border); }
+        .group-block.enc, .group-block.fad { border-top: 1px solid var(--border); }
+        .group-block.enc .gb-label, .group-block.fad .gb-label { color: var(--text); }
+        .gb-sec-title h3.encoders, .gb-sec-title h3.push, .gb-sec-title h3.faders, .gb-sec-title h3.green { color: var(--text-dim); }
+        .section-title.encoders, .section-title.push, .section-title.green, .section-title.faders, .section-title.fader9 { color: var(--text-dim); }
+        .fader9-card .control-header { background: none; }
+        .fader9-card { border-left: 1px solid var(--border); }
+        .help-link { border-color: var(--border); color: var(--text-dim); }
+        .batch-bar { border-top-width: 1px; }
+        .notes-title, .dev-title { color: var(--text-dim); }
+        /* Controller drawing */
+        .cv-device { border-radius: 10px; padding: 0.9rem 1rem 0.5rem; }
+        .cv-rowtitle { gap: 0.8rem; color: var(--text-dim); font-size: 0.7rem; margin-bottom: 0.5rem; }
+        .cv-rowtitle .cv-grp { color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+        .cv-divider { border: none; border-top: 1px solid var(--border-light); margin: 0.4rem 0 0.9rem; }
+        .cv-col { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; min-width: 0; }
+        .cv-el { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0.3rem 0.2rem; border-radius: 6px; }
+        .cv-el.sel { border-color: var(--accent); background: transparent; }
+        .cv-el.bsel { box-shadow: inset 0 0 0 2px var(--warning); }
+        .cv-knob { display: block; margin: 0 auto 0.3rem; }
+        .cv-el.push .cv-knob { margin-bottom: 0.2rem; }
+        .cv-green { width: 26px; height: 26px; border-radius: 50%; background: var(--green-btn); border: 2px solid var(--bg-panel); box-shadow: 0 0 0 1px var(--green-btn); margin: 0.15rem auto 0.4rem; }
+        .cv-fader { width: 12px; height: 64px; margin: 0.9rem auto 0.4rem; background: var(--bg-input); border: 1px solid var(--border-light); border-radius: 6px; position: relative; }
+        .cv-fader::after { content: ''; position: absolute; left: -9px; right: -9px; top: 36%; height: 14px; background: var(--text-dim); border-radius: 3px; }
+        .cv-fader i { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-style: normal; color: var(--text-muted); margin-bottom: 0.1rem; }
+        .cv-row { margin-bottom: 0.4rem; }
+        .cv-row.one { grid-template-columns: 1fr; margin-top: 0.9rem; }
+        .cv-el.wide { max-width: 100%; }
+        .cv-hfader { width: 100%; height: 12px; background: var(--bg-input); border: 1px solid var(--border-light); border-radius: 6px; position: relative; margin: 0.3rem 0 0.5rem; }
+        .cv-hcap { position: absolute; top: -5px; bottom: -5px; left: 62%; width: 14px; background: var(--text-dim); border-radius: 3px; }
+        .cv-lab-in { width: 100%; max-width: 130px; text-align: center; background: transparent; border: 1px solid transparent; border-bottom-color: var(--border); color: var(--text); font-family: var(--font-mono); font-size: 0.7rem; padding: 0.15rem 0.2rem; }
+        .cv-lab-in:hover { border-color: var(--border-light); }
+        .cv-lab-in:focus { outline: none; border-color: var(--accent); background: var(--bg-input); }
+        .cv-lab-in::placeholder { color: var(--text-muted); }
+        .cv-el.wide .cv-lab-in { max-width: 260px; }
+        .cv-sum { font-size: 0.62rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .cv-sum[hidden] { display: none; }
+    
+        /* Overview tables */
+        .ov-section { border: 1px solid var(--border); background: var(--bg-panel); margin-bottom: 1rem; }
+        .ov-sec-head { display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); user-select: none; }
+        .ov-sec-head:hover { color: var(--text); }
+        .ov-arrow { width: 0.9rem; color: var(--text-muted); }
+        .ov-section.collapsed .ov-sec-body { display: none; }
+        .ov-sec-body { padding: 0 0.75rem 0.75rem; overflow-x: auto; }
+        .ov-table { user-select: none; width: 100%; }
+        .ov-table th.ov-col, .ov-table th.ov-row { cursor: pointer; }
+        .ov-table th.ov-col:hover, .ov-table th.ov-row:hover { color: var(--accent); }
+        .ov-table td.ov-cell { cursor: cell; }
+        .ov-table td.ov-cell.ov-sel { background: rgba(0, 212, 170, 0.22); outline: 1px solid var(--accent); outline-offset: -1px; }
+        html[data-theme="light"] .ov-table td.ov-cell.ov-sel { background: rgba(0, 128, 106, 0.16); }
+        .ov-table td.ov-cell.ov-clip { outline: 1px dashed var(--text-dim); outline-offset: -2px; }
+        .ov-table td.ov-cell.ov-sel.ov-clip { outline: 1px dashed var(--accent); }
+        #ovBar .bb-head { flex-wrap: wrap; }
+        #ovBar label { display: flex; align-items: center; gap: 0.3rem; color: var(--text-dim); font-size: 0.75rem; }
+        #ovBar input { font-family: inherit; font-size: 0.75rem; background: var(--bg-input); color: var(--text); border: 1px solid var(--border); padding: 0.25rem 0.4rem; width: 3.6rem; }
     </style>
 </head>
 <body>
@@ -3094,7 +3143,7 @@
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeProjectDropdown();" title="All 18 setups or one setup">Import SysEx...</div>
                     <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeProjectDropdown();">Import JSON...</div>
-                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">Library...</div>
+                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">New setup from Library...</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="exportBtn" onclick="exportSysEx(); closeProjectDropdown();">Export SysEx (all)...</div>
                     <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeProjectDropdown();">Export SysEx (this setup)...</div>
@@ -3126,7 +3175,7 @@
             </div>
             <span id="librarySourceBadge" class="library-source-badge" style="display: none;"></span>
             <button class="btn" id="manageSetupsBtn" onclick="openSetupManager()" disabled>Setup Manager</button>
-            <button class="btn" id="libraryBtn" onclick="openLibraryModal()" disabled>Library</button>
+            <span id="libraryBtn" hidden></span>
         </div>
         
         <div class="nav-section">
@@ -3160,6 +3209,7 @@
     </details>
     
     <div class="batch-bar" id="batchBar" style="display:none"></div>
+    <div class="batch-bar" id="ovBar" style="display:none"></div>
     
     <main class="main-content" id="mainContent">
         <div class="no-data">
@@ -3324,26 +3374,6 @@
         // Conflict filter state
         let showConcurrentConflicts = true;
         let showMutuallyExclusiveConflicts = false;
-        
-        // Copy/Paste State
-        let clipboard = null;
-        let selection = {
-            mode: 'none', // 'none' | 'single' | 'row' | 'column'
-            controlType: null,
-            group: null,
-            index: null
-        };
-        
-        // Quick Paste State (v1.0)
-        const quickPaste = {
-            mode: 'off',           // 'off' | 'copy' | 'paste'
-            scope: 'cell',         // 'cell' | 'column' | 'row'
-            source: null,          // { controlType, group, index, data, lockedScope, count }
-            chMultiplier: 0,       // Channel offset multiplier (-8 to +8)
-            ccMultiplier: 0,       // CC offset multiplier (-8 to +8)
-            pasteCount: 0,         // Total pastes this session
-            doubleClickToastShown: false
-        };
         
         // Link Groups State
         let linkGroups = false;
@@ -4884,7 +4914,7 @@ ${last ? `Last Error:
             
             card.innerHTML = `
                 <div class="control-header">
-                    <span class="control-name">Push ${idx + 1}</span>
+                    <span class="control-name">Enc.Button ${idx + 1}</span>
                     <span class="control-index">P${encoderGroup + 1}.${idx + 1}</span>
                 </div>
                 <div class="param-row">
@@ -4951,7 +4981,7 @@ ${last ? `Last Error:
             
             card.innerHTML = `
                 <div class="control-header">
-                    <span class="control-name">Button ${idx + 1}</span>
+                    <span class="control-name">Green Button ${idx + 1}</span>
                     <span class="control-index">B${faderGroup + 1}.${idx + 1}</span>
                 </div>
                 <div class="param-row">
@@ -5157,138 +5187,6 @@ ${last ? `Last Error:
             return card;
         }
         
-        function renderOverview() {
-            const main = document.getElementById('mainContent');
-            main.innerHTML = '';
-            
-            const container = document.createElement('div');
-            container.className = 'overview-container';
-            
-            // Quick Paste Toolbar (guarded for safety)
-            if (typeof createQuickPasteToolbar === 'function') {
-                container.appendChild(createQuickPasteToolbar());
-            }
-            
-            // Tab bar
-            const tabs = document.createElement('div');
-            tabs.className = 'overview-tabs';
-            tabs.innerHTML = `
-                <button class="overview-tab ${overviewTab === 'all' ? 'active' : ''}" onclick="setOverviewTab('all')">All</button>
-                <button class="overview-tab ${overviewTab === 'faders' ? 'active' : ''}" onclick="setOverviewTab('faders')">Faders</button>
-                <button class="overview-tab ${overviewTab === 'green' ? 'active' : ''}" onclick="setOverviewTab('green')">Green Buttons</button>
-                <button class="overview-tab ${overviewTab === 'encoders' ? 'active' : ''}" onclick="setOverviewTab('encoders')">Encoders</button>
-                <button class="overview-tab ${overviewTab === 'push' ? 'active' : ''}" onclick="setOverviewTab('push')">Push Buttons</button>
-            `;
-            container.appendChild(tabs);
-            
-            // Conflict filter chips
-            const filters = document.createElement('div');
-            filters.className = 'conflict-filters';
-            filters.innerHTML = `
-                <span class="conflict-filters-label">Conflicts:</span>
-                <div class="filter-chip ${showConcurrentConflicts ? 'active' : ''}" onclick="toggleConcurrentFilter()">
-                    <span class="checkmark">${showConcurrentConflicts ? '✓' : ''}</span>
-                    Concurrent
-                    <span class="count" id="concurrentCount">${conflicts.concurrent.size}</span>
-                </div>
-                <div class="filter-chip ${showMutuallyExclusiveConflicts ? 'active dim' : ''}" onclick="toggleMEFilter()">
-                    <span class="checkmark">${showMutuallyExclusiveConflicts ? '✓' : ''}</span>
-                    Mutually-Exclusive
-                    <span class="count" id="meCount">${conflicts.mutuallyExclusive.size}</span>
-                </div>
-            `;
-            container.appendChild(filters);
-            
-            // Grid based on active tab
-            const grid = document.createElement('div');
-            grid.className = 'overview-grid';
-            
-            switch (overviewTab) {
-                case 'all':
-                    // Show all control types stacked: Faders 1-8, Fader 9, Green, Encoders, Push
-                    grid.appendChild(createOverviewSection('Faders 1-8', createFaderOverviewTable(), 'faders'));
-                    grid.appendChild(createOverviewSection('Fader 9', createFader9OverviewTable(), 'fader9'));
-                    grid.appendChild(createOverviewSection('Green Buttons', createButtonOverviewTable('green', getGreenData, 'B'), 'green'));
-                    grid.appendChild(createOverviewSection('Encoders', createEncoderOverviewTable(), 'encoders'));
-                    grid.appendChild(createOverviewSection('Push Buttons', createButtonOverviewTable('push', getPushData, 'P'), 'push'));
-                    break;
-                case 'encoders':
-                    grid.appendChild(createEncoderOverviewTable());
-                    break;
-                case 'push':
-                    grid.appendChild(createButtonOverviewTable('push', getPushData, 'P'));
-                    break;
-                case 'green':
-                    grid.appendChild(createButtonOverviewTable('green', getGreenData, 'B'));
-                    break;
-                case 'faders':
-                    grid.appendChild(createOverviewSection('Faders 1-8', createFaderOverviewTable(), 'faders'));
-                    grid.appendChild(createOverviewSection('Fader 9', createFader9OverviewTable(), 'fader9'));
-                    break;
-            }
-            
-            container.appendChild(grid);
-            
-            // Conflict panel (show only if there are conflicts to display)
-            const visibleConflicts = [];
-            if (showConcurrentConflicts) {
-                for (const [key, entry] of conflicts.concurrent) {
-                    visibleConflicts.push({ key, entry, type: 'concurrent' });
-                }
-            }
-            if (showMutuallyExclusiveConflicts) {
-                for (const [key, entry] of conflicts.mutuallyExclusive) {
-                    visibleConflicts.push({ key, entry, type: 'me' });
-                }
-            }
-            
-            if (visibleConflicts.length > 0) {
-                const panel = document.createElement('div');
-                panel.className = 'conflict-panel';
-                panel.innerHTML = `
-                    <div class="conflict-panel-header">
-                        <span>⚠ ${visibleConflicts.length} Conflict${visibleConflicts.length !== 1 ? 's' : ''}</span>
-                    </div>
-                `;
-                
-                for (const { key, entry, type } of visibleConflicts.slice(0, 20)) {
-                    const item = document.createElement('div');
-                    item.className = `conflict-item ${type === 'me' ? 'dim' : ''}`;
-                    const refsStr = entry.refs.map(formatControlRef).join(', ');
-                    item.innerHTML = `
-                        <span class="warning-icon">⚠ </span>
-                        <span class="conflict-key">${formatConflictKey(key)}:</span>
-                        <span class="conflict-refs">${refsStr}</span>
-                    `;
-                    panel.appendChild(item);
-                }
-                
-                if (visibleConflicts.length > 20) {
-                    const more = document.createElement('div');
-                    more.className = 'conflict-item';
-                    more.innerHTML = `<span class="conflict-refs">...and ${visibleConflicts.length - 20} more</span>`;
-                    panel.appendChild(more);
-                }
-                
-                container.appendChild(panel);
-            }
-            
-            main.appendChild(container);
-            
-            // Update cursor classes on all tables (guarded for safety)
-            if (typeof updateOverviewTableCursor === 'function') {
-                updateOverviewTableCursor();
-            }
-        }
-        
-        // Overview state
-        let overviewTab = 'all';
-        
-        function setOverviewTab(tab) {
-            overviewTab = tab;
-            renderOverview();
-        }
-        
         // MIDI Channel Helpers
         function chDisp(ch0) { return (ch0 | 0) + 1; }
         
@@ -5349,326 +5247,7 @@ ${last ? `Last Error:
             return `${ch}:${type} ${data.cc} [${mode}]`;
         }
         
-        function createOverviewSection(title, table, colorClass = '') {
-            const section = document.createElement('div');
-            section.className = 'overview-section';
-            
-            const header = document.createElement('h3');
-            header.className = 'overview-section-title' + (colorClass ? ' ' + colorClass : '');
-            header.textContent = title;
-            section.appendChild(header);
-            
-            section.appendChild(table);
-            return section;
-        }
-        
-        function createEncoderOverviewTable() {
-            const table = document.createElement('table');
-            table.className = 'overview-table';
-            
-            // Header row
-            let headerHtml = '<tr><th class="row-header"></th>';
-            for (let g = 0; g < 8; g++) {
-                const name = getGroupName(currentSetup, g);
-                headerHtml += `<th class="group-header">Group ${g + 1}</th>`;
-            }
-            headerHtml += '</tr>';
-            
-            // Group name row (clickable to edit)
-            headerHtml += '<tr class="group-name-row"><td></td>';
-            for (let g = 0; g < 8; g++) {
-                headerHtml += `<td onclick="showGroupNameEditor(${currentSetup}, ${g})" title="Click to edit">${renderGroupNameWithWarning(currentSetup, g)}</td>`;
-            }
-            headerHtml += '</tr>';
-            
-            table.innerHTML = headerHtml;
-            
-            // Data rows
-            for (let i = 0; i < 8; i++) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<th class="row-header">Enc ${i + 1}</th>`;
-                
-                for (let g = 0; g < 8; g++) {
-                    const data = getEncoderData(currentSetup, g, i);
-                    const cell = document.createElement('td');
-                    
-                    // Add data attributes for keyboard navigation
-                    cell.dataset.type = 'encoder';
-                    cell.dataset.group = g;
-                    cell.dataset.index = i;
-                    
-                    // Check for conflicts
-                    const conflictType = getControlConflictType('encoder', g, i);
-                    if (conflictType === 'concurrent') {
-                        cell.className = 'conflict';
-                    } else if (conflictType === 'mutuallyExclusive') {
-                        cell.className = 'conflict-dim';
-                    }
-                    
-                    // Check if this cell is selected
-                    if (selection.mode !== 'none' && 
-                        selection.controlType === 'encoder' && 
-                        selection.group === g && 
-                        selection.index === i) {
-                        cell.classList.add('selected');
-                    }
-                    
-                    // Check if this cell is QP source
-                    if (isQuickPasteSource('encoder', g, i)) {
-                        cell.classList.add('qp-source');
-                    }
-                    
-                    const warningIcon = conflictType ? '<span class="conflict-icon">⚠ </span>' : '';
-                    cell.innerHTML = `<div class="overview-cell">${warningIcon}${formatEncoderCell(data)}</div>`;
-                    cell.onclick = () => { 
-                        if (!handleQuickPasteCellClick('encoder', g, i)) {
-                            setSelection('encoder', g, i); 
-                        }
-                    };
-                    cell.ondblclick = () => {
-                        if (!handleQuickPasteDoubleClick('encoder', g, i)) {
-                            jumpToFocusedView('encoder', g, i);
-                        }
-                    };
-                    cell.onmouseenter = () => handleOverviewMouseEnter('encoder', g, i);
-                    cell.oncontextmenu = (e) => showContextMenu(e, 'encoder', g, i);
-                    cell.title = createEncoderTooltip(data, g, i);
-                    row.appendChild(cell);
-                }
-                
-                table.appendChild(row);
-            }
-            
-            return table;
-        }
-        
-        function createButtonOverviewTable(type, getData, prefix) {
-            const table = document.createElement('table');
-            table.className = 'overview-table';
-            
-            // Header row
-            let headerHtml = '<tr><th class="row-header"></th>';
-            for (let g = 0; g < 8; g++) {
-                headerHtml += `<th class="group-header">Group ${g + 1}</th>`;
-            }
-            headerHtml += '</tr>';
-            
-            // Group name row (clickable to edit)
-            headerHtml += '<tr class="group-name-row"><td></td>';
-            for (let g = 0; g < 8; g++) {
-                headerHtml += `<td onclick="showGroupNameEditor(${currentSetup}, ${g})" title="Click to edit">${renderGroupNameWithWarning(currentSetup, g)}</td>`;
-            }
-            headerHtml += '</tr>';
-            
-            table.innerHTML = headerHtml;
-            
-            // Data rows
-            for (let i = 0; i < 8; i++) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<th class="row-header">${prefix} ${i + 1}</th>`;
-                
-                for (let g = 0; g < 8; g++) {
-                    const data = getData(currentSetup, g, i);
-                    const cell = document.createElement('td');
-                    
-                    // Add data attributes for keyboard navigation
-                    cell.dataset.type = type;
-                    cell.dataset.group = g;
-                    cell.dataset.index = i;
-                    
-                    // Check for conflicts
-                    const conflictType = getControlConflictType(type, g, i);
-                    if (conflictType === 'concurrent') {
-                        cell.className = 'conflict';
-                    } else if (conflictType === 'mutuallyExclusive') {
-                        cell.className = 'conflict-dim';
-                    }
-                    
-                    // Check if this cell is selected
-                    if (selection.mode !== 'none' && 
-                        selection.controlType === type && 
-                        selection.group === g && 
-                        selection.index === i) {
-                        cell.classList.add('selected');
-                    }
-                    
-                    // Check if this cell is QP source
-                    if (isQuickPasteSource(type, g, i)) {
-                        cell.classList.add('qp-source');
-                    }
-                    
-                    const warningIcon = conflictType ? '<span class="conflict-icon">⚠ </span>' : '';
-                    cell.innerHTML = `<div class="overview-cell">${warningIcon}${formatButtonCell(data)}</div>`;
-                    cell.onclick = () => { 
-                        if (!handleQuickPasteCellClick(type, g, i)) {
-                            setSelection(type, g, i); 
-                        }
-                    };
-                    cell.ondblclick = () => {
-                        if (!handleQuickPasteDoubleClick(type, g, i)) {
-                            jumpToFocusedView(type, g, i);
-                        }
-                    };
-                    cell.onmouseenter = () => handleOverviewMouseEnter(type, g, i);
-                    cell.oncontextmenu = (e) => showContextMenu(e, type, g, i);
-                    row.appendChild(cell);
-                }
-                
-                table.appendChild(row);
-            }
-            
-            return table;
-        }
-        
-        function createFaderOverviewTable() {
-            const table = document.createElement('table');
-            table.className = 'overview-table';
-            
-            // Header row
-            let headerHtml = '<tr><th class="row-header"></th>';
-            for (let g = 0; g < 8; g++) {
-                headerHtml += `<th class="group-header">Group ${g + 1}</th>`;
-            }
-            headerHtml += '</tr>';
-            
-            // Group name row (clickable to edit)
-            headerHtml += '<tr class="group-name-row"><td></td>';
-            for (let g = 0; g < 8; g++) {
-                headerHtml += `<td onclick="showGroupNameEditor(${currentSetup}, ${g})" title="Click to edit">${renderGroupNameWithWarning(currentSetup, g)}</td>`;
-            }
-            headerHtml += '</tr>';
-            
-            table.innerHTML = headerHtml;
-            
-            // Fader 1-8 rows
-            for (let i = 0; i < 8; i++) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<th class="row-header">Fad ${i + 1}</th>`;
-                
-                for (let g = 0; g < 8; g++) {
-                    const data = getFaderData(currentSetup, g, i);
-                    const cell = document.createElement('td');
-                    
-                    // Add data attributes for keyboard navigation
-                    cell.dataset.type = 'fader';
-                    cell.dataset.group = g;
-                    cell.dataset.index = i;
-                    
-                    // Check for conflicts
-                    const conflictType = getControlConflictType('fader', g, i);
-                    if (conflictType === 'concurrent') {
-                        cell.className = 'conflict';
-                    } else if (conflictType === 'mutuallyExclusive') {
-                        cell.className = 'conflict-dim';
-                    }
-                    
-                    // Check if this cell is selected
-                    if (selection.mode !== 'none' && 
-                        selection.controlType === 'fader' && 
-                        selection.group === g && 
-                        selection.index === i) {
-                        cell.classList.add('selected');
-                    }
-                    
-                    // Check if this cell is QP source
-                    if (isQuickPasteSource('fader', g, i)) {
-                        cell.classList.add('qp-source');
-                    }
-                    
-                    const warningIcon = conflictType ? '<span class="conflict-icon">⚠ </span>' : '';
-                    cell.innerHTML = `<div class="overview-cell">${warningIcon}${formatFaderCell(data)}</div>`;
-                    cell.onclick = () => { 
-                        if (!handleQuickPasteCellClick('fader', g, i)) {
-                            setSelection('fader', g, i); 
-                        }
-                    };
-                    cell.ondblclick = () => {
-                        if (!handleQuickPasteDoubleClick('fader', g, i)) {
-                            jumpToFocusedView('fader', g, i);
-                        }
-                    };
-                    cell.onmouseenter = () => handleOverviewMouseEnter('fader', g, i);
-                    cell.oncontextmenu = (e) => showContextMenu(e, 'fader', g, i);
-                    row.appendChild(cell);
-                }
-                
-                table.appendChild(row);
-            }
-            
-            return table;
-        }
-        
         // Fader 9 separate table
-        function createFader9OverviewTable() {
-            const table = document.createElement('table');
-            table.className = 'overview-table';
-            
-            // Header row
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th></th>';
-            for (let g = 0; g < 8; g++) {
-                const name = getGroupName(currentSetup, g);
-                headerRow.innerHTML += `<th class="group-header">Group ${g + 1}<br><span class="group-name">${name}</span></th>`;
-            }
-            table.appendChild(headerRow);
-            
-            // Fader 9 row
-            const f9row = document.createElement('tr');
-            f9row.innerHTML = `<th class="row-header">Fad 9</th>`;
-            
-            for (let g = 0; g < 8; g++) {
-                const data = getFader9Data(currentSetup, g);
-                const cell = document.createElement('td');
-                
-                // Add data attributes for keyboard navigation
-                cell.dataset.type = 'fader9';
-                cell.dataset.group = g;
-                cell.dataset.index = 0;
-                
-                // Check for conflicts
-                const conflictType = getControlConflictType('fader9', g, 0);
-                if (conflictType === 'concurrent') {
-                    cell.className = 'conflict';
-                } else if (conflictType === 'mutuallyExclusive') {
-                    cell.className = 'conflict-dim';
-                }
-                
-                // Check if this cell is selected
-                if (selection.mode !== 'none' && 
-                    selection.controlType === 'fader9' && 
-                    selection.group === g) {
-                    cell.classList.add('selected');
-                }
-                
-                // Check if this cell is QP source
-                if (isQuickPasteSource('fader9', g, 0)) {
-                    cell.classList.add('qp-source');
-                }
-                
-                // Fader 9 only has CC type
-                const ch = chDisp(data.channel - 1);
-                const warningIcon = conflictType ? '<span class="conflict-icon">⚠ </span>' : '';
-                cell.innerHTML = `<div class="overview-cell">${warningIcon}${ch}:CC ${data.cc}</div>`;
-                cell.onclick = () => { 
-                    if (!handleQuickPasteCellClick('fader9', g, 0)) {
-                        setSelection('fader9', g, 0); 
-                    }
-                };
-                cell.ondblclick = () => {
-                    if (!handleQuickPasteDoubleClick('fader9', g, 0)) {
-                        jumpToFocusedView('fader9', g, 0);
-                    }
-                };
-                cell.onmouseenter = () => handleOverviewMouseEnter('fader9', g, 0);
-                cell.oncontextmenu = (e) => showContextMenu(e, 'fader9', g, 0);
-                f9row.appendChild(cell);
-            }
-            
-            table.appendChild(f9row);
-            
-            return table;
-        }
-        
         function createEncoderTooltip(data, group, index) {
             const types = ['CCr1', 'CCr2', 'CCAb', 'PrGC', 'CCAh', 'Pbnd', 'AFtt'];
             const accs = ['Acc0', 'Acc1', 'Acc2', 'Acc3'];
@@ -5922,10 +5501,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             document.getElementById('focusedViewBtn').classList.toggle('active', view === 'focused');
             document.getElementById('overviewBtn').classList.toggle('active', view === 'overview');
             
-            // Clear selection when leaving overview
-            if (view === 'focused') {
-                clearSelection();
-            }
+            if (view !== 'overview') ovClearSelection();
             
             renderCurrentView();
         }
@@ -6684,9 +6260,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             isModified = false;
             dirtyBanks.clear();
             
-            // Clear Quick Paste source
-            quickPaste.source = null;
-            quickPaste.pasteCount = 0;
+            ovClearAll();
             
             // Clear setup labels (reset clears everything)
             setupLabels.clear();
@@ -7421,10 +6995,9 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         }
         
         // ============================================================
-        // Copy/Paste Operations
+        // Control data accessors
         // ============================================================
         
-        // Generic control data accessors
         function getControlData(controlType, setupIdx, group, index) {
             switch (controlType) {
                 case 'encoder': return getEncoderData(setupIdx, group, index);
@@ -7447,991 +7020,9 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         }
         
         function formatControlName(controlType, group, index) {
-            const typeNames = {
-                'encoder': 'Enc',
-                'push': 'Push',
-                'green': 'Grn',
-                'fader': 'Fad',
-                'fader9': 'Fad9'
-            };
-            const name = typeNames[controlType] || controlType;
-            if (controlType === 'fader9') {
-                return `${name} G${group + 1}`;
-            }
-            return `${name} G${group + 1}.${index + 1}`;
-        }
-        
-        // Copy operations
-        function copyControl(controlType, setupIdx, group, index) {
-            const data = getControlData(controlType, setupIdx, group, index);
-            if (!data) return;
-            
-            clipboard = {
-                type: 'control',
-                controlType,
-                sourceSetup: setupIdx,
-                sourceGroup: group,
-                sourceIndex: index,
-                data: { ...data }
-            };
-            showToast(`Copied ${formatControlName(controlType, group, index)}`);
-        }
-        
-        function copyRow(controlType, setupIdx, index) {
-            const data = [];
-            for (let g = 0; g < 8; g++) {
-                data.push({ ...getControlData(controlType, setupIdx, g, index) });
-            }
-            clipboard = {
-                type: 'row',
-                controlType,
-                sourceSetup: setupIdx,
-                sourceGroup: null,
-                sourceIndex: index,
-                data
-            };
-            const typeName = { encoder: 'Enc', push: 'Push', green: 'Grn', fader: 'Fad', fader9: 'Fad9' }[controlType];
-            showToast(`Copied ${typeName} ${index + 1} row (all groups)`);
-        }
-        
-        function copyColumn(controlType, setupIdx, group) {
-            const count = controlType === 'fader9' ? 1 : 8;
-            const data = [];
-            for (let i = 0; i < count; i++) {
-                data.push({ ...getControlData(controlType, setupIdx, group, i) });
-            }
-            clipboard = {
-                type: 'column',
-                controlType,
-                sourceSetup: setupIdx,
-                sourceGroup: group,
-                sourceIndex: null,
-                data
-            };
-            const typeName = { encoder: 'Encoders', push: 'Push Btns', green: 'Green Btns', fader: 'Faders', fader9: 'Fader 9' }[controlType];
-            showToast(`Copied Group ${group + 1} ${typeName}`);
-        }
-        
-        // Check paste compatibility
-        function canPaste(clip, targetControlType) {
-            if (!clip) return false;
-            // Must be same control type
-            return clip.controlType === targetControlType;
-        }
-        
-        // Apply offset with wrap/clamp
-        function applyOffset(value, delta, min, max, wrapMode) {
-            const v = value + delta;
-            if (wrapMode === 'wrap') {
-                const range = max - min + 1;
-                return min + (((v - min) % range) + range) % range;
-            } else {
-                return Math.max(min, Math.min(max, v)); // clamp
-            }
-        }
-        
-        // Transform copied data with options
-        function transformControlData(data, options) {
-            let newData = { ...data };
-            
-            // Apply channel offset (channel is 1-based: 1-16)
-            if (options.channelOffset && options.channelOffset !== 0) {
-                const newCh = applyOffset(newData.channel, options.channelOffset, 1, 16, options.wrapMode);
-                newData.channel = newCh;
-            }
-            
-            // Apply CC/number offset
-            if (options.numberOffset && options.numberOffset !== 0) {
-                if (newData.cc !== undefined) {
-                    newData.cc = applyOffset(newData.cc, options.numberOffset, 0, 127, options.wrapMode);
-                }
-            }
-            
-            return newData;
-        }
-        
-        // Paste to single control
-        function pasteToControl(controlType, setupIdx, group, index, options = {}) {
-            if (!clipboard || !canPaste(clipboard, controlType)) {
-                showToast('Nothing compatible to paste', 'warning');
-                return;
-            }
-            
-            const before = getControlData(controlType, setupIdx, group, index);
-            let sourceData;
-            
-            if (clipboard.type === 'control') {
-                sourceData = clipboard.data;
-            } else if (clipboard.type === 'row') {
-                sourceData = clipboard.data[group]; // Use data for this group
-            } else if (clipboard.type === 'column') {
-                sourceData = clipboard.data[index]; // Use data for this index
-            } else {
-                showToast('Unsupported clipboard type for single paste', 'warning');
-                return;
-            }
-            
-            const newData = transformControlData(sourceData, options, 0);
-            setControlData(controlType, setupIdx, group, index, newData);
-            
-            recordUndo({
-                type: 'control',
-                description: `Paste to ${formatControlName(controlType, group, index)}`,
-                controlType,
-                setupIdx,
-                group,
-                index,
-                before,
-                after: newData
-            });
-            
-            markModified();
-            scheduleConflictRebuild();
-            renderCurrentView();
-            showToast(`Pasted to ${formatControlName(controlType, group, index)}`);
-        }
-        
-        // Paste row to all groups
-        function pasteRowToGroups(controlType, setupIdx, index, options = {}) {
-            if (!clipboard || !canPaste(clipboard, controlType)) {
-                showToast('Nothing compatible to paste', 'warning');
-                return;
-            }
-            
-            const batch = { type: 'batch', description: `Paste row ${index + 1}`, actions: [] };
-            
-            for (let g = 0; g < 8; g++) {
-                const before = getControlData(controlType, setupIdx, g, index);
-                let sourceData;
-                
-                if (clipboard.type === 'control') {
-                    sourceData = clipboard.data;
-                } else if (clipboard.type === 'row') {
-                    sourceData = clipboard.data[g];
-                } else if (clipboard.type === 'column') {
-                    sourceData = clipboard.data[0]; // Use first item for all
-                }
-                
-                const newData = transformControlData(sourceData, options, g);
-                setControlData(controlType, setupIdx, g, index, newData);
-                
-                batch.actions.push({
-                    type: 'control',
-                    controlType,
-                    setupIdx,
-                    group: g,
-                    index,
-                    before,
-                    after: newData
-                });
-            }
-            
-            recordUndo(batch);
-            markModified();
-            scheduleConflictRebuild();
-            renderCurrentView();
-            showToast(`Pasted to row ${index + 1} (all groups)`);
-        }
-        
-        // Paste column to group
-        function pasteColumnToGroup(controlType, setupIdx, group, options = {}) {
-            if (!clipboard || !canPaste(clipboard, controlType)) {
-                showToast('Nothing compatible to paste', 'warning');
-                return;
-            }
-            
-            const count = controlType === 'fader9' ? 1 : 8;
-            const batch = { type: 'batch', description: `Paste to Group ${group + 1}`, actions: [] };
-            
-            for (let i = 0; i < count; i++) {
-                const before = getControlData(controlType, setupIdx, group, i);
-                let sourceData;
-                
-                if (clipboard.type === 'control') {
-                    sourceData = clipboard.data;
-                } else if (clipboard.type === 'row') {
-                    sourceData = clipboard.data[0]; // Use first group's data
-                } else if (clipboard.type === 'column') {
-                    sourceData = clipboard.data[i];
-                }
-                
-                const newData = transformControlData(sourceData, options, i);
-                setControlData(controlType, setupIdx, group, i, newData);
-                
-                batch.actions.push({
-                    type: 'control',
-                    controlType,
-                    setupIdx,
-                    group,
-                    index: i,
-                    before,
-                    after: newData
-                });
-            }
-            
-            recordUndo(batch);
-            markModified();
-            scheduleConflictRebuild();
-            renderCurrentView();
-            showToast(`Pasted to Group ${group + 1}`);
-        }
-        
-        // Set selection (for overview click/keyboard)
-        function setSelection(controlType, group, index) {
-            // Clear previous selection highlight
-            clearSelectionHighlight();
-            
-            selection = {
-                mode: 'single',
-                controlType,
-                group,
-                index
-            };
-            
-            // Apply new selection highlight
-            updateSelectionHighlight();
-        }
-        
-        // Clear selection
-        function clearSelection() {
-            clearSelectionHighlight();
-            selection = { mode: 'none', controlType: null, group: null, index: null };
-        }
-        
-        // Update visual highlight for current selection
-        function updateSelectionHighlight() {
-            if (selection.mode === 'none' || currentView !== 'overview') return;
-            
-            const cell = getOverviewCell(selection.controlType, selection.group, selection.index);
-            if (cell) {
-                cell.classList.add('selected');
-                cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-            }
-        }
-        
-        // Clear visual highlight
-        function clearSelectionHighlight() {
-            const selected = document.querySelectorAll('.overview-table td.selected');
-            selected.forEach(cell => cell.classList.remove('selected'));
-        }
-        
-        // Get cell element by control type, group, index
-        function getOverviewCell(controlType, group, index) {
-            // Search all overview tables (Fader 9 is now in its own table)
-            const tables = document.querySelectorAll('.overview-table');
-            for (const table of tables) {
-                const cell = table.querySelector(`td[data-type="${controlType}"][data-group="${group}"][data-index="${index}"]`);
-                if (cell) return cell;
-            }
-            return null;
-        }
-        
-        // Get max index for control type
-        function getMaxIndex(controlType) {
-            return controlType === 'fader9' ? 0 : 7;
-        }
-        
-        // Check if cell is part of Quick Paste source
-        function isQuickPasteSource(controlType, group, index) {
-            if (!quickPaste.source || quickPaste.source.controlType !== controlType) return false;
-            
-            const scope = quickPaste.source.lockedScope;
-            const srcGroup = quickPaste.source.group;
-            const srcIndex = quickPaste.source.index;
-            
-            if (scope === 'cell') {
-                return group === srcGroup && index === srcIndex;
-            } else if (scope === 'column') {
-                return group === srcGroup;
-            } else if (scope === 'row') {
-                return index === srcIndex;
-            }
-            return false;
-        }
-        
-        // Keyboard navigation
-        function moveSelection(direction) {
-            if (currentView !== 'overview') return;
-            
-            // If no selection, start at 0,0 with appropriate control type
-            if (selection.mode === 'none') {
-                let startType = 'encoder';
-                if (overviewTab === 'push') startType = 'push';
-                else if (overviewTab === 'green') startType = 'green';
-                else if (overviewTab === 'faders') startType = 'fader';
-                // 'all' and 'encoders' both start with encoder
-                setSelection(startType, 0, 0);
-                return;
-            }
-            
-            let { controlType, group, index } = selection;
-            const maxIndex = getMaxIndex(controlType);
-            
-            // Define control type order for 'all' tab navigation
-            const allTypeOrder = ['encoder', 'push', 'green', 'fader', 'fader9'];
-            
-            switch (direction) {
-                case 'left':
-                    group = Math.max(0, group - 1);
-                    break;
-                case 'right':
-                    group = Math.min(7, group + 1);
-                    break;
-                case 'up':
-                    if (index > 0) {
-                        index--;
-                    } else if (overviewTab === 'all') {
-                        // Move to previous control type section
-                        const currentTypeIdx = allTypeOrder.indexOf(controlType);
-                        if (currentTypeIdx > 0) {
-                            controlType = allTypeOrder[currentTypeIdx - 1];
-                            index = getMaxIndex(controlType);
-                        }
-                    } else if (controlType === 'fader9') {
-                        // Move from fader9 row to fader row 8
-                        controlType = 'fader';
-                        index = 7;
-                    }
-                    break;
-                case 'down':
-                    if (index < maxIndex) {
-                        index++;
-                    } else if (overviewTab === 'all') {
-                        // Move to next control type section
-                        const currentTypeIdx = allTypeOrder.indexOf(controlType);
-                        if (currentTypeIdx < allTypeOrder.length - 1) {
-                            controlType = allTypeOrder[currentTypeIdx + 1];
-                            index = 0;
-                        }
-                    } else if (controlType === 'fader' && overviewTab === 'faders') {
-                        // Move from fader row 8 to fader9 row
-                        controlType = 'fader9';
-                        index = 0;
-                    }
-                    break;
-            }
-            
-            setSelection(controlType, group, index);
-        }
-        
-        // Handle Enter key - jump to focused view
-        function handleEnterKey() {
-            if (currentView === 'overview' && selection.mode !== 'none') {
-                jumpToFocusedView(selection.controlType, selection.group, selection.index);
-            }
-        }
-        
-        // Context menu
-        let contextMenu = null;
-        
-        function showContextMenu(e, controlType, group, index) {
-            e.preventDefault();
-            hideContextMenu();
-            
-            setSelection(controlType, group, index);
-            
-            const menu = document.createElement('div');
-            menu.className = 'context-menu';
-            menu.innerHTML = `
-                <div class="context-menu-item" onclick="copyControl('${controlType}', ${currentSetup}, ${group}, ${index}); hideContextMenu();">
-                    Copy Control
-                </div>
-                <div class="context-menu-item" onclick="copyRow('${controlType}', ${currentSetup}, ${index}); hideContextMenu();">
-                    Copy Row (${controlType === 'fader9' ? 'Fad9' : (index + 1)} ÃƒÆ’│ 8 groups)
-                </div>
-                <div class="context-menu-item" onclick="copyColumn('${controlType}', ${currentSetup}, ${group}); hideContextMenu();">
-                    Copy Column (Group ${group + 1})
-                </div>
-                <div class="context-menu-separator"></div>
-                <div class="context-menu-item ${!clipboard || !canPaste(clipboard, controlType) ? 'disabled' : ''}" 
-                     onclick="${clipboard && canPaste(clipboard, controlType) ? `pasteToControl('${controlType}', ${currentSetup}, ${group}, ${index}); hideContextMenu();` : ''}">
-                    Paste
-                </div>
-                <div class="context-menu-item ${!clipboard || !canPaste(clipboard, controlType) ? 'disabled' : ''}" 
-                     onclick="${clipboard && canPaste(clipboard, controlType) ? `showPasteSpecialDialog('${controlType}', ${group}, ${index}); hideContextMenu();` : ''}">
-                    Paste Special...
-                </div>
-            `;
-            
-            menu.style.left = e.pageX + 'px';
-            menu.style.top = e.pageY + 'px';
-            
-            document.body.appendChild(menu);
-            contextMenu = menu;
-            
-            // Close on click outside
-            setTimeout(() => {
-                document.addEventListener('click', hideContextMenu, { once: true });
-            }, 0);
-        }
-        
-        function hideContextMenu() {
-            if (contextMenu) {
-                contextMenu.remove();
-                contextMenu = null;
-            }
-        }
-        
-        // Paste Special Dialog
-        function showPasteSpecialDialog(controlType, group, index) {
-            if (!clipboard || !canPaste(clipboard, controlType)) {
-                showToast('Nothing compatible to paste', 'warning');
-                return;
-            }
-            
-            const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
-            
-            const sourceInfo = clipboard.type === 'control' 
-                ? formatControlName(clipboard.controlType, clipboard.sourceGroup, clipboard.sourceIndex)
-                : clipboard.type === 'row'
-                    ? `Row ${clipboard.sourceIndex + 1} (8 groups)`
-                    : `Group ${clipboard.sourceGroup + 1} column`;
-            
-            overlay.innerHTML = `
-                <div class="modal-dialog paste-special-dialog">
-                    <h3>Paste Special</h3>
-                    <p class="paste-source">Source: ${sourceInfo}</p>
-                    
-                    <div class="paste-section">
-                        <label class="paste-section-label">Paste to:</label>
-                        <div class="paste-targets">
-                            <label><input type="radio" name="pasteTarget" value="single" checked> Current cell</label>
-                            <label><input type="radio" name="pasteTarget" value="row"> Entire row (all groups)</label>
-                            <label><input type="radio" name="pasteTarget" value="column"> Entire column (Group ${group + 1})</label>
-                        </div>
-                    </div>
-                    
-                    <div class="paste-section">
-                        <label class="paste-section-label">Transforms:</label>
-                        <div class="paste-transforms">
-                            <div class="transform-row">
-                                <label>Channel offset:</label>
-                                <input type="number" id="channelOffset" value="0" min="-15" max="15">
-                            </div>
-                            <div class="transform-row">
-                                <label>CC/Number offset:</label>
-                                <input type="number" id="numberOffset" value="0" min="-127" max="127">
-                            </div>
-                            <div class="transform-row">
-                                <label>
-                                    <input type="checkbox" id="autoIncrement"> Auto-increment CC by:
-                                </label>
-                                <input type="number" id="incrementBy" value="1" min="1" max="127" style="width: 60px;">
-                            </div>
-                            <div class="transform-row">
-                                <label>Out-of-range:</label>
-                                <select id="wrapMode">
-                                    <option value="clamp">Clamp to limits</option>
-                                    <option value="wrap">Wrap around</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-buttons">
-                        <button class="btn" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
-                        <button class="btn btn-primary" onclick="executePasteSpecial('${controlType}', ${group}, ${index}); this.closest('.modal-overlay').remove();">Paste</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(overlay);
-        }
-        
-        function executePasteSpecial(controlType, group, index) {
-            const target = document.querySelector('input[name="pasteTarget"]:checked').value;
-            const options = {
-                channelOffset: parseInt(document.getElementById('channelOffset').value) || 0,
-                numberOffset: parseInt(document.getElementById('numberOffset').value) || 0,
-                autoIncrement: document.getElementById('autoIncrement').checked,
-                incrementBy: parseInt(document.getElementById('incrementBy').value) || 1,
-                wrapMode: document.getElementById('wrapMode').value
-            };
-            
-            switch (target) {
-                case 'single':
-                    pasteToControl(controlType, currentSetup, group, index, options);
-                    break;
-                case 'row':
-                    pasteRowToGroups(controlType, currentSetup, index, options);
-                    break;
-                case 'column':
-                    pasteColumnToGroup(controlType, currentSetup, group, options);
-                    break;
-            }
-        }
-        
-        // Keyboard copy/paste for current selection or focused view
-        function handleCopy() {
-            if (currentView === 'focused') {
-                // In focused view, copy the currently visible encoders (first one as default)
-                // This is a simple approach - could be enhanced with actual selection
-                copyControl('encoder', currentSetup, encoderGroup, 0);
-            } else if (selection.mode !== 'none') {
-                copyControl(selection.controlType, currentSetup, selection.group, selection.index);
-            } else {
-                showToast('Nothing selected to copy', 'warning');
-            }
-        }
-        
-        function handlePaste() {
-            if (!clipboard) {
-                showToast('Nothing to paste', 'warning');
-                return;
-            }
-            
-            if (currentView === 'focused') {
-                // Paste to current encoder group, first encoder
-                if (canPaste(clipboard, 'encoder')) {
-                    pasteToControl('encoder', currentSetup, encoderGroup, 0);
-                } else {
-                    showToast('Clipboard contents not compatible with encoders', 'warning');
-                }
-            } else if (selection.mode !== 'none') {
-                pasteToControl(selection.controlType, currentSetup, selection.group, selection.index);
-            } else {
-                showToast('Nothing selected to paste to', 'warning');
-            }
-        }
-        
-        // ============================================================
-        // Quick Paste System (v1.0)
-        // ============================================================
-        
-        function createQuickPasteToolbar() {
-            const toolbar = document.createElement('div');
-            toolbar.id = 'quickPasteToolbar';
-            toolbar.className = `quick-paste-toolbar ${quickPaste.mode === 'off' ? 'collapsed' : ''}`;
-            
-            const isExpanded = quickPaste.mode !== 'off';
-            const hasSource = quickPaste.source !== null;
-            
-            // Build channel multiplier options (-8 to +8, default 1)
-            let chOptions = '';
-            for (let i = -8; i <= 8; i++) {
-                const label = i === 0 ? '0' : (i > 0 ? `+${i}` : `${i}`);
-                chOptions += `<option value="${i}" ${quickPaste.chMultiplier === i ? 'selected' : ''}>${label}</option>`;
-            }
-            
-            // Build CC multiplier options (-8 to +8, default 1)
-            let ccOptions = '';
-            for (let i = -8; i <= 8; i++) {
-                const label = i === 0 ? '0' : (i > 0 ? `+${i}` : `${i}`);
-                ccOptions += `<option value="${i}" ${quickPaste.ccMultiplier === i ? 'selected' : ''}>${label}</option>`;
-            }
-            
-            // Source display
-            let sourceText = 'No source';
-            if (hasSource) {
-                const s = quickPaste.source;
-                const scopeNames = { cell: 'Cell', column: 'Column', row: 'Row' };
-                const typeNames = { encoder: 'Enc', push: 'Push', green: 'Grn', fader: 'Fad', fader9: 'F9' };
-                const typeName = typeNames[s.controlType] || s.controlType;
-                
-                if (s.lockedScope === 'cell') {
-                    sourceText = `${typeName} G${s.group + 1}.${s.index + 1}`;
-                } else if (s.lockedScope === 'column') {
-                    sourceText = `${typeName} Column G${s.group + 1} (${s.count})`;
-                } else if (s.lockedScope === 'row') {
-                    sourceText = `${typeName} Row ${s.index + 1} (${s.count})`;
-                }
-            }
-            
-            // Status text
-            let statusText = '';
-            if (quickPaste.mode === 'off') {
-                statusText = 'Press Q to start Quick Paste';
-            } else if (quickPaste.mode === 'copy') {
-                statusText = hasSource ? 'Click cell to copy new source, or switch to Paste' : 'Click a cell to set source';
-            } else if (quickPaste.mode === 'paste') {
-                statusText = hasSource ? `Click to paste • ${quickPaste.pasteCount} pasted` : 'Switch to Copy mode first';
-            }
-            
-            toolbar.innerHTML = `
-                <div class="qp-section">
-                    <span class="qp-label">Mode</span>
-                    <div class="qp-mode-buttons">
-                        <button class="qp-mode-btn ${quickPaste.mode === 'off' ? 'active' : ''}" data-mode="off" onclick="setQuickPasteMode('off')">Off</button>
-                        <button class="qp-mode-btn ${quickPaste.mode === 'copy' ? 'active' : ''}" data-mode="copy" onclick="setQuickPasteMode('copy')">Copy</button>
-                        <button class="qp-mode-btn ${quickPaste.mode === 'paste' ? 'active' : ''}" data-mode="paste" onclick="setQuickPasteMode('paste')">Paste</button>
-                    </div>
-                </div>
-                
-                <div class="qp-expanded-content qp-section">
-                    <span class="qp-label">Scope</span>
-                    <div class="qp-scope-btns">
-                        <button class="qp-scope-btn ${quickPaste.scope === 'cell' ? 'active' : ''}" 
-                                onclick="setQuickPasteScope('cell')" title="Single cell [1]">Cell</button>
-                        <button class="qp-scope-btn ${quickPaste.scope === 'column' ? 'active' : ''}" 
-                                onclick="setQuickPasteScope('column')" title="Entire column/group [2]">Column</button>
-                        <button class="qp-scope-btn ${quickPaste.scope === 'row' ? 'active' : ''}" 
-                                onclick="setQuickPasteScope('row')" title="Entire row [3]">Row</button>
-                    </div>
-                </div>
-                
-                <div class="qp-expanded-content qp-section">
-                    <span class="qp-label">Source</span>
-                    <div class="qp-source-display ${hasSource ? 'has-source' : ''}">${sourceText}</div>
-                </div>
-                
-                <div class="qp-expanded-content qp-section qp-ch-section">
-                    <span class="qp-label">Ch</span>
-                    <select id="qpChMult" onchange="setQuickPasteChMult(this.value)" title="Channel offset = group diff * this value">${chOptions}</select>
-                </div>
-                
-                <div class="qp-expanded-content qp-section qp-ch-section">
-                    <span class="qp-label">CC</span>
-                    <select id="qpCCMult" onchange="setQuickPasteCCMult(this.value)" title="CC offset = group diff * this value">${ccOptions}</select>
-                </div>
-                
-                <div class="qp-expanded-content qp-actions">
-                    <button class="qp-action-btn" onclick="clearQuickPasteSource()" ${!hasSource ? 'disabled' : ''}>Clear Source</button>
-                </div>
-                
-                <div class="qp-expanded-content qp-status">${statusText}</div>
-            `;
-            
-            return toolbar;
-        }
-        
-        function setQuickPasteMode(mode) {
-            const prevMode = quickPaste.mode;
-            quickPaste.mode = mode;
-            
-            // Clear source when going to off mode
-            if (mode === 'off') {
-                quickPaste.source = null;
-                quickPaste.pasteCount = 0;
-            }
-            
-            // Clear hover highlight tracking when leaving paste mode
-            if (prevMode === 'paste' && mode !== 'paste') {
-                lastHoverKey = null;
-                clearHoverHighlight();
-            }
-            
-            // Collapse/expand toolbar
-            const toolbar = document.getElementById('quickPasteToolbar');
-            if (toolbar) {
-                toolbar.classList.toggle('collapsed', mode === 'off');
-            }
-            
-            // Update table cursor class
-            updateOverviewTableCursor();
-            
-            // Re-render toolbar
-            renderOverview();
-        }
-        
-        function setQuickPasteScope(scope) {
-            // If scope is changing and we have a source, clear it
-            if (quickPaste.source && quickPaste.scope !== scope) {
-                quickPaste.source = null;
-                showToast(`Scope → ${scope.charAt(0).toUpperCase() + scope.slice(1)} (source cleared)`, 'info');
-            }
-            
-            quickPaste.scope = scope;
-            renderOverview();
-        }
-        
-        function setQuickPasteChMult(value) {
-            quickPaste.chMultiplier = parseInt(value, 10);
-        }
-        
-        function setQuickPasteCCMult(value) {
-            quickPaste.ccMultiplier = parseInt(value, 10);
-        }
-        
-        function clearQuickPasteSource() {
-            quickPaste.source = null;
-            quickPaste.pasteCount = 0;
-            renderOverview();
-        }
-        
-        
-        function updateOverviewTableCursor() {
-            const tables = document.querySelectorAll('.overview-table');
-            tables.forEach(table => {
-                table.classList.remove('qp-copy-mode', 'qp-paste-mode');
-                if (quickPaste.mode === 'copy') {
-                    table.classList.add('qp-copy-mode');
-                } else if (quickPaste.mode === 'paste') {
-                    table.classList.add('qp-paste-mode');
-                }
-            });
-        }
-        
-        // Perform Quick Copy based on scope
-        function performQuickCopy(controlType, group, index) {
-            const scope = quickPaste.scope;
-            const colCount = controlType === 'fader9' ? 1 : 8;
-            
-            let data;
-            let count;
-            
-            if (scope === 'cell') {
-                data = { ...getControlData(controlType, currentSetup, group, index) };
-                count = 1;
-            } else if (scope === 'column') {
-                data = [];
-                for (let i = 0; i < colCount; i++) {
-                    data.push({ ...getControlData(controlType, currentSetup, group, i) });
-                }
-                count = colCount;
-            } else if (scope === 'row') {
-                data = [];
-                for (let g = 0; g < 8; g++) {
-                    data.push({ ...getControlData(controlType, currentSetup, g, index) });
-                }
-                count = 8;
-            }
-            
-            quickPaste.source = {
-                controlType,
-                group,
-                index,
-                data,
-                lockedScope: scope,
-                count
-            };
-            
-            quickPaste.pasteCount = 0;
-            
-            // Auto-switch to paste mode
-            quickPaste.mode = 'paste';
-            
-            const scopeNames = { cell: 'Cell', column: 'Column', row: 'Row' };
-            showToast(`Copied ${scopeNames[scope]} - ready to paste`, 'success');
-            
-            renderOverview();
-        }
-        
-        // Perform Quick Paste based on locked scope
-        function performQuickPaste(controlType, group, index) {
-            if (!quickPaste.source) {
-                showToast('No source to paste', 'warning');
-                return;
-            }
-            
-            // Same-type enforcement
-            if (controlType !== quickPaste.source.controlType) {
-                showToast(`Can't paste ${quickPaste.source.controlType} to ${controlType}`, 'error');
-                return;
-            }
-            
-            const scope = quickPaste.source.lockedScope;
-            const colCount = controlType === 'fader9' ? 1 : 8;
-            
-            // Calculate offset based on group difference * multiplier
-            const sourceGroup = quickPaste.source.group;
-            const groupDiff = group - sourceGroup;
-            
-            const options = {
-                channelOffset: groupDiff * quickPaste.chMultiplier,
-                numberOffset: groupDiff * quickPaste.ccMultiplier,
-                wrapMode: 'clamp'
-            };
-            
-            // Record undo based on scope
-            if (scope === 'cell') {
-                // Single cell paste
-                const before = getControlData(controlType, currentSetup, group, index);
-                const newData = transformControlData(quickPaste.source.data, options);
-                setControlData(controlType, currentSetup, group, index, newData);
-                
-                recordUndo({
-                    type: 'control',
-                    description: `Quick Paste to ${formatControlName(controlType, group, index)}`,
-                    controlType,
-                    setupIdx: currentSetup,
-                    group,
-                    index,
-                    before,
-                    after: newData
-                });
-                
-                flashCell(controlType, group, index);
-                
-            } else if (scope === 'column') {
-                // Column paste to target group
-                const batch = { 
-                    type: 'batch', 
-                    description: `Quick Paste Column to G${group + 1}`, 
-                    actions: [] 
-                };
-                
-                for (let i = 0; i < colCount; i++) {
-                    const before = getControlData(controlType, currentSetup, group, i);
-                    const sourceData = quickPaste.source.data[i] || quickPaste.source.data[0];
-                    const newData = transformControlData(sourceData, options);
-                    setControlData(controlType, currentSetup, group, i, newData);
-                    
-                    batch.actions.push({
-                        type: 'control',
-                        controlType,
-                        setupIdx: currentSetup,
-                        group,
-                        index: i,
-                        before,
-                        after: newData
-                    });
-                    
-                    flashCell(controlType, group, i);
-                }
-                
-                recordUndo(batch);
-                
-            } else if (scope === 'row') {
-                // Row paste to all groups at target index
-                // For row paste, offset is based on row difference (index), not group
-                const sourceIndex = quickPaste.source.index;
-                const rowDiff = index - sourceIndex;
-                
-                const rowOptions = {
-                    channelOffset: rowDiff * quickPaste.chMultiplier,
-                    numberOffset: rowDiff * quickPaste.ccMultiplier,
-                    wrapMode: 'clamp'
-                };
-                
-                const batch = { 
-                    type: 'batch', 
-                    description: `Quick Paste Row ${index + 1}`, 
-                    actions: [] 
-                };
-                
-                for (let g = 0; g < 8; g++) {
-                    const before = getControlData(controlType, currentSetup, g, index);
-                    const sourceData = quickPaste.source.data[g] || quickPaste.source.data[0];
-                    const newData = transformControlData(sourceData, rowOptions);
-                    setControlData(controlType, currentSetup, g, index, newData);
-                    
-                    batch.actions.push({
-                        type: 'control',
-                        controlType,
-                        setupIdx: currentSetup,
-                        group: g,
-                        index,
-                        before,
-                        after: newData
-                    });
-                    
-                    flashCell(controlType, g, index);
-                }
-                
-                recordUndo(batch);
-            }
-            
-            quickPaste.pasteCount++;
-            
-            markModified();
-            scheduleConflictRebuild();
-            renderOverview();
-        }
-        
-        // Flash cell to indicate paste
-        function flashCell(controlType, group, index) {
-            const cell = getOverviewCell(controlType, group, index);
-            if (cell) {
-                cell.classList.add('just-pasted');
-                setTimeout(() => cell.classList.remove('just-pasted'), 400);
-            }
-        }
-        
-        // Handle Quick Paste cell click
-        function handleQuickPasteCellClick(controlType, group, index) {
-            if (quickPaste.mode === 'copy') {
-                performQuickCopy(controlType, group, index);
-                return true;
-            }
-            
-            if (quickPaste.mode === 'paste') {
-                performQuickPaste(controlType, group, index);
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // Handle Quick Paste double-click (blocked in paste mode)
-        function handleQuickPasteDoubleClick(controlType, group, index) {
-            if (quickPaste.mode === 'paste') {
-                if (!quickPaste.doubleClickToastShown) {
-                    showToast('Double-click disabled in Paste mode', 'info');
-                    quickPaste.doubleClickToastShown = true;
-                }
-                return true; // Block the action
-            }
-            
-            if (quickPaste.mode === 'copy') {
-                // Treat as single click
-                performQuickCopy(controlType, group, index);
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // Hover highlighting for Quick Paste (column/row preview)
-        let lastHoverKey = null;
-        
-        function handleOverviewMouseEnter(controlType, group, index) {
-            // Only show hover highlight in paste mode with a source
-            if (quickPaste.mode !== 'paste' || !quickPaste.source) return;
-            
-            // Only highlight compatible types
-            if (controlType !== quickPaste.source.controlType) return;
-            
-            const scope = quickPaste.source.lockedScope;
-            const key = `${controlType}-${group}-${index}-${scope}`;
-            
-            // Skip if same cell (avoid redundant DOM updates)
-            if (key === lastHoverKey) return;
-            lastHoverKey = key;
-            
-            clearHoverHighlight();
-            
-            const colCount = (controlType === 'fader9') ? 1 : 8;
-            
-            if (scope === 'column') {
-                // Highlight all cells in this group's column
-                for (let i = 0; i < colCount; i++) {
-                    const cell = getOverviewCell(controlType, group, i);
-                    if (cell) cell.classList.add('qp-column-hover');
-                }
-            } else if (scope === 'row') {
-                // Highlight all cells across groups at this index
-                for (let g = 0; g < 8; g++) {
-                    const cell = getOverviewCell(controlType, g, index);
-                    if (cell) cell.classList.add('qp-row-hover');
-                }
-            } else if (scope === 'cell') {
-                // Highlight single target cell
-                const cell = getOverviewCell(controlType, group, index);
-                if (cell) cell.classList.add('qp-cell-hover');
-            }
-            // Cell scope uses default CSS hover, no extra highlighting needed
-        }
-        
-        function handleOverviewMouseLeave(controlType, group, index) {
-            // Clear highlight when leaving cells
-            if (quickPaste.mode !== 'paste') return;
-            
-            // Small delay to prevent flicker when moving between cells
-            setTimeout(() => {
-                // Only clear if we haven't entered a new cell
-                const currentKey = lastHoverKey;
-                if (currentKey && currentKey.startsWith(`${controlType}-${group}-${index}-`)) {
-                    // Still on same logical cell, might be between sub-elements
-                }
-            }, 10);
-        }
-        
-        function clearHoverHighlight() {
-            const highlighted = document.querySelectorAll('.qp-column-hover, .qp-row-hover, .qp-cell-hover');
-            highlighted.forEach(cell => {
-                cell.classList.remove('qp-column-hover', 'qp-row-hover', 'qp-cell-hover');
-            });
+            const names = { encoder: 'Encoder', push: 'Enc.Button', green: 'Green Button', fader: 'Fader', fader9: 'Fader 9' };
+            const name = names[controlType] || controlType;
+            return controlType === 'fader9' ? `${name} G${group + 1}` : `${name} G${group + 1}.${index + 1}`;
         }
         
         // ============================================================
@@ -9024,7 +7615,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         // ============================================================
         
         document.addEventListener('keydown', (e) => {
-            // Check if we're in an input field
+            // Ignore typing in fields
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') {
                 return;
             }
@@ -9041,58 +7632,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             } else if (ctrlKey && e.key === 'y') {
                 e.preventDefault();
                 redo();
-            } else if (ctrlKey && e.key === 'c' && !e.shiftKey && !e.altKey) {
-                e.preventDefault();
-                handleCopy();
-            } else if (ctrlKey && e.key === 'v' && !e.shiftKey) {
-                e.preventDefault();
-                handlePaste();
-            } else if (e.key === 'Escape') {
-                // Quick Paste priority escape handling
-                if (contextMenu) {
-                    hideContextMenu();
-                } else if (quickPaste.mode !== 'off') {
-                    // Exit Quick Paste mode
-                    setQuickPasteMode('off');
-                    showToast('Quick Paste off', 'info');
-                } else {
-                    clearSelection();
-                }
-            } else if (e.key === 'q' || e.key === 'Q') {
-                // Cycle Quick Paste modes: off -> copy -> paste -> off
-                if (currentView === 'overview') {
-                    e.preventDefault();
-                    const modes = ['off', 'copy', 'paste'];
-                    const currentIdx = modes.indexOf(quickPaste.mode);
-                    const nextIdx = (currentIdx + 1) % modes.length;
-                    setQuickPasteMode(modes[nextIdx]);
-                }
-            } else if ((e.key === '1' || e.key === '2' || e.key === '3') && !ctrlKey && !e.altKey) {
-                // Quick Paste scope shortcuts (when in QP mode)
-                if (currentView === 'overview' && quickPaste.mode !== 'off') {
-                    e.preventDefault();
-                    const scopes = { '1': 'cell', '2': 'column', '3': 'row' };
-                    setQuickPasteScope(scopes[e.key]);
-                }
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                moveSelection('left');
-            } else if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                moveSelection('right');
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                moveSelection('up');
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                moveSelection('down');
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                handleEnterKey();
-            } else if (e.key === 'Tab' && currentView === 'overview') {
-                e.preventDefault();
-                // Tab moves right, Shift+Tab moves left
-                moveSelection(e.shiftKey ? 'left' : 'right');
+            } else if (currentView === 'overview') {
+                ovKeydown(e, ctrlKey);
             }
         });
         
@@ -12152,158 +10693,94 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             }
         }
         
-        function showSingleSetupImportDialog(entry, configData) {
+        // Library -> editor: ask where to put it. One dropdown: a setup number for one setup,
+        // or a run like 8-9 for configs that need several setups.
+        function libSlotOptions(count) {
+            const out = [];
+            const isAbleton = (i) => i >= 16 || setupLabels.get(i) === 'Ableton';
+            for (let start = 0; start + count <= 18; start++) {
+                const range = Array.from({ length: count }, (_, k) => start + k);
+                const text = count === 1 ? `${start + 1}` : `${start + 1}-${start + count}`;
+                out.push({ start, text: text + (range.some(isAbleton) ? ' (Ableton)' : ''), ableton: range.some(isAbleton) });
+            }
+            return out;
+        }
+
+        function showLibrarySlotDialog(entry, configData, count) {
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
             overlay.id = 'libraryImportOverlay';
-            
-            // Check if source has a label
-            const sourceLabel = configData.label || '';
-            const hasSourceLabel = sourceLabel.length > 0;
-            
+            const opts = libSlotOptions(count);
+            const def = opts.find(o => o.start === currentSetup && !o.ableton) || opts.find(o => !o.ableton) || opts[0];
             overlay.innerHTML = `
-                <div class="modal-dialog" style="max-width: 400px;">
-                    <h3>Import: ${escapeHtml(entry.name)}</h3>
-                    <p style="margin-bottom: 1rem;">Select target setup slot:</p>
-                    <div class="setup-subdialog-grid" id="importSlotGrid"></div>
-                    ${hasSourceLabel ? `
-                        <label class="setup-subdialog-checkbox" style="margin-top: 1rem;">
-                            <input type="checkbox" id="importLabelCheckbox" checked>
-                            Apply label "${escapeHtml(sourceLabel)}"
-                        </label>
-                    ` : ''}
-                    <div class="modal-actions" style="margin-top: 1.5rem;">
+                <div class="modal-dialog" style="max-width: 380px;">
+                    <h3>${escapeHtml(entry.name)}</h3>
+                    <label style="margin: 0.5rem 0;">${count === 1 ? 'Setup' : 'Setups'}
+                        <select id="libSlotSelect" onchange="libSlotChanged()">
+                            ${opts.map(o => `<option value="${o.start}" data-ab="${o.ableton ? 1 : 0}" ${o.start === def.start ? 'selected' : ''}>${o.text}</option>`).join('')}
+                        </select>
+                    </label>
+                    <p id="libAbletonNote" style="color: var(--warning); font-size: 0.8rem;" hidden>This replaces a factory Ableton setup.</p>
+                    <div class="modal-actions">
                         <button class="btn" onclick="closeLibraryImportDialog()">Cancel</button>
-                        <button class="btn btn-primary" id="importConfirmBtn" disabled>Import</button>
+                        <button class="btn btn-primary" onclick="performLibrarySlotImport()">Load</button>
                     </div>
-                </div>
-            `;
-            
+                </div>`;
             document.body.appendChild(overlay);
-            
-            // Store state
             overlay._entry = entry;
             overlay._configData = configData;
-            overlay._selectedSlot = null;
-            
-            // Render slot grid
-            renderImportSlotGrid();
-            
-            // Wire up confirm button
-            document.getElementById('importConfirmBtn').onclick = () => {
-                performLibrarySingleImport();
-            };
+            overlay._count = count;
+            libSlotChanged();
         }
-        
-        function renderImportSlotGrid() {
-            const grid = document.getElementById('importSlotGrid');
-            if (!grid) return;
-            
-            const overlay = document.getElementById('libraryImportOverlay');
-            
-            let html = '';
-            for (let i = 0; i < 18; i++) {
-                const label = setupLabels.get(i);
-                const hasLabel = label && label.length > 0;
-                const isFactory = differsFromFactory(i) === false && !hasLabel;
-                
-                let indicator = '';
-                if (hasLabel) indicator = '&#9642;'; // small black square
-                else if (isFactory) indicator = '&#9670;'; // black diamond
-                
-                const selected = overlay._selectedSlot === i ? 'selected' : '';
-                
-                html += `<div class="setup-subdialog-item ${selected}" data-slot="${i}" onclick="selectImportSlot(${i})">
-                    ${i + 1}${indicator}
-                </div>`;
-            }
-            
-            grid.innerHTML = html;
+        function libSlotChanged() {
+            const sel = document.getElementById('libSlotSelect');
+            const note = document.getElementById('libAbletonNote');
+            if (sel && note) note.hidden = sel.selectedOptions[0].dataset.ab !== '1';
         }
-        
-        function selectImportSlot(slot) {
+        function showSingleSetupImportDialog(entry, configData) { showLibrarySlotDialog(entry, configData, 1); }
+        function showPartialImportDialog(entry, configData, setupCount) { showLibrarySlotDialog(entry, configData, setupCount); }
+
+        function performLibrarySlotImport() {
             const overlay = document.getElementById('libraryImportOverlay');
             if (!overlay) return;
-            
-            overlay._selectedSlot = slot;
-            renderImportSlotGrid();
-            
-            document.getElementById('importConfirmBtn').disabled = false;
-        }
-        
-        function performLibrarySingleImport() {
-            const overlay = document.getElementById('libraryImportOverlay');
-            if (!overlay || overlay._selectedSlot === null) return;
-            
-            const entry = overlay._entry;
-            const configData = overlay._configData;
-            const targetSlot = overlay._selectedSlot;
-            const importLabel = document.getElementById('importLabelCheckbox')?.checked ?? false;
-            
-            // Get source data
-            const sourceGroups = configData.groups;
-            const sourceLabel = configData.label || '';
-            
-            // Capture before state
-            const beforeSnapshot = captureSetupSnapshot(targetSlot);
-            const labelBefore = setupLabels.get(targetSlot) || null;
-            
-            // Build snapshot from source and apply
-            const importedSnapshot = {
-                groups: sourceGroups.map((g, gIdx) => ({
-                    name: g.name || `Grp${gIdx + 1}`,
-                    encoders: g.encoders,
-                    pushButtons: g.pushButtons,
-                    greenButtons: g.greenButtons,
-                    faders: g.faders,
-                    fader9: g.fader9
-                }))
-            };
-            
-            restoreSetupSnapshot(targetSlot, importedSnapshot);
-            
-            // Handle label
-            if (importLabel && sourceLabel) {
-                const sanitized = cleanLabel(sourceLabel);
-                if (sanitized) {
-                    setupLabels.set(targetSlot, sanitized);
-                } else {
-                    setupLabels.delete(targetSlot);
-                }
+            const entry = overlay._entry, configData = overlay._configData, count = overlay._count;
+            const start = parseInt(document.getElementById('libSlotSelect').value, 10);
+            const sources = count === 1
+                ? [{ groups: configData.groups, label: configData.label || '' }]
+                : configData.setups.map((su, i) => ({ groups: su.groups, label: (configData.labels && configData.labels[i]) || '' }));
+            const affected = [], before = [], after = [];
+            for (let k = 0; k < count; k++) {
+                const slot = start + k;
+                affected.push(slot);
+                before.push({ index: slot, snapshot: captureSetupSnapshot(slot), label: setupLabels.get(slot) || null });
+                restoreSetupSnapshot(slot, {
+                    groups: sources[k].groups.map((g, gi) => ({
+                        name: g.name || `Grp${gi + 1}`,
+                        encoders: g.encoders, pushButtons: g.pushButtons, greenButtons: g.greenButtons,
+                        faders: g.faders, fader9: g.fader9
+                    }))
+                });
+                const label = cleanLabel(sources[k].label);
+                if (label.trim()) setupLabels.set(slot, label);
+                after.push({ index: slot, snapshot: captureSetupSnapshot(slot), label: setupLabels.get(slot) || null });
             }
-            
-            // Capture after state
-            const afterSnapshot = captureSetupSnapshot(targetSlot);
-            const labelAfter = setupLabels.get(targetSlot) || null;
-            
-            // Record undo
             recordUndo({
                 type: 'library-import',
-                description: `Import "${entry.name}" to Setup ${targetSlot + 1}`,
-                affectedSlots: [targetSlot],
-                beforeSnapshots: [{ index: targetSlot, snapshot: beforeSnapshot, label: labelBefore }],
-                afterSnapshots: [{ index: targetSlot, snapshot: afterSnapshot, label: labelAfter }]
+                description: count === 1 ? `Load "${entry.name}" to Setup ${start + 1}` : `Load "${entry.name}" to Setups ${start + 1}-${start + count}`,
+                affectedSlots: affected, beforeSnapshots: before, afterSnapshots: after
             });
-            
-            // Update state
-            invalidateDiffCache(targetSlot);
+            for (const slot of affected) invalidateDiffCache(slot);
             dirtySinceLoad = true;
             markModified();
-            
-            // Close dialog and cleanup preview mode if active
             closeLibraryImportDialog();
             exitPreviewModeIfActive();
-            
-            refreshMainEditorIfNeeded([targetSlot]);
+            refreshMainEditorIfNeeded(affected);
             updateSetupDropdownLabels();
-            
-            // Track library source
-            librarySourceMap.set(targetSlot, entry.name);
+            for (const slot of affected) librarySourceMap.set(slot, entry.name);
             updateLibrarySourceBadge();
-            
-            showToast(`Imported to Setup ${targetSlot + 1}`, 'success');
+            showToast(count === 1 ? `Loaded into Setup ${start + 1}` : `Loaded into Setups ${start + 1}-${start + count}`, 'success');
         }
-        
+
         function showFullImportDialog(entry, configData) {
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
@@ -12443,167 +10920,6 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             updateLibrarySourceBadge();
             
             showToast('Imported all 18 setups', 'success');
-        }
-        
-        function showPartialImportDialog(entry, configData, setupCount) {
-            const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
-            overlay.id = 'libraryImportOverlay';
-            
-            // Build dropdown options (max starting slot is 18 - setupCount)
-            const maxStart = 18 - setupCount;
-            let options = '';
-            for (let i = 0; i <= maxStart; i++) {
-                options += `<option value="${i}">${i + 1}</option>`;
-            }
-            
-            // Check if source has labels
-            const hasSourceLabels = configData.labels && configData.labels.some(l => l && l.length > 0);
-            
-            overlay.innerHTML = `
-                <div class="modal-dialog" style="max-width: 400px;">
-                    <h3>Import: ${escapeHtml(entry.name)}</h3>
-                    <p style="margin-bottom: 1rem;">
-                        Import ${setupCount} setups starting at slot:
-                        <select id="partialStartSlot" onchange="updatePartialImportPreview()" style="margin-left: 0.5rem;">
-                            ${options}
-                        </select>
-                    </p>
-                    <p id="partialSlotPreview" style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;"></p>
-                    ${hasSourceLabels ? `
-                        <label class="setup-subdialog-checkbox">
-                            <input type="checkbox" id="partialImportLabels" checked>
-                            Import labels from config
-                        </label>
-                    ` : ''}
-                    <div class="modal-actions" style="margin-top: 1.5rem;">
-                        <button class="btn" onclick="closeLibraryImportDialog()">Cancel</button>
-                        <button class="btn btn-primary" onclick="performLibraryPartialImport()">Import</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(overlay);
-            
-            // Store state
-            overlay._entry = entry;
-            overlay._configData = configData;
-            overlay._setupCount = setupCount;
-            
-            // Initial preview
-            updatePartialImportPreview();
-        }
-        
-        function updatePartialImportPreview() {
-            const overlay = document.getElementById('libraryImportOverlay');
-            if (!overlay) return;
-            
-            const startSlot = parseInt(document.getElementById('partialStartSlot').value);
-            const count = overlay._setupCount;
-            const endSlot = startSlot + count - 1;
-            
-            const slots = [];
-            for (let i = startSlot; i <= endSlot; i++) {
-                slots.push(i + 1);
-            }
-            
-            document.getElementById('partialSlotPreview').textContent = 
-                `This will fill slots ${slots.join(', ')}`;
-        }
-        
-        function performLibraryPartialImport() {
-            const overlay = document.getElementById('libraryImportOverlay');
-            if (!overlay) return;
-            
-            const entry = overlay._entry;
-            const configData = overlay._configData;
-            const startSlot = parseInt(document.getElementById('partialStartSlot').value);
-            const setupCount = overlay._setupCount;
-            const importLabels = document.getElementById('partialImportLabels')?.checked ?? false;
-            
-            // Capture before state
-            const beforeSnapshots = [];
-            const affectedSlots = [];
-            for (let i = 0; i < setupCount; i++) {
-                const targetSlot = startSlot + i;
-                affectedSlots.push(targetSlot);
-                beforeSnapshots.push({
-                    index: targetSlot,
-                    snapshot: captureSetupSnapshot(targetSlot),
-                    label: setupLabels.get(targetSlot) || null
-                });
-            }
-            
-            // Apply setups
-            for (let i = 0; i < setupCount; i++) {
-                const sourceSetup = configData.setups[i];
-                const targetSlot = startSlot + i;
-                
-                const importedSnapshot = {
-                    groups: sourceSetup.groups.map((g, gIdx) => ({
-                        name: g.name || `Grp${gIdx + 1}`,
-                        encoders: g.encoders,
-                        pushButtons: g.pushButtons,
-                        greenButtons: g.greenButtons,
-                        faders: g.faders,
-                        fader9: g.fader9
-                    }))
-                };
-                restoreSetupSnapshot(targetSlot, importedSnapshot);
-                
-                // Handle label for this slot
-                if (importLabels && configData.labels && configData.labels[i]) {
-                    const label = configData.labels[i];
-                    const sanitized = cleanLabel(label);
-                    if (sanitized) {
-                        setupLabels.set(targetSlot, sanitized);
-                    } else {
-                        setupLabels.delete(targetSlot);
-                    }
-                }
-            }
-            
-            // Capture after state
-            const afterSnapshots = [];
-            for (let i = 0; i < setupCount; i++) {
-                const targetSlot = startSlot + i;
-                afterSnapshots.push({
-                    index: targetSlot,
-                    snapshot: captureSetupSnapshot(targetSlot),
-                    label: setupLabels.get(targetSlot) || null
-                });
-            }
-            
-            // Record undo
-            recordUndo({
-                type: 'library-import',
-                description: `Import "${entry.name}" to Setups ${startSlot + 1}-${startSlot + setupCount}`,
-                affectedSlots,
-                beforeSnapshots,
-                afterSnapshots
-            });
-            
-            // Invalidate caches
-            for (const slot of affectedSlots) {
-                invalidateDiffCache(slot);
-            }
-            dirtySinceLoad = true;
-            markModified();
-            
-            // Close and cleanup
-            closeLibraryImportDialog();
-            exitPreviewModeIfActive();
-            
-            refreshMainEditorIfNeeded(affectedSlots);
-            updateSetupDropdownLabels();
-            
-            // Track library source for affected slots
-            for (const slot of affectedSlots) {
-                librarySourceMap.set(slot, entry.name);
-            }
-            updateLibrarySourceBadge();
-            
-            showToast(`Imported ${setupCount} setups starting at slot ${startSlot + 1}`, 'success');
         }
         
         function closeLibraryImportDialog() {
@@ -13814,12 +12130,12 @@ ${description}
             const cols = [
                 { scope: 'project', key: '', title: 'Project (whole device)' },
                 { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
-                { scope: 'enc', key: String(encoderGroup), title: `Encoder group ${encoderGroup + 1} (UC4 name: ${getGroupName(currentSetup, encoderGroup)})` },
-                { scope: 'fad', key: String(faderGroup), title: `Fader/button group ${faderGroup + 1} (UC4 name: ${getGroupName(currentSetup, faderGroup)})` }
+                { scope: 'enc', key: String(encoderGroup), title: `Encoders & Enc.Buttons, group ${encoderGroup + 1}` },
+                { scope: 'fad', key: String(faderGroup), title: `Faders & Green Buttons, group ${faderGroup + 1}` }
             ];
             grid.innerHTML = cols.map(c => `
                 <div class="notes-col">
-                    <div class="notes-title" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>
+                    <div class="notes-title" title="${escapeHtml(c.title)}${c.scope === 'enc' ? ' - UC4 name: ' + escapeHtml(getGroupName(currentSetup, encoderGroup)) : c.scope === 'fad' ? ' - UC4 name: ' + escapeHtml(getGroupName(currentSetup, faderGroup)) : ''}">${escapeHtml(c.title)}</div>
                     <input type="text" class="note-name" placeholder="Label" maxlength="${c.scope === 'setup' ? 24 : 60}" value="${escapeHtml(noteGet(c.scope, c.key, 'label'))}"
                         oninput="noteSet('${c.scope}','${c.key}','label',this.value)">
                     <textarea class="note-desc" placeholder="Description" rows="2" maxlength="1000"
@@ -13996,7 +12312,7 @@ ${description}
         const BATCH_NUMERIC = new Set(['cc', 'min', 'max', 'lower', 'upper']);
         const PARAM_LABEL = { channel: 'Chan', cc: 'CC / Note', min: 'Min', max: 'Max', lower: 'Lo', upper: 'Hi',
                               type: 'Type', typeNibble: 'Type', mode: 'Mode', display: 'Disp / LED', acc: 'Acc' };
-        const TYPE_LABEL = { encoder: 'Encoder', push: 'Push', green: 'Green button', fader: 'Fader', fader9: 'Fader 9' };
+        const TYPE_LABEL = { encoder: 'Encoder', push: 'Enc.Button', green: 'Green Button', fader: 'Fader', fader9: 'Fader 9' };
         const PARAM_CALL_RE = /update(?:Encoder|Push|Green|Fader9|Fader)\((?:\d+,\s*)?'(\w+)'/;
         let blockCollapsed = {};
         try { blockCollapsed = JSON.parse(localStorage.getItem('uc4_mom_blocks')) || {}; } catch (e) { blockCollapsed = {}; }
@@ -14297,7 +12613,7 @@ ${description}
             }).join('');
             const head = document.createElement('div');
             head.className = 'gb-head';
-            head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders' : 'Faders &amp; buttons'}</div>
+            head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders &amp; Enc.Buttons' : 'Faders &amp; Green Buttons'}</div>
                 <div class="gb-tabs">${tabs}</div>
                 <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">All Chan</button>
                 <div class="gb-tools">
@@ -14320,16 +12636,16 @@ ${description}
                 body.appendChild(section('Encoders', 'encoders', g1, buildChips('encoder', encoderGroup, 8, false)));
                 const g2 = document.createElement('div'); g2.className = 'gb-row8';
                 for (let i = 0; i < 8; i++) g2.appendChild(createPushCard(i));
-                body.appendChild(section('Push buttons', 'push', g2, buildChips('push', encoderGroup, 8, false)));
+                body.appendChild(section('Enc.Buttons', 'push', g2, buildChips('push', encoderGroup, 8, false)));
             } else {
                 const g1 = document.createElement('div'); g1.className = 'gb-row9';
                 for (let i = 0; i < 8; i++) g1.appendChild(createFaderCard(i));
                 const sep = document.createElement('div'); sep.className = 'fader-sep'; g1.appendChild(sep);
                 g1.appendChild(createFader9Card());
-                body.appendChild(section('Faders 1-8 and Fader 9', 'faders', g1, buildChips('fader', faderGroup, 8, true)));
+                body.appendChild(section('Faders', 'faders', g1, buildChips('fader', faderGroup, 8, true)));
                 const g2 = document.createElement('div'); g2.className = 'gb-row8';
                 for (let i = 0; i < 8; i++) g2.appendChild(createGreenCard(i));
-                body.appendChild(section('Green buttons', 'green', g2, buildChips('green', faderGroup, 8, false)));
+                body.appendChild(section('Green Buttons', 'green', g2, buildChips('green', faderGroup, 8, false)));
             }
             block.appendChild(body);
             return block;
@@ -14385,66 +12701,88 @@ ${description}
         }
         function cvGroupOf(type) { return (type === 'encoder' || type === 'push') ? encoderGroup : faderGroup; }
         function cvHasBatch(type, idx) {
-            const g = cvGroupOf(type);
-            const prefixes = [`${currentSetup}|${type}|${g}|${idx}|`];
-            if (type === 'encoder') prefixes.push(`${currentSetup}|push|${g}|${idx}|`);
-            for (const k of batchSel.keys()) if (prefixes.some(pf => k.startsWith(pf))) return true;
+            const prefix = `${currentSetup}|${type}|${cvGroupOf(type)}|${idx}|`;
+            for (const k of batchSel.keys()) if (k.startsWith(prefix)) return true;
             return false;
         }
 
-        function cvElHtml(type, idx) {
+        // Knob with a shallow knurled edge (encoder cap profile)
+        function cvKnobSvg(size, teeth, text) {
+            const c = size / 2, rOut = c - 1.5, rIn = rOut - Math.max(1.4, size * 0.05);
+            const pts = [];
+            for (let t = 0; t < teeth; t++) {
+                const a0 = (t / teeth) * 2 * Math.PI, da = (2 * Math.PI) / teeth;
+                for (const [f, r] of [[0.12, rIn], [0.3, rOut], [0.7, rOut], [0.88, rIn]]) {
+                    const a = a0 + f * da;
+                    pts.push(`${(c + r * Math.sin(a)).toFixed(1)},${(c - r * Math.cos(a)).toFixed(1)}`);
+                }
+            }
+            const cap = rIn - size * 0.12;
+            return `<svg class="cv-knob" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+                <polygon points="${pts.join(' ')}" style="fill:var(--bg-input);stroke:var(--text-dim);stroke-width:1"/>
+                <circle cx="${c}" cy="${c}" r="${cap}" style="fill:var(--bg-control);stroke:var(--border-light);stroke-width:1"/>
+                ${text ? `<text x="${c}" y="${c + 3.5}" text-anchor="middle" style="fill:var(--text-dim);font-size:${Math.round(size * 0.26)}px;font-family:var(--font-mono)">${text}</text>` : ''}</svg>`;
+        }
+
+        function cvSummary(type, g, idx) {
+            if (type === 'encoder') { const d = getEncoderData(currentSetup, g, idx); return `ch${d.channel} ${cvEncSummary(d)}`; }
+            if (type === 'push') { const d = getPushData(currentSetup, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
+            if (type === 'green') { const d = getGreenData(currentSetup, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
+            if (type === 'fader') { const d = getFaderData(currentSetup, g, idx); return `ch${d.channel} ${cvFaderSummary(d)}`; }
+            const d = getFader9Data(currentSetup, g); return `ch${d.channel} CC ${d.cc}`;
+        }
+
+        function cvElHtml(type, idx, extraClass) {
             const g = cvGroupOf(type);
             const label = noteGet('ctl', ctlKey(type, g, idx), 'label');
-            let sum, sub = '', cls = '', visual;
-            if (type === 'encoder') {
-                const d = getEncoderData(currentSetup, g, idx), pd = getPushData(currentSetup, g, idx);
-                sum = `ch${d.channel} ${cvEncSummary(d)}`;
-                sub = `push ${cvBtnSummary(pd)}`;
-                visual = `<div class="cv-knob">${idx + 1}</div>`;
-            } else if (type === 'green') {
-                const d = getGreenData(currentSetup, g, idx);
-                sum = `ch${d.channel} ${cvBtnSummary(d)}`;
-                visual = `<div class="cv-btn">${idx + 1}</div>`;
-            } else if (type === 'fader') {
-                const d = getFaderData(currentSetup, g, idx);
-                sum = `ch${d.channel} ${cvFaderSummary(d)}`;
-                cls = ' fdr';
-                visual = `<div class="cv-fader"><span>${idx + 1}</span></div>`;
-            } else {
-                const d = getFader9Data(currentSetup, g);
-                sum = `ch${d.channel} CC ${d.cc}`;
-                cls = ' fdr';
-                visual = `<div class="cv-fader"><span>9</span></div>`;
-            }
-            const l1 = label || sum;
-            const l2 = label ? sum : sub;
+            const sum = cvSummary(type, g, idx);
+            let visual;
+            if (type === 'encoder') visual = cvKnobSvg(46, 22, idx + 1);
+            else if (type === 'push') visual = cvKnobSvg(26, 14, '');
+            else if (type === 'green') visual = `<div class="cv-green"></div>`;
+            else if (type === 'fader') visual = `<div class="cv-fader"><i>${idx + 1}</i></div>`;
+            else visual = `<div class="cv-hfader"><span class="cv-hcap"></span></div>`;
             const sel = cv.sel && cv.sel.type === type && cv.sel.idx === idx ? ' sel' : '';
             const bs = cvHasBatch(type, idx) ? ' bsel' : '';
-            return `<div class="cv-el${cls}${sel}${bs}" onclick="cvSelectEl('${type}', ${idx})" title="${escapeHtml(label ? label + ' - ' + sum : sum)}">
-                ${visual}<div class="cv-l1">${escapeHtml(l1)}</div><div class="cv-l2">${escapeHtml(l2)}</div></div>`;
+            return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs}" data-type="${type}" data-idx="${idx}" onclick="cvSelectEl('${type}', ${idx})" title="${escapeHtml(sum)}">
+                ${visual}
+                <input type="text" class="cv-lab-in" maxlength="60" placeholder="${escapeHtml(sum)}" value="${escapeHtml(label)}"
+                    onclick="event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})">
+                <div class="cv-sum" ${label ? '' : 'hidden'}>${escapeHtml(sum)}</div></div>`;
+        }
+
+        function cvLabelInput(input, type, idx) {
+            const g = cvGroupOf(type);
+            noteSet('ctl', ctlKey(type, g, idx), 'label', input.value);
+            const sum = input.parentElement.querySelector('.cv-sum');
+            if (sum) sum.hidden = !input.value;
+            const ins = document.querySelector(`#cvInspector .control-card[data-ctype="${type}"][data-idx="${idx}"] .ctl-note-name`);
+            if (ins) ins.value = input.value;
         }
 
         function cvRenderPanel() {
             const el = document.getElementById('cvPanel');
             if (!el) return;
+            // keep typing focus when only the texts change
+            const focused = document.activeElement && document.activeElement.classList.contains('cv-lab-in') ? document.activeElement : null;
+            if (focused) return;
             const row = (type, n) => Array.from({ length: n }, (_, i) => cvElHtml(type, i)).join('');
-            const grpName = (g) => getGroupName(currentSetup, g);
+            const grp = (g) => `${g + 1} ${escapeHtml(getGroupName(currentSetup, g))}`;
             const setupLbl = setupLabels.get(currentSetup);
+            const encCells = Array.from({ length: 8 }, (_, i) => `<div class="cv-col">${cvElHtml('encoder', i)}${cvElHtml('push', i)}</div>`).join('');
             el.innerHTML = `
-                <div class="cv-head">
-                    <span><b>Setup ${currentSetup + 1}</b>${setupLbl ? ' ' + escapeHtml(setupLbl) : ''}</span>
-                    <span>Encoders: <b>${encoderGroup + 1} ${escapeHtml(grpName(encoderGroup))}</b></span>
-                    <span>Faders &amp; buttons: <b>${faderGroup + 1} ${escapeHtml(grpName(faderGroup))}</b></span>
-                </div>
+                <div class="cv-head"><b>Setup ${currentSetup + 1}</b>${setupLbl ? `<span>${escapeHtml(setupLbl)}</span>` : ''}</div>
                 <div class="cv-device">
-                    <div class="cv-rowtitle">Encoders <button type="button" class="gb-chip" data-block="enc" onclick="batchBlockChannel('enc')" title="Select Chan of every encoder and push button in this group">All Chan</button></div>
-                    <div class="cv-row">${row('encoder', 8)}</div>
-                    <div class="cv-rowtitle">Buttons</div>
+                    <div class="cv-rowtitle"><span>Encoders &amp; Enc.Buttons</span><span class="cv-grp">group ${grp(encoderGroup)}</span>
+                        <button type="button" class="gb-chip" data-block="enc" onclick="batchBlockChannel('enc')" title="Select Chan of every encoder and Enc.Button in this group">All Chan</button></div>
+                    <div class="cv-row">${encCells}</div>
+                    <hr class="cv-divider">
+                    <div class="cv-rowtitle"><span>Faders &amp; Green Buttons</span><span class="cv-grp">group ${grp(faderGroup)}</span>
+                        <button type="button" class="gb-chip" data-block="fad" onclick="batchBlockChannel('fad')" title="Select Chan of every fader, Fader 9 and Green Button in this group">All Chan</button></div>
+                    <div class="cv-row">${row('fader', 8)}</div>
+                    <div class="cv-row one">${cvElHtml('fader9', 0, ' wide')}</div>
                     <div class="cv-row">${row('green', 8)}</div>
-                    <div class="cv-rowtitle">Faders <button type="button" class="gb-chip" data-block="fad" onclick="batchBlockChannel('fad')" title="Select Chan of every fader, button and Fader 9 in this group">All Chan</button></div>
-                    <div class="cv-row fad">${row('fader', 8)}<div class="cv-sep"></div>${cvElHtml('fader9', 0)}</div>
                 </div>`;
-            // chips state
             document.querySelectorAll('#cvPanel .gb-chip[data-block]').forEach(ch => {
                 const kind = ch.dataset.block, g = kind === 'enc' ? encoderGroup : faderGroup;
                 const list = kind === 'enc' ? [['encoder', 8], ['push', 8]] : [['fader', 8], ['green', 8]];
@@ -14469,7 +12807,7 @@ ${description}
                     const sid = `s${i}`;
                     h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(1)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt">${i + 1}${lab ? ` <span class="cv-lab">${escapeHtml(lab)}</span>` : ''}</span></div>`;
                     if (!cv.open.has(sid)) continue;
-                    for (const [half, title, gcur] of [['e', 'Encoders', encoderGroup], ['f', 'Faders &amp; buttons', faderGroup]]) {
+                    for (const [half, title, gcur] of [['e', 'Encoders &amp; Enc.Buttons', encoderGroup], ['f', 'Faders &amp; Green Buttons', faderGroup]]) {
                         const fid = `s${i}${half}`;
                         h += `<div class="cv-node" ${pad(2)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
                         if (!cv.open.has(fid)) continue;
@@ -14493,10 +12831,11 @@ ${description}
             el.innerHTML = '';
             if (cv.sel) {
                 const t = cv.sel.type, i = cv.sel.idx;
-                const title = { encoder: `Encoder ${i + 1}`, green: `Button ${i + 1}`, fader: `Fader ${i + 1}`, fader9: 'Fader 9' }[t];
+                const title = { encoder: `Encoder ${i + 1}`, push: `Enc.Button ${i + 1}`, green: `Green Button ${i + 1}`, fader: `Fader ${i + 1}`, fader9: 'Fader 9' }[t];
                 el.insertAdjacentHTML('beforeend', `<div class="cv-ins-title">${title}</div>`);
                 const wrap = document.createElement('div');
-                const cards = t === 'encoder' ? [createEncoderCard(i), createPushCard(i)]
+                const cards = t === 'encoder' ? [createEncoderCard(i)]
+                            : t === 'push' ? [createPushCard(i)]
                             : t === 'green' ? [createGreenCard(i)]
                             : t === 'fader' ? [createFaderCard(i)] : [createFader9Card()];
                 for (const c of cards) { const d = document.createElement('div'); d.className = 'cv-ins-card'; d.appendChild(c); wrap.appendChild(d); }
@@ -14507,8 +12846,8 @@ ${description}
             const spec = {
                 project: { scope: 'project', key: '', title: 'Project' },
                 setup: { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
-                enc: { scope: 'enc', key: String(encoderGroup), title: `Encoders, group ${encoderGroup + 1}` },
-                fad: { scope: 'fad', key: String(faderGroup), title: `Faders & buttons, group ${faderGroup + 1}` }
+                enc: { scope: 'enc', key: String(encoderGroup), title: `Encoders & Enc.Buttons, group ${encoderGroup + 1}` },
+                fad: { scope: 'fad', key: String(faderGroup), title: `Faders & Green Buttons, group ${faderGroup + 1}` }
             }[kind];
             const lbl = noteGet(spec.scope, spec.key, 'label'), dsc = noteGet(spec.scope, spec.key, 'description');
             const grp = kind === 'enc' ? encoderGroup : kind === 'fad' ? faderGroup : null;
@@ -14543,9 +12882,12 @@ ${description}
         }
 
         function cvSelectEl(type, idx) {
+            if (cv.sel && cv.sel.type === type && cv.sel.idx === idx && !cv.node) return;
             cv.sel = { type, idx };
             cv.node = null;
-            cvRenderPanel();
+            document.querySelectorAll('#cvPanel .cv-el.sel').forEach(e => e.classList.remove('sel'));
+            const el = document.querySelector(`#cvPanel .cv-el[data-type="${type}"][data-idx="${idx}"]`);
+            if (el) el.classList.add('sel');
             cvRenderInspector();
             cvRenderTree();
         }
@@ -14571,6 +12913,346 @@ ${description}
             cv.node = { kind: half === 'e' ? 'enc' : 'fad' };
             if (setup !== currentSetup) selectSetup(setup);
             if (half === 'e') selectEncoderGroup(g); else selectFaderGroup(g);
+        }
+
+
+        // ============================================================
+        // Overview: tables with selection, copy and paste (like a spreadsheet)
+        // ============================================================
+        // Click selects, Shift+click extends, Ctrl/Cmd+click adds, drag draws a rectangle,
+        // row and column headers select a whole row/column. Ctrl/Cmd+C copies, Ctrl/Cmd+V pastes.
+        const OV_SECTIONS = [
+            { id: 'encoders', title: 'Encoders', type: 'encoder', rows: 8, row: i => `Encoder ${i + 1}` },
+            { id: 'push', title: 'Enc.Buttons', type: 'push', rows: 8, row: i => `Enc.Button ${i + 1}` },
+            { id: 'faders', title: 'Faders', type: 'fader', rows: 8, row: i => `Fader ${i + 1}` },
+            { id: 'fader9', title: 'Fader 9', type: 'fader9', rows: 1, row: () => 'Fader 9' },
+            { id: 'green', title: 'Green Buttons', type: 'green', rows: 8, row: i => `Green Button ${i + 1}` }
+        ];
+        const ovSel = new Map();     // "type|group|index" -> { type, g, i }
+        let ovAnchor = null;         // where a Shift-range starts
+        let ovFocus = null;          // last clicked or moved cell
+        let ovClip = null;           // { type, setup, cells: [{ dg, di, data }] }
+        let ovDrag = null;           // active rectangle drag
+        const ovStep = { ch: 0, cc: 0 };
+        let ovCollapsed = {};
+        try { ovCollapsed = JSON.parse(localStorage.getItem('uc4_mom_ovc')) || {}; } catch (e) { ovCollapsed = {}; }
+
+        const ovK = (t, g, i) => `${t}|${g}|${i}`;
+        const ovSecOf = (type) => OV_SECTIONS.find(x => x.type === type);
+
+        function ovCellText(type, data) {
+            if (type === 'encoder') return formatEncoderCell(data);
+            if (type === 'fader') return formatFaderCell(data);
+            if (type === 'fader9') return `${chDisp(data.channel - 1)}:CC ${data.cc}`;
+            return formatButtonCell(data);
+        }
+
+        function renderOverview() {
+            const main = document.getElementById('mainContent');
+            main.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'overview-container';
+
+            const filters = document.createElement('div');
+            filters.className = 'conflict-filters';
+            filters.innerHTML = `
+                <span class="conflict-filters-label">Conflicts:</span>
+                <div class="filter-chip ${showConcurrentConflicts ? 'active' : ''}" onclick="toggleConcurrentFilter()" title="Same message on controls that are active together">
+                    <span class="checkmark">${showConcurrentConflicts ? '&#10003;' : ''}</span>
+                    Same time
+                    <span class="count" id="concurrentCount">${conflicts.concurrent.size}</span>
+                </div>
+                <div class="filter-chip ${showMutuallyExclusiveConflicts ? 'active dim' : ''}" onclick="toggleMEFilter()" title="Same message in different groups">
+                    <span class="checkmark">${showMutuallyExclusiveConflicts ? '&#10003;' : ''}</span>
+                    Other groups
+                    <span class="count" id="meCount">${conflicts.mutuallyExclusive.size}</span>
+                </div>`;
+            container.appendChild(filters);
+
+            for (const sec of OV_SECTIONS) container.appendChild(ovBuildSection(sec));
+
+            // conflict list
+            const visible = [];
+            if (showConcurrentConflicts) for (const [key, entry] of conflicts.concurrent) visible.push({ key, entry, type: 'concurrent' });
+            if (showMutuallyExclusiveConflicts) for (const [key, entry] of conflicts.mutuallyExclusive) visible.push({ key, entry, type: 'me' });
+            if (visible.length) {
+                const panel = document.createElement('div');
+                panel.className = 'conflict-panel';
+                panel.innerHTML = `<div class="conflict-panel-header"><span>${visible.length} conflict${visible.length !== 1 ? 's' : ''}</span></div>`;
+                for (const { key, entry, type } of visible.slice(0, 20)) {
+                    const item = document.createElement('div');
+                    item.className = `conflict-item ${type === 'me' ? 'dim' : ''}`;
+                    item.innerHTML = `<span class="conflict-key">${formatConflictKey(key)}:</span> <span class="conflict-refs">${entry.refs.map(formatControlRef).join(', ')}</span>`;
+                    panel.appendChild(item);
+                }
+                if (visible.length > 20) {
+                    const more = document.createElement('div');
+                    more.className = 'conflict-item';
+                    more.innerHTML = `<span class="conflict-refs">and ${visible.length - 20} more</span>`;
+                    panel.appendChild(more);
+                }
+                container.appendChild(panel);
+            }
+
+            main.appendChild(container);
+            ovBind(container);
+            ovPaint();
+        }
+
+        function ovBuildSection(sec) {
+            const el = document.createElement('div');
+            el.className = 'ov-section' + (ovCollapsed[sec.id] ? ' collapsed' : '');
+            el.dataset.sec = sec.id;
+            const head = document.createElement('div');
+            head.className = 'ov-sec-head';
+            head.innerHTML = `<span class="ov-arrow">${ovCollapsed[sec.id] ? '&#9656;' : '&#9662;'}</span><span>${sec.title}</span>`;
+            head.onclick = () => {
+                ovCollapsed[sec.id] = !ovCollapsed[sec.id];
+                try { localStorage.setItem('uc4_mom_ovc', JSON.stringify(ovCollapsed)); } catch (e) {}
+                el.classList.toggle('collapsed', !!ovCollapsed[sec.id]);
+                head.querySelector('.ov-arrow').innerHTML = ovCollapsed[sec.id] ? '&#9656;' : '&#9662;';
+            };
+            el.appendChild(head);
+
+            const table = document.createElement('table');
+            table.className = 'overview-table ov-table';
+            let h = '<tr><th class="ov-corner"></th>';
+            for (let g = 0; g < 8; g++) {
+                h += `<th class="ov-col" data-type="${sec.type}" data-col="${g}" title="Click: select the column. Double-click: rename the group on the UC4">${g + 1} <span class="group-name">${escapeHtml(getGroupName(currentSetup, g))}</span></th>`;
+            }
+            h += '</tr>';
+            table.innerHTML = h;
+            for (let i = 0; i < sec.rows; i++) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<th class="ov-row" data-type="${sec.type}" data-row="${i}" title="Click: select the row">${sec.rows === 1 ? '' : i + 1}</th>`;
+                for (let g = 0; g < 8; g++) {
+                    const data = getControlData(sec.type, currentSetup, g, i);
+                    const td = document.createElement('td');
+                    td.className = 'ov-cell';
+                    td.dataset.type = sec.type; td.dataset.group = g; td.dataset.index = i;
+                    const ct = getControlConflictType(sec.type, g, i);
+                    if (ct === 'concurrent') td.classList.add('conflict');
+                    else if (ct === 'mutuallyExclusive') td.classList.add('conflict-dim');
+                    td.innerHTML = `<div class="overview-cell">${escapeHtml(ovCellText(sec.type, data))}</div>`;
+                    const lbl = noteGet('ctl', ctlKey(sec.type, g, i), 'label');
+                    td.title = `${sec.row(i)}, group ${g + 1}${lbl ? ' - ' + lbl : ''}`;
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+            const body = document.createElement('div');
+            body.className = 'ov-sec-body';
+            body.appendChild(table);
+            el.appendChild(body);
+            return el;
+        }
+
+        // ---- selection ----
+        function ovRect(type, g0, i0, g1, i1, base) {
+            ovSel.clear();
+            if (base) for (const [k, v] of base) ovSel.set(k, v);
+            const sec = ovSecOf(type);
+            for (let g = Math.min(g0, g1); g <= Math.max(g0, g1); g++) {
+                for (let i = Math.min(i0, i1); i <= Math.max(i0, i1); i++) {
+                    if (i < sec.rows) ovSel.set(ovK(type, g, i), { type, g, i });
+                }
+            }
+        }
+        function ovCellDown(td, e) {
+            const t = td.dataset.type, g = +td.dataset.group, i = +td.dataset.index;
+            const add = e.ctrlKey || e.metaKey;
+            if (e.shiftKey && ovAnchor && ovAnchor.type === t) {
+                ovRect(t, ovAnchor.g, ovAnchor.i, g, i, add ? new Map(ovSel) : null);
+            } else if (add) {
+                const k = ovK(t, g, i);
+                if (ovSel.has(k)) ovSel.delete(k); else ovSel.set(k, { type: t, g, i });
+                ovAnchor = { type: t, g, i };
+                ovDrag = { type: t, g0: g, i0: i, base: new Map(ovSel) };
+            } else {
+                ovSel.clear();
+                ovSel.set(ovK(t, g, i), { type: t, g, i });
+                ovAnchor = { type: t, g, i };
+                ovDrag = { type: t, g0: g, i0: i, base: null };
+            }
+            ovFocus = { type: t, g, i };
+            ovPaint();
+        }
+        function ovHeaderClick(th, e) {
+            const t = th.dataset.type, sec = ovSecOf(t);
+            const add = e.ctrlKey || e.metaKey;
+            if (!add) ovSel.clear();
+            if (th.classList.contains('ov-row')) {
+                const i = +th.dataset.row;
+                for (let g = 0; g < 8; g++) ovSel.set(ovK(t, g, i), { type: t, g, i });
+                ovAnchor = { type: t, g: 0, i };
+            } else {
+                const g = +th.dataset.col;
+                for (let i = 0; i < sec.rows; i++) ovSel.set(ovK(t, g, i), { type: t, g, i });
+                ovAnchor = { type: t, g, i: 0 };
+            }
+            ovFocus = ovAnchor;
+            ovPaint();
+        }
+        function ovBind(container) {
+            container.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                const td = e.target.closest('td.ov-cell');
+                if (td) { e.preventDefault(); ovCellDown(td, e); return; }
+                const th = e.target.closest('th.ov-row, th.ov-col');
+                if (th) { e.preventDefault(); ovHeaderClick(th, e); }
+            });
+            container.addEventListener('mouseover', (e) => {
+                if (!ovDrag) return;
+                const td = e.target.closest('td.ov-cell');
+                if (!td || td.dataset.type !== ovDrag.type) return;
+                ovRect(ovDrag.type, ovDrag.g0, ovDrag.i0, +td.dataset.group, +td.dataset.index, ovDrag.base);
+                ovFocus = { type: ovDrag.type, g: +td.dataset.group, i: +td.dataset.index };
+                ovPaint();
+            });
+            container.addEventListener('dblclick', (e) => {
+                const td = e.target.closest('td.ov-cell');
+                if (td) { ovOpenInController(td.dataset.type, +td.dataset.group, +td.dataset.index); return; }
+                const th = e.target.closest('th.ov-col');
+                if (th) showGroupNameEditor(currentSetup, +th.dataset.col);
+            });
+        }
+        document.addEventListener('mouseup', () => { ovDrag = null; });
+
+        function ovClearSelection() {
+            ovSel.clear(); ovAnchor = null; ovFocus = null;
+            const bar = document.getElementById('ovBar');
+            if (bar) { bar.style.display = 'none'; bar.innerHTML = ''; }
+            if (!(batchSel && [...batchSel.keys()].some(k => k.startsWith(currentSetup + '|')))) document.body.classList.remove('batch-open');
+        }
+        function ovClearAll() { ovClip = null; ovClearSelection(); }
+
+        function ovPaint() {
+            document.querySelectorAll('#mainContent td.ov-cell').forEach(td => {
+                const k = ovK(td.dataset.type, +td.dataset.group, +td.dataset.index);
+                td.classList.toggle('ov-sel', ovSel.has(k));
+                const inClip = ovClip && ovClip.setup === currentSetup && ovClip.type === td.dataset.type &&
+                    ovClip.cells.some(c => ovK(ovClip.type, ovClip.g0 + c.dg, ovClip.i0 + c.di) === k);
+                td.classList.toggle('ov-clip', !!inClip);
+            });
+            ovRenderBar();
+        }
+
+        function ovRenderBar() {
+            const bar = document.getElementById('ovBar');
+            if (!bar) return;
+            if (currentView !== 'overview' || ovSel.size === 0) {
+                bar.style.display = 'none'; bar.innerHTML = '';
+                if (!document.getElementById('batchBar') || document.getElementById('batchBar').style.display === 'none') document.body.classList.remove('batch-open');
+                return;
+            }
+            const types = new Set([...ovSel.values()].map(c => c.type));
+            const canPaste = ovClip && [...ovSel.values()].some(c => c.type === ovClip.type);
+            bar.innerHTML = `<div class="bb-head"><b>${ovSel.size} selected</b>
+                <button class="btn" onclick="ovCopy()" ${types.size === 1 ? '' : 'disabled'} title="Copy (Ctrl/Cmd+C)">Copy</button>
+                <button class="btn btn-primary" onclick="ovPaste()" ${canPaste ? '' : 'disabled'} title="Paste (Ctrl/Cmd+V). One copied cell fills every selected cell; a copied block lands on the top-left selected cell.">Paste</button>
+                <label title="When one copied cell fills several cells, each next cell adds this to Chan and CC">each next: Chan +<input type="number" class="bb-step" min="-15" max="15" value="${ovStep.ch}" onchange="ovStep.ch = parseInt(this.value, 10) || 0"></label>
+                <label>CC +<input type="number" class="bb-step" min="-127" max="127" value="${ovStep.cc}" onchange="ovStep.cc = parseInt(this.value, 10) || 0"></label>
+                <button class="btn" onclick="ovClearSelection(); ovPaint();">Clear</button></div>`;
+            bar.style.display = 'block';
+            document.documentElement.style.setProperty('--batch-h', bar.offsetHeight + 'px');
+            document.body.classList.add('batch-open');
+        }
+
+        // ---- copy / paste ----
+        function ovCopy() {
+            const cells = [...ovSel.values()];
+            if (!cells.length) return;
+            const type = cells[0].type;
+            if (cells.some(c => c.type !== type)) { showToast('Copy works inside one table', 'info'); return; }
+            const g0 = Math.min(...cells.map(c => c.g)), i0 = Math.min(...cells.map(c => c.i));
+            ovClip = {
+                type, setup: currentSetup, g0, i0,
+                cells: cells.map(c => ({ dg: c.g - g0, di: c.i - i0, data: { ...getControlData(type, currentSetup, c.g, c.i) } }))
+            };
+            showToast(`Copied ${cells.length}`, 'success');
+            ovPaint();
+        }
+        function ovPaste() {
+            if (!ovClip) { showToast('Copy something first', 'info'); return; }
+            const sec = ovSecOf(ovClip.type);
+            const targets = [...ovSel.values()].filter(c => c.type === ovClip.type)
+                .sort((a, b) => a.g - b.g || a.i - b.i);
+            if (!targets.length) { showToast(`Select ${sec.title} cells to paste into`, 'info'); return; }
+            const clampN = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+            const jobs = [];
+            if (ovClip.cells.length === 1) {
+                targets.forEach((t, k) => {
+                    const d = { ...ovClip.cells[0].data };
+                    if (ovStep.ch) d.channel = clampN(d.channel + k * ovStep.ch, 1, 16);
+                    if (ovStep.cc && d.cc !== undefined) d.cc = clampN(d.cc + k * ovStep.cc, 0, 127);
+                    jobs.push({ g: t.g, i: t.i, data: d });
+                });
+            } else {
+                const g0 = Math.min(...targets.map(t => t.g)), i0 = Math.min(...targets.map(t => t.i));
+                for (const c of ovClip.cells) {
+                    const g = g0 + c.dg, i = i0 + c.di;
+                    if (g < 8 && i < sec.rows) jobs.push({ g, i, data: { ...c.data } });
+                }
+            }
+            const actions = [];
+            for (const j of jobs) {
+                const before = { ...getControlData(ovClip.type, currentSetup, j.g, j.i) };
+                const after = { ...before, ...j.data };
+                if (JSON.stringify(before) === JSON.stringify(after)) continue;
+                setControlDataSilent(ovClip.type, currentSetup, j.g, j.i, after);
+                actions.push({ controlType: ovClip.type, setupIdx: currentSetup, group: j.g, index: j.i, before, after });
+            }
+            ovSel.clear();
+            for (const j of jobs) ovSel.set(ovK(ovClip.type, j.g, j.i), { type: ovClip.type, g: j.g, i: j.i });
+            if (!actions.length) { showToast('Nothing changed', 'info'); ovPaint(); return; }
+            recordUndo({ type: 'batch', description: `Paste (${actions.length})`, actions });
+            markModified();
+            scheduleConflictRebuild();
+            renderCurrentView();
+            showToast(`Pasted ${actions.length}`, 'success');
+        }
+
+        function ovOpenInController(type, g, i) {
+            if (type === 'encoder' || type === 'push') selectEncoderGroup(g); else selectFaderGroup(g);
+            cv.sel = { type, idx: i };
+            cv.node = null;
+            setView('controller');
+        }
+
+        // ---- keyboard ----
+        function ovKeydown(e, ctrlKey) {
+            const k = e.key;
+            if (ctrlKey && (k === 'c' || k === 'C') && !e.shiftKey) { e.preventDefault(); ovCopy(); return; }
+            if (ctrlKey && (k === 'v' || k === 'V') && !e.shiftKey) { e.preventDefault(); ovPaste(); return; }
+            if (ctrlKey && (k === 'a' || k === 'A')) {
+                e.preventDefault();
+                const t = (ovFocus || ovAnchor || { type: 'encoder' }).type;
+                const sec = ovSecOf(t);
+                ovSel.clear();
+                for (let g = 0; g < 8; g++) for (let i = 0; i < sec.rows; i++) ovSel.set(ovK(t, g, i), { type: t, g, i });
+                ovAnchor = { type: t, g: 0, i: 0 }; ovFocus = { type: t, g: 7, i: sec.rows - 1 };
+                ovPaint();
+                return;
+            }
+            if (k === 'Escape') {
+                if (ovSel.size) { ovClearSelection(); ovPaint(); } else if (ovClip) { ovClip = null; ovPaint(); }
+                return;
+            }
+            if (k === 'Enter' && ovFocus) { e.preventDefault(); ovOpenInController(ovFocus.type, ovFocus.g, ovFocus.i); return; }
+            const dir = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[k];
+            if (!dir || !ovFocus) return;
+            e.preventDefault();
+            const sec = ovSecOf(ovFocus.type);
+            const g = Math.max(0, Math.min(7, ovFocus.g + dir[0]));
+            const i = Math.max(0, Math.min(sec.rows - 1, ovFocus.i + dir[1]));
+            if (e.shiftKey && ovAnchor && ovAnchor.type === ovFocus.type) {
+                ovRect(ovFocus.type, ovAnchor.g, ovAnchor.i, g, i, null);
+            } else {
+                ovSel.clear(); ovSel.set(ovK(ovFocus.type, g, i), { type: ovFocus.type, g, i });
+                ovAnchor = { type: ovFocus.type, g, i };
+            }
+            ovFocus = { type: ovFocus.type, g, i };
+            ovPaint();
         }
 
         // ---- light / dark theme ----

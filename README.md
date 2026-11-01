@@ -256,3 +256,6 @@ Built for the Faderfox UC4. Not affiliated with Faderfox.
 
 The dump format comes from vehka/uc4-tool (`docs/sysex-format.md`).
 - **Controller view** (first button in the header): a tree on the left (project, setups, encoder groups, fader/button groups), a drawing of the UC4 in the middle (encoders, buttons, faders and Fader 9, each with its label or what it sends) and an inspector on the right. Click an element to edit it; click a tree node to switch setup or group and to write its label and description.
+- **Overview** is a spreadsheet: click, Shift+click, Ctrl/Cmd+click, drag, row and column headers, Ctrl/Cmd+C and Ctrl/Cmd+V; one bar at the bottom for copy, paste and step.
+- **Library** lives in the Project menu (New setup from Library). One list picks the setup, or a run like `8-9` for configs that need two.
+- Light/dark switch at the top right; the guide is rewritten for UC4 Mom (`UC4_EDITOR_GUIDE.html`). The older spec and how-to files in this repo describe the upstream editor.
