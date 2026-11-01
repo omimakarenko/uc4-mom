@@ -356,6 +356,19 @@
         .dev-card { background: var(--bg-input); border: 1px solid var(--border); padding: 0.7rem; margin: 0.5rem 0; font-size: 0.8rem; }
         .dev-bad { border-color: var(--error); color: var(--error); }
         .dev-progress { font-size: 0.8rem; color: var(--warning); min-height: 1.1em; }
+        .dev-pulse { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--accent); margin-right: 0.35rem; animation: devPulse 0.8s ease-in-out infinite; }
+        .dev-pulse.idle { animation: none; opacity: 0.55; }
+        @keyframes devPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(0.7); } }
+        .dev-listen { font-size: 0.8rem; color: var(--text-dim); margin: 0.2rem 0 0.5rem; }
+        .dev-rx { font-size: 0.85rem; color: var(--accent); margin: 0.4rem 0; }
+        .dev-bar { height: 8px; background: var(--bg-input); border: 1px solid var(--border); overflow: hidden; }
+        .dev-bar > div { height: 100%; background: var(--accent); transition: width 0.1s linear; }
+        .dev-bar-anim { width: 35% !important; animation: devSlide 0.9s linear infinite; }
+        @keyframes devSlide { from { margin-left: -35%; } to { margin-left: 100%; } }
+        .dev-ok { border-color: var(--accent); }
+        .dev-ok-line { color: var(--accent); font-size: 0.8rem; margin-top: 0.35rem; }
+        .dev-warn-line { color: var(--warning); font-size: 0.8rem; margin-top: 0.35rem; }
+        #deviceBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
         .dev-confirm { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.78rem; color: var(--warning); margin: 0.5rem 0; cursor: pointer; }
 
         /* Group Name Editor Modal */
@@ -12978,8 +12991,9 @@ ${description}
         const midiState = {
             access: null, inputs: [], outputs: [], inId: '', outId: '',
             error: '', rx: { active: false, parts: [], len: 0, expected: 0, lastUi: 0 },
-            last: null,       // last complete dump received: { bytes, parsed, time }
-            lastSent: null
+            last: null,       // last complete dump received: { bytes, parsed, time, checks }
+            lastSent: null,   // { what, size, port, time, parsed }
+            sendScope: 'one', sendConfirm: false, sending: false, sendStatus: null
         };
 
         function midiSupported() { return typeof navigator !== 'undefined' && !!navigator.requestMIDIAccess; }
@@ -13044,12 +13058,15 @@ ${description}
                 midiResetRx();
                 midiState.rx.active = true;
                 midiState.rx.t0 = performance.now();
+                midiRxStarted();
             } else if (d[0] === 0xF0) {
                 midiResetRx();                       // a new sysex started: drop the partial one
                 midiState.rx.active = true;
                 midiState.rx.t0 = performance.now();
+                midiRxStarted();
             } else if (d[0] >= 0x80 && d[0] < 0xF8) {
                 midiResetRx();                       // interrupted by a channel message
+                updateRxProgress();
                 return;
             } else if (d[0] >= 0xF8) {
                 return;                              // realtime byte between chunks
@@ -13070,6 +13087,7 @@ ${description}
                 let o = 0;
                 for (const p of r.parts) { all.set(p, o); o += p.length; }
                 midiResetRx();
+                updateRxProgress();
                 midiHandleDump(all);
                 return;
             }
@@ -13086,20 +13104,70 @@ ${description}
                 showToast('Received data is not a valid UC4 dump: ' + parsed.error, 'error');
             } else {
                 deviceFirmware = { major: parsed.fwMajor, minor: parsed.fwMinor };
-                midiState.last = { bytes, parsed, time: new Date() };
+                midiState.last = { bytes, parsed, time: new Date(), checks: midiVerifyReceived(parsed) };
                 showToast(parsed.kind === 'all' ? 'Received all 18 setups from UC4' : 'Received one setup from UC4', 'success');
             }
             if (!document.getElementById('deviceModal')) openDeviceDialog(); else renderDeviceDialog();
         }
 
+        // A dump started arriving: make it obvious that the browser is receiving.
+        function midiRxStarted() {
+            if (!document.getElementById('deviceModal')) openDeviceDialog();
+            updateRxProgress();
+        }
+
         function updateRxProgress() {
-            const el = document.getElementById('deviceRxProgress');
-            if (!el) return;
             const r = midiState.rx;
-            if (!r.active) { el.textContent = ''; return; }
-            el.textContent = r.expected
-                ? `Receiving... ${Math.min(100, Math.round(r.len / r.expected * 100))}% (${r.len.toLocaleString()} / ${r.expected.toLocaleString()} bytes)`
-                : `Receiving... ${r.len.toLocaleString()} bytes`;
+            const pct = r.active && r.expected ? Math.min(100, Math.round(r.len / r.expected * 100)) : null;
+            const btn = document.getElementById('deviceBtn');
+            if (btn) {
+                btn.textContent = r.active ? (pct !== null ? `Receiving ${pct}%` : 'Receiving...') : 'Device';
+                btn.classList.toggle('rx-active', !!r.active);
+            }
+            const box = document.getElementById('deviceRxProgress');
+            if (!box) return;
+            if (!r.active) { box.innerHTML = ''; return; }
+            const txt = r.expected
+                ? `${pct}% (${r.len.toLocaleString()} of ${r.expected.toLocaleString()} bytes)`
+                : `${r.len.toLocaleString()} bytes`;
+            box.innerHTML = `<div class="dev-rx"><span class="dev-pulse"></span> Browser is receiving from UC4: ${txt}</div>
+                <div class="dev-bar"><div style="width:${pct === null ? 5 : pct}%"></div></div>`;
+        }
+
+        // Compare two parsed dumps block by block (values only, addresses ignored).
+        function uc4DiffValues(a, b) {
+            if (!a || !b || a.blocks.length !== b.blocks.length) return { mismatch: true };
+            let diff = 0;
+            for (let i = 0; i < a.blocks.length; i++) {
+                const x = a.blocks[i].values, y = b.blocks[i].values;
+                if (x.length !== y.length) return { mismatch: true };
+                for (let j = 0; j < x.length; j++) if (x[j] !== y[j]) diff++;
+            }
+            return { diff };
+        }
+
+        function midiVerifyReceived(parsed) {
+            const checks = [];
+            const fmt = (label, d) => d.mismatch
+                ? { ok: false, text: `${label}: different structure` }
+                : (d.diff === 0 ? { ok: true, text: `Identical to ${label}` }
+                                : { ok: false, text: `${d.diff} byte(s) differ from ${label}` });
+            const sent = midiState.lastSent;
+            if (sent && sent.parsed && sent.parsed.kind === parsed.kind) {
+                checks.push(fmt(`what was sent to the UC4 at ${sent.time.toLocaleTimeString()}`, uc4DiffValues(parsed, sent.parsed)));
+            }
+            try {
+                if (parsed.kind === 'all') {
+                    checks.push(fmt('the editor (all setups)', uc4DiffValues(parsed, uc4ParseDump(uc4BuildFullDump()))));
+                } else {
+                    const nb = parsed.blocks.find(b => b.addr >= UC4_ADDR_NAMES && b.addr < UC4_ADDR_FADER9);
+                    if (nb) {
+                        const sIdx = uc4RegionOf(nb.addr).src;
+                        checks.push(fmt(`the editor's Setup ${sIdx + 1}`, uc4DiffValues(parsed, uc4ParseDump(uc4BuildOneSetupDump(sIdx)))));
+                    }
+                }
+            } catch (e) { /* editor has no data yet */ }
+            return checks;
         }
 
         function midiSendDump(bytes, what) {
@@ -13111,19 +13179,34 @@ ${description}
                 showToast('Send failed: ' + (e && e.message ? e.message : e), 'error');
                 return false;
             }
-            midiState.lastSent = { what, size: bytes.length, port: out.name, time: new Date() };
+            midiState.lastSent = { what, size: bytes.length, port: out.name, time: new Date(), parsed: uc4ParseDump(bytes) };
             showToast(`Sent ${what} (${bytes.length.toLocaleString()} bytes) to ${out.name}`, 'success');
             return true;
         }
 
         function deviceSendSelected() {
-            if (!rawBuffer) return;
-            const scope = (document.querySelector('input[name="devSendScope"]:checked') || {}).value || 'one';
-            const chk = document.getElementById('devSendConfirm');
-            if (!chk || !chk.checked) { showToast('Tick the confirmation box first', 'info'); return; }
-            if (scope === 'all') midiSendDump(uc4BuildFullDump(), 'all 18 setups');
-            else midiSendDump(uc4BuildOneSetupDump(currentSetup), `Setup ${currentSetup + 1}`);
+            if (!rawBuffer || midiState.sending) return;
+            if (!midiState.sendConfirm) { showToast('Tick the confirmation box first', 'info'); return; }
+            const scope = midiState.sendScope;
+            midiState.sending = true;
+            midiState.sendStatus = null;
             renderDeviceDialog();
+            setTimeout(() => {
+                let ok = false, what = '';
+                try {
+                    what = scope === 'all' ? 'all 18 setups' : `Setup ${currentSetup + 1}`;
+                    const bytes = scope === 'all' ? uc4BuildFullDump() : uc4BuildOneSetupDump(currentSetup);
+                    ok = midiSendDump(bytes, what);
+                } catch (e) {
+                    showToast('Send failed: ' + e.message, 'error');
+                }
+                midiState.sending = false;
+                midiState.sendConfirm = false;   // must be ticked again for the next send
+                midiState.sendStatus = { ok, scope, what, time: new Date() };
+                renderDeviceDialog();
+                const st = document.querySelector('#deviceModal .dev-ok, #deviceModal .dev-sec:last-child .dev-bad');
+                if (st) st.scrollIntoView({ block: 'nearest' });
+            }, 400);
         }
 
         function deviceSaveCurrent(scope) {
@@ -13180,6 +13263,7 @@ ${description}
                 recvHtml = `<div class="dev-card">
                     <div>Received <b>${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b>,
                     ${last.bytes.length.toLocaleString()} bytes, firmware ${uc4FwString(p)}, ${last.time.toLocaleTimeString()}.</div>
+                    ${(last.checks || []).map(c => `<div class="${c.ok ? 'dev-ok-line' : 'dev-warn-line'}">${c.ok ? '&#10003;' : '&#8800;'} ${escapeHtml(c.text)}</div>`).join('')}
                     <div class="dev-row">
                         ${p.kind === 'all'
                             ? '<button class="btn btn-primary" onclick="deviceUseReceived(\'load\')">Load into editor</button>'
@@ -13187,8 +13271,17 @@ ${description}
                         <button class="btn" onclick="deviceUseReceived('save')">Save .syx</button>
                     </div></div>`;
             }
-            const sentHtml = s.lastSent
-                ? `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>` : '';
+            let sendStatusHtml = '';
+            if (s.sendStatus) {
+                const st = s.sendStatus;
+                sendStatusHtml = st.ok
+                    ? `<div class="dev-card dev-ok"><b>&#10003; Sent ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes).
+                        <div class="dev-note">The browser cannot see whether the UC4 accepted it. Look at the UC4 display: it should count up (rC00 and onward) while receiving and then return to normal. If it stayed on rC00 or never counted, it did not get the data (put it in receive mode first, then send again).
+                        <br>To verify: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). This window compares what comes back with what was sent.</div></div>`
+                    : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
+            } else if (s.lastSent) {
+                sendStatusHtml = `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>`;
+            }
             overlay.innerHTML = `
                 <div class="device-dialog">
                     <div class="dev-head"><h3>UC4 Device</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
@@ -13210,6 +13303,7 @@ ${description}
 
                     <div class="dev-sec">
                         <div class="dev-title">2. Receive from UC4 (backup / read)</div>
+                        ${connected ? `<div class="dev-listen"><span class="dev-pulse idle"></span> Listening on ${escapeHtml((s.inputs.find(p => p.id === s.inId) || {}).name || 'no input')}</div>` : ''}
                         <div class="dev-note">The editor listens while this window is open or closed. On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc, current setup) or <b>encoder 8</b> (SndA, all setups) until the display counts.</div>
                         <div id="deviceRxProgress" class="dev-progress"></div>
                         ${recvHtml}
@@ -13218,18 +13312,19 @@ ${description}
                     <div class="dev-sec">
                         <div class="dev-title">3. Send to UC4</div>
                         <div class="dev-row">
-                            <label><input type="radio" name="devSendScope" value="one" checked> Current setup (${currentSetup + 1})</label>
-                            <label><input type="radio" name="devSendScope" value="all"> All 18 setups</label>
+                            <label><input type="radio" name="devSendScope" value="one" ${s.sendScope === 'one' ? 'checked' : ''} onchange="midiState.sendScope='one'"> Current setup (${currentSetup + 1})</label>
+                            <label><input type="radio" name="devSendScope" value="all" ${s.sendScope === 'all' ? 'checked' : ''} onchange="midiState.sendScope='all'"> All 18 setups</label>
                         </div>
                         <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>hold encoder 7</b> until the display shows <b>rC00</b>. A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send.</div>
-                        <label class="dev-confirm"><input type="checkbox" id="devSendConfirm"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
+                        <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
                         <div class="dev-row">
-                            <button class="btn btn-primary" ${connected && s.outId && rawBuffer ? '' : 'disabled'} onclick="deviceSendSelected()">Send to UC4</button>
+                            <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected()">${s.sending ? 'Sending...' : 'Send to UC4'}</button>
                             <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('one')">Save current setup .syx</button>
                             <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('all')">Save all .syx</button>
                         </div>
                         <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; connect and receive once to use your UC4\'s own value)'}.</div>
-                        ${sentHtml}
+                        ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Sending to UC4...</div><div class="dev-bar"><div class="dev-bar-anim"></div></div></div>' : ''}
+                        ${sendStatusHtml}
                     </div>
                 </div>`;
             updateRxProgress();
