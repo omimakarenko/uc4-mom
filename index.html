@@ -28,6 +28,10 @@
             --push: #aa66ff;
             --green-btn: #44dd66;
             --fader: #ff8844;
+            --tab-bg: #1b1b21;
+            --field-bg: #0f0f13;
+            --chip-bg: #3a3a45;
+            --chip-hover: #4a4a57;
         }
         
         * {
@@ -406,7 +410,11 @@
         :root { color-scheme: dark; }
         html[data-theme="light"] {
             color-scheme: light;
-            --bg-dark: #f1f2f5;
+            --tab-bg: #ffffff;
+            --field-bg: #eceef2;
+            --chip-bg: #c3c8d3;
+            --chip-hover: #b0b6c4;
+            --bg-dark: #dde0e7;
             --bg-panel: #ffffff;
             --bg-control: #f6f7f9;
             --bg-input: #eceef2;
@@ -3235,6 +3243,28 @@
         .group-block .fader9-card .control-header, .cv-inspector .fader9-card .control-header { background: none; margin: 0 0 0.4rem; padding: 0 0 0.3rem; border-bottom: none; }
         .group-block .fader9-card .param-row, .cv-inspector .fader9-card .param-row { margin: 0 0 0.3rem; min-height: 0; height: auto; }
         .group-block .fader9-card .param-input { margin: 0; }
+        /* round 5: contrast and sizes */
+        .device-status { display: flex !important; align-items: center; justify-content: center; position: relative; gap: 0.4rem; }
+        #deviceStatusText { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+        .dev-connect { font-family: inherit; font-size: 0.65rem; text-transform: uppercase; background: var(--chip-bg); color: var(--text); border: none; border-radius: 3px; height: 1.1rem; padding: 0 0.45rem; cursor: pointer; flex-shrink: 0; position: absolute; right: 0.2rem; }
+        .dev-connect:hover { background: var(--accent); color: var(--bg-dark); }
+        .dev-connect[hidden] { display: none; }
+        .act-main .device-status { padding-right: 4.2rem; padding-left: 0.5rem; }
+        .group-block { background: var(--tab-bg); }
+        .gb-tab.active { background: var(--tab-bg); }
+        .gb-tab { font-size: 0.92rem; padding: 0.4rem 0.9rem; }
+        .gb-label { font-size: 0.8rem; }
+        .gb-tab:hover { background: var(--bg-panel); }
+        .gb-chip { background: var(--chip-bg); color: var(--text); height: 1rem; line-height: 1rem; font-size: 0.64rem; padding: 0 0.4rem; }
+        .gb-chip:hover { background: var(--chip-hover); }
+        .gb-chip.on { background: var(--accent); color: var(--bg-dark); }
+        .batch-cb { width: 1rem; height: 1rem; background: var(--chip-bg); }
+        .batch-cb:hover { background: var(--chip-hover); }
+        .batch-cb:checked { background: var(--accent); }
+        .batch-cb:checked::after { left: 0.3rem; top: 0.1rem; width: 0.22rem; height: 0.46rem; }
+        .group-block .param-input input, .group-block .param-input select, .group-block .step-btn,
+        .group-block .ctl-note input, .group-block .ctl-note textarea, .group-block .ctl-note-btn, .gb-edit input, .gb-edit textarea { background: var(--field-bg); }
+        .group-block .step-btn:hover { background: var(--accent); }
     </style>
 </head>
 <body>
@@ -3305,7 +3335,7 @@
             </div>
                 </div>
                 <div class="mod-note" id="modNote"></div>
-                <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)">UC4: not connected</div>
+                <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)"><span id="deviceStatusText">UC4: not connected</span><button type="button" class="dev-connect" id="connectBtn" onclick="event.stopPropagation(); midiConnect()" title="Connect to the UC4 (the browser asks for MIDI access)">Connect</button></div>
             </div>
             <span class="btn-divider"></span>
             <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">Undo</button>
@@ -11868,7 +11898,16 @@ ${description}
             const el = document.getElementById('deviceStatus');
             if (!el) return;
             el.className = 'device-status ' + (kind || 'idle');
-            el.textContent = text;
+            const tx = document.getElementById('deviceStatusText');
+            if (tx) tx.textContent = text; else el.textContent = text;
+            updateConnectBtn();
+        }
+        function deviceConnected() {
+            return !!(midiState.access && midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || '')));
+        }
+        function updateConnectBtn() {
+            const b = document.getElementById('connectBtn');
+            if (b) b.hidden = deviceConnected();
         }
         function deviceStatusClick() {
             if (midiState.status && midiState.status.mode === 'receive') openReceiveDialog(); else openUploadDialog();
@@ -13777,7 +13816,10 @@ ${description}
             .pg-head b { font-size: 16px; }
             .pg-head span { color: #666; }
             .pg-head .proj { margin-left: auto; }
-            .side { overflow: hidden; }
+            .side { overflow: visible; }
+            .side.s { font-size: 9.5px; }
+            .side.xs { font-size: 8px; }
+            .side.s h4, .side.xs h4 { font-size: inherit; }
             .side h4 { margin: 0 0 1mm; font-size: 11px; }
             .side h4 small { color: #666; font-weight: 400; }
             .side p { margin: 0 0 3mm; color: #333; white-space: pre-wrap; }
@@ -13831,18 +13873,21 @@ ${description}
             const setupLab = setupLabelShown(setup);
             const em = csGroupMeta(setup, 'enc', eg), fm = csGroupMeta(setup, 'fad', fg);
             const side = [];
-            if (st && st.description) side.push(`<p>${csEsc(st.description)}</p>`);
+            if (projectMeta.description) side.push(`<h4>${csEsc(projName || 'Project')}</h4><p>${csEsc(projectMeta.description)}</p>`);
+            if (st && st.description) side.push(`<h4>${csEsc(setupBaseName(setup))}${setupLab ? '<br><small>' + csEsc(setupLab) + '</small>' : ''}</h4><p>${csEsc(st.description)}</p>`);
             side.push(`<h4>Encoders &amp; Enc.Buttons<br><small>group ${eg + 1} ${csEsc(getGroupName(setup, eg))}${em.label ? ' - ' + csEsc(em.label) : ''}</small></h4>${em.desc ? `<p>${csEsc(em.desc)}</p>` : '<p></p>'}`);
             side.push(`<h4>Faders &amp; Green Buttons<br><small>group ${fg + 1} ${csEsc(getGroupName(setup, fg))}${fm.label ? ' - ' + csEsc(fm.label) : ''}</small></h4>${fm.desc ? `<p>${csEsc(fm.desc)}</p>` : '<p></p>'}`);
             const notes = [];
             const add = (type, g, n) => { for (let i = 0; i < n; i++) { const c = csCtl(setup, type, g, i); if (c.desc) notes.push(`<li><i>${csEsc(c.label || cvDefaultName(type, i))}</i> ${csEsc(c.desc)}</li>`); } };
             add('encoder', eg, 8); add('push', eg, 8); add('fader', fg, 8); add('fader9', fg, 1); add('green', fg, 8);
-            if (notes.length) side.push(`<ul>${notes.join('')}</ul>`);
+            if (notes.length) side.push(`<h4>Controls</h4><ul>${notes.join('')}</ul>`);
+            const sideLen = side.join('').replace(/<[^>]+>/g, '').length;
+            const sideCls = sideLen > 1500 ? 'side xs' : sideLen > 800 ? 'side s' : 'side';
             const row = (type, g, n) => `<div class="row">${Array.from({ length: n }, (_, i) => csEl(setup, type, g, i)).join('')}</div>`;
             const encCols = Array.from({ length: 8 }, (_, i) => `<div>${csEl(setup, 'encoder', eg, i)}${csEl(setup, 'push', eg, i)}</div>`).join('');
             return `<section class="page">
                 <div class="pg-head"><b>${csEsc(setupBaseName(setup))}${setupLab ? ' - ' + csEsc(setupLab) : ''}</b><span>group ${eg + 1} / ${fg + 1}</span>${projName ? `<span class="proj">${csEsc(projName)}</span>` : ''}</div>
-                <div class="side">${side.join('')}</div>
+                <div class="${sideCls}">${side.join('')}</div>
                 <div class="dev">
                     <div class="half-title">Encoders &amp; Enc.Buttons - ${eg + 1} ${csEsc(getGroupName(setup, eg))}</div>
                     <div class="row">${encCols}</div>
