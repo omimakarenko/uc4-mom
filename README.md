@@ -251,11 +251,12 @@ Built for the Faderfox UC4. Not affiliated with Faderfox.
 - **Import > From UC4 (USB MIDI)**: receive a dump straight from the UC4 over Web MIDI (Chrome/Edge). On the UC4: setup mode (Shift + Edit twice), then hold encoder 4 (current setup) or encoder 8 (all setups). Progress shows in the dialog, on the Import button and in the status line at the bottom. A received dump is compared with the editor and with what was last sent.
 - **Upload**: send the current setup or all 18 setups to the UC4. Put the UC4 into receive mode first (setup mode, hold encoder 7 until `rC00`). After a single-setup dump is stored the UC4 display shows the setup number (`SE06`).
 - **Single-setup SysEx** (5072 bytes, the UC4's own "Sndc" dump) can be imported into any slot and exported.
-- **Notes**: labels and descriptions for the project, each setup, each encoder group, each fader/button group and each control. Notes are stored in the project, not on the UC4.
+- **Names and descriptions**: the project name sits above the view buttons (click to rename, pencil for the description); the setup label and description are in the setup strip; each group header has a pencil for the 4-character UC4 name, a label and a description. Label edits can be undone. They are stored in the project, not on the UC4.
+- **Cheat sheet** (Project menu): printable A4 pages with the device drawing, labels, what each control sends and the descriptions. One screen, one setup (8 pages) or all setups; print to PDF or download as HTML.
 - **Project** menu: save/open a whole-device project or a single-setup project (`.uc4proj.json`: SysEx plus notes and labels).
 
 The dump format comes from vehka/uc4-tool (`docs/sysex-format.md`).
-- **Controller view** (first button in the header): a tree on the left (project, setups, encoder groups, fader/button groups), a drawing of the UC4 in the middle (encoders, buttons, faders and Fader 9, each with its label or what it sends) and an inspector on the right. Click an element to edit it; click a tree node to switch setup or group and to write its label and description.
+- **Controller view** (first button in the header): a tree on the left (setups, encoder groups, fader/button groups), a drawing of the UC4 in the middle (encoders, buttons, faders and Fader 9, each with its label or what it sends) and an inspector on the right. Click an element to edit it; click a tree node to switch setup or group and to write its label and description.
 - **Overview** is a spreadsheet: click, Shift+click, Ctrl/Cmd+click, drag, row and column headers, Ctrl/Cmd+C and Ctrl/Cmd+V; one bar at the bottom for copy, paste and step.
-- **Library** lives in the Project menu (New setup from Library). One list picks the setup, or a run like `8-9` for configs that need two.
+- **Library** lives in the Project menu (Import Setup from Library). One list picks the setup, or a run like `8-9` for configs that need two.
 - Light/dark switch at the top right; the guide is rewritten for UC4 Mom (`UC4_EDITOR_GUIDE.html`). The older spec and how-to files in this repo describe the upstream editor.

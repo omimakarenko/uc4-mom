@@ -46,6 +46,7 @@ strong { color: var(--text); }
 <li>Each group has a 4-character <strong>name</strong> that the UC4 stores (GrP1 ...). Everything else you type here is a <strong>label</strong>.</li>
 </ul>
 <h2>Label, description, name</h2>
+<p>The project name is above the view buttons (click it to rename, the pencil opens the description). The setup label and description are in the setup strip. In Focused, the pencil in a group header opens the 4-character UC4 name, the label and the description of that group. Label edits are part of Undo.</p>
 <table>
 <thead>
 <tr>
@@ -74,7 +75,7 @@ strong { color: var(--text); }
 </table>
 <p>The setup label is the same one in the setup list, Setup Manager and the tree.</p>
 <h2>Three views</h2>
-<p><strong>Controller</strong> - a tree on the left (Project, setups, the two halves with their 8 groups), a drawing of the UC4 in the middle, an inspector on the right.
+<p><strong>Controller</strong> - a tree on the left (the setups, each with its two halves and their 8 groups), a drawing of the UC4 in the middle, an inspector on the right.
 Click a group in the tree to switch to it. Click a control to edit it. Type a label right under a control. Click a tree node to write its label and description.</p>
 <p><strong>Focused</strong> - the same two halves as two blocks with group tabs. Every parameter is a row: checkbox, value, minus and plus. Collapse a block with the arrow.</p>
 <p><strong>Overview</strong> - one table per kind of control (rows are controls, columns are groups). It works like a spreadsheet:</p>
@@ -179,8 +180,12 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
 <td>readable text of all parameters, for sharing or editing by hand (no descriptions)</td>
 </tr>
 <tr>
-<td>New setup from Library</td>
+<td>Import Setup from Library</td>
 <td>ready-made setups, see below</td>
+</tr>
+<tr>
+<td>Cheat sheet</td>
+<td>printable pages: the device drawing with your labels, what each control sends, the descriptions. One screen, one setup or all setups; print to PDF or download HTML</td>
 </tr>
 </tbody>
 </table>
@@ -235,6 +240,5 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
 <li>The upload progress bar is an estimate. The UC4 does not report progress to the browser.</li>
 <li>The dump format is not documented by Faderfox. It was worked out by the community (see uc4-tool by vehka). UC4 Mom is an independent fork of UC4 SysEx Editor by thegdyne.</li>
 </ul>
-</main>
 </body>
 </html>

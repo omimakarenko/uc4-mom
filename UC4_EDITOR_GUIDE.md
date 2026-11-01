@@ -19,6 +19,9 @@ UC4
 
 ## Label, description, name
 
+The project name is above the view buttons (click it to rename, the pencil opens the description). The setup label and description are in the setup strip. In Focused, the pencil in a group header opens the 4-character UC4 name, the label and the description of that group. Label edits are part of Undo.
+
+
 | | Where it lives | Limit |
 |---|---|---|
 | **Name** of a group | on the UC4 | 4 characters |
@@ -29,7 +32,7 @@ The setup label is the same one in the setup list, Setup Manager and the tree.
 
 ## Three views
 
-**Controller** - a tree on the left (Project, setups, the two halves with their 8 groups), a drawing of the UC4 in the middle, an inspector on the right.
+**Controller** - a tree on the left (the setups, each with its two halves and their 8 groups), a drawing of the UC4 in the middle, an inspector on the right.
 Click a group in the tree to switch to it. Click a control to edit it. Type a label right under a control. Click a tree node to write its label and description.
 
 **Focused** - the same two halves as two blocks with group tabs. Every parameter is a row: checkbox, value, minus and plus. Collapse a block with the arrow.
@@ -86,7 +89,8 @@ If nothing happens: use Chrome or Edge, close Ableton, SysEx Librarian and other
 | Save this setup | a project with just the current setup |
 | Import SysEx, Export SysEx | plain UC4 dump files: all 18 setups or one setup |
 | Import JSON, Export JSON | readable text of all parameters, for sharing or editing by hand (no descriptions) |
-| New setup from Library | ready-made setups, see below |
+| Import Setup from Library | ready-made setups, see below |
+| Cheat sheet | printable pages: the device drawing with your labels, what each control sends, the descriptions. One screen, one setup or all setups; print to PDF or download HTML |
 
 Use **Save** for your own work. Use SysEx for other tools (SysEx Librarian ...). Use JSON for sharing.
 

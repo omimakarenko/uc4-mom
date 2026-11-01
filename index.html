@@ -3165,6 +3165,76 @@
         .main-content { padding-bottom: 24px; }
         body.batch-open .main-content { padding-bottom: calc(24px + var(--batch-h, 0px)); }
         .cv-ins-cap { color: var(--text-dim); font-size: 0.72rem; margin-bottom: 0.2rem; }
+    
+        /* ---- round 4 ---- */
+        .notes-bar { display: none !important; }
+        /* header: project name above the views, bottoms aligned with the connection status */
+        .header { align-items: flex-end; }
+        .logo-wrap { align-self: center; }
+        .center-col { display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem; position: relative; }
+        .proj-row { display: flex; align-items: center; gap: 0.4rem; height: 1.3rem; max-width: 22rem; }
+        .proj-name { font-size: 0.95rem; font-weight: 700; color: var(--text); cursor: text; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .proj-name.empty { color: var(--text-muted); font-weight: 400; }
+        .proj-ren { font-family: var(--font-mono); font-size: 0.9rem; background: var(--bg-input); color: var(--text); border: none; outline: 1px solid var(--accent); padding: 0.05rem 0.3rem; width: 15rem; }
+        .proj-pencil { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.05rem; padding: 0 0.2rem; line-height: 1; }
+        .proj-pencil:hover, .proj-pencil.has { color: var(--accent); }
+        .proj-pop { display: none; position: absolute; top: 1.7rem; left: 0; z-index: 300; width: 22rem; padding: 0.5rem; background: var(--bg-panel); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+        .proj-pop.open { display: block; }
+        .proj-pop textarea { width: 100%; background: var(--bg-input); color: var(--text); border: none; font-family: var(--font-mono); font-size: 0.78rem; padding: 0.4rem 0.5rem; resize: vertical; }
+        /* setup label and description live in the setup strip */
+        .setup-note { flex: 1 1 18rem; min-width: 14rem; align-items: flex-start; }
+        .setup-note input, .setup-note textarea { background: var(--bg-input); color: var(--text); border: none; font-family: var(--font-mono); font-size: 0.78rem; padding: 0.4rem 0.5rem; }
+        .setup-note input { width: 10rem; flex-shrink: 0; text-align: center; }
+        .setup-note textarea { flex: 1; min-width: 0; resize: none; overflow: hidden; height: 1.9rem; }
+        .setup-note input:focus, .setup-note textarea:focus { outline: 1px solid var(--accent); }
+        body[data-view="controller"] #setupNote { display: none; }
+        /* gray, borderless small controls: batch chips and checkboxes share height, colour and corner */
+        .gb-chip { border: none; background: var(--bg-input); color: var(--text-dim); border-radius: 3px; height: 1.15rem; padding: 0 0.5rem; line-height: 1.15rem; }
+        .gb-chip:hover { color: var(--text); }
+        .gb-chip.on { background: var(--accent); color: var(--bg-dark); }
+        .batch-cb { -webkit-appearance: none; appearance: none; width: 1.15rem; height: 1.15rem; border-radius: 3px; border: none; background: var(--bg-input); position: relative; margin: 0 0.35rem 0 0; }
+        .batch-cb:hover { background: var(--border-light); }
+        .batch-cb:checked { background: var(--accent); }
+        .batch-cb:checked::after { content: ''; position: absolute; left: 0.38rem; top: 0.14rem; width: 0.25rem; height: 0.5rem; border: solid var(--bg-dark); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+        .group-block .param-label, .cv-inspector .param-label { font-size: 0.74rem; width: 2.5rem; }
+        .group-block .param-input select, .cv-inspector .param-input select { -webkit-appearance: none; appearance: none; background-image: none; padding-left: 0.1rem; padding-right: 0.1rem; text-overflow: clip; }
+        .group-block .param-row, .cv-inspector .param-row { gap: 0.25rem; }
+        .group-block .step-btn, .cv-inspector .step-btn { width: 1.3rem; font-size: 0.85rem; }
+        .group-block .param-input.with-step, .cv-inspector .param-input.with-step { gap: 2px; }
+        /* focused: no outlines around cards, group header looks like tabs */
+        .group-block { border: none; background: var(--bg-panel); }
+        .group-block.enc, .group-block.fad { border-top: none; }
+        .group-block .control-card, .cv-inspector .control-card { border: none; background: transparent; }
+        .group-block .control-card:hover { border: none; }
+        .group-block .control-header { border-bottom: none; }
+        .gb-head { background: var(--bg-dark); border-bottom: none; padding: 0.5rem 0.75rem 0; gap: 0.6rem; align-items: flex-end; }
+        .group-block.collapsed .gb-head { padding-bottom: 0.4rem; }
+        .gb-label { padding-bottom: 0.45rem; margin-right: 0.4rem; }
+        .gb-tabs { flex: none; gap: 2px; flex-wrap: nowrap; }
+        .gb-tab { border: none; border-radius: 6px 6px 0 0; background: transparent; padding: 0.4rem 0.8rem; }
+        .gb-tab:hover { background: var(--bg-input); }
+        .gb-tab.active { background: var(--bg-panel); color: var(--accent); }
+        .gb-tab.active .gb-num { color: var(--accent); }
+        .gb-head > .gb-chip { margin-bottom: 0.5rem; }
+        .gb-ico { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.15rem; line-height: 1; padding: 0 0.25rem 0.4rem; font-family: inherit; }
+        .gb-ico:hover, .gb-ico.has { color: var(--accent); }
+        .gb-ico.gb-collapse { margin-left: auto; font-size: 1.5rem; padding-right: 0; }
+        .cs-opts { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.8rem 0 1rem; font-size: 0.85rem; }
+        .cs-opts label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .gb-edit { display: none; grid-template-columns: 5rem 12rem minmax(0, 1fr); gap: 0.5rem; padding: 0.6rem 0.75rem 0; }
+        .group-block.editing .gb-edit { display: grid; }
+        .group-block.collapsed .gb-edit { display: none; }
+        .gb-edit input, .gb-edit textarea { background: var(--bg-input); color: var(--text); border: none; font-family: var(--font-mono); font-size: 0.78rem; padding: 0.35rem 0.5rem; text-align: center; min-width: 0; }
+        .gb-edit textarea { text-align: left; resize: vertical; }
+        .gb-edit input:focus, .gb-edit textarea:focus { outline: 1px solid var(--accent); }
+        /* inspector description stays open */
+        .cv-inspector .ctl-note { grid-template-columns: 1fr; }
+        .cv-inspector .ctl-note textarea { background: var(--bg-input); border: none; }
+        .group-block .fader9-card, .cv-inspector .fader9-card { border: none; background: transparent; padding: 0.6rem 0.5rem; margin-top: 0.6rem; overflow: hidden; min-width: 0; }
+        .cv-inspector .fader9-card { margin-top: 0; padding: 0; }
+        .group-block .fader9-card .control-header, .cv-inspector .fader9-card .control-header { background: none; margin: 0 0 0.4rem; padding: 0 0 0.3rem; border-bottom: none; }
+        .group-block .fader9-card .param-row, .cv-inspector .fader9-card .param-row { margin: 0 0 0.3rem; min-height: 0; height: auto; }
+        .group-block .fader9-card .param-input { margin: 0; }
     </style>
 </head>
 <body>
@@ -3192,10 +3262,18 @@
                 <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
                 Fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne</div>
         </div>
-        <div class="view-toggle">
-            <button class="view-btn" id="controllerViewBtn" onclick="setView('controller')">Controller</button>
-            <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
-            <button class="view-btn" id="overviewBtn" onclick="setView('overview')">Overview</button>
+        <div class="center-col">
+            <div class="proj-row">
+                <span class="proj-name empty" id="projName" onclick="projRename()" title="Rename the project">Untitled project</span>
+                <button type="button" class="proj-pencil" id="projDescBtn" onclick="projDescToggle(event)" title="Project description">&#9998;</button>
+                <div class="proj-pop" id="projDescPop"><textarea id="projDescIn" rows="5" maxlength="1000" placeholder="Project description"
+                    oninput="noteSet('project','','description',this.value); renderNotesBar()"></textarea></div>
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn" id="controllerViewBtn" onclick="setView('controller')">Controller</button>
+                <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
+                <button class="view-btn" id="overviewBtn" onclick="setView('overview')">Overview</button>
+            </div>
         </div>
         <div class="file-actions">
             <input type="file" id="sysexInput" accept=".syx" class="hidden-input">
@@ -3217,6 +3295,7 @@
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="exportBtn" onclick="exportSysEx(); closeProjectDropdown();">Export SysEx (all)...</div>
                     <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeProjectDropdown();">Export SysEx (this setup)...</div>
+                    <div class="import-dropdown-item" id="cheatSheetItem" onclick="showCheatSheetDialog(); closeProjectDropdown();">Cheat sheet...</div>
                     <div class="import-dropdown-item" id="exportJsonBtn" onclick="exportJSON(); closeProjectDropdown();">Export JSON...</div>
                 </div>
             </div>
@@ -3258,6 +3337,13 @@
             </label>
         </div>
         
+        <div class="nav-section setup-note" id="setupNote">
+            <input type="text" id="setupLabelIn" placeholder="Setup label" maxlength="24" title="Saved in the project, not on the UC4"
+                oninput="noteSet('setup','','label',this.value)">
+            <textarea id="setupDescIn" rows="1" placeholder="Setup description" maxlength="1000" title="Saved in the project, not on the UC4"
+                oninput="noteSet('setup','','description',this.value); autoGrow(this)"></textarea>
+        </div>
+
         <div class="nav-section">
             <span class="nav-label">Encoder Grp</span>
             <div class="group-tabs" id="encoderGroupTabs">
@@ -3275,10 +3361,6 @@
         </div>
     </nav>
     
-    <details class="notes-bar" id="notesBar" open>
-        <summary title="Names and descriptions are saved in the project file, not on the UC4">Notes</summary>
-        <div class="notes-grid" id="notesGrid"></div>
-    </details>
     
     <div class="batch-bar" id="batchBar" style="display:none"></div>
     <div class="batch-bar" id="ovBar" style="display:none"></div>
@@ -6279,6 +6361,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Apply reverse
             applyAction(action, true);
+            if (action.type === 'note' && document.activeElement && document.activeElement.blur) document.activeElement.blur();
             
             redoStack.push(action);
             updateUndoRedoUI();
@@ -6296,6 +6379,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Apply forward
             applyAction(action, false);
+            if (action.type === 'note' && document.activeElement && document.activeElement.blur) document.activeElement.blur();
             
             undoStack.push(action);
             updateUndoRedoUI();
@@ -6385,6 +6469,15 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                         break;
                     }
                     
+                    case 'note': {
+                        const cs = currentSetup;
+                        currentSetup = action.setupIdx;
+                        try { noteSetRaw(action.scope, action.key, action.field, reverse ? action.before : action.after); }
+                        finally { currentSetup = cs; }
+                        updateSetupDropdownLabels();
+                        break;
+                    }
+
                     case 'group-name': {
                         const values = reverse ? action.beforeValues : action.afterValues;
                         setGroupName(action.setupIdx, action.group, values);
@@ -12188,7 +12281,7 @@ ${description}
             const bag = noteBag(scope, false);
             return (bag && bag[key] && bag[key][field]) || '';
         }
-        function noteSet(scope, key, field, value) {
+        function noteSetRaw(scope, key, field, value) {
             value = cleanStr(String(value), field === 'label' ? 60 : 1000);
             if (scope === 'project') projectMeta[field] = value;
             else if (scope === 'setup' && field === 'label') {
@@ -12209,32 +12302,74 @@ ${description}
             }
             try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
         }
+        function noteSet(scope, key, field, value) {
+            const setup = currentSetup;
+            const before = noteGet(scope, key, field);
+            noteSetRaw(scope, key, field, value);
+            const after = noteGet(scope, key, field);
+            if (before === after) return;
+            const last = undoStack[undoStack.length - 1];
+            if (last && last.type === 'note' && last.scope === scope && last.key === key && last.field === field
+                && last.setupIdx === setup && Date.now() - last.timestamp < 1500) {
+                last.after = after; last.timestamp = Date.now();
+                return;
+            }
+            recordUndo({ type: 'note', description: `Edit ${field === 'label' ? 'label' : 'description'}`, scope, key, field, setupIdx: setup, before, after });
+        }
         function noteShortName(i) {
             const st = metaSetup(i, false);
             return st && st.name ? truncateText(st.name, 22) : '';
         }
 
+        function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 120) + 'px'; }
         function renderNotesBar() {
-            const grid = document.getElementById('notesGrid');
-            if (!grid || !rawBuffer) return;
-            if (grid.contains(document.activeElement)) return;   // do not rebuild while typing
-            const cols = [
-                { scope: 'project', key: '', title: 'Project (whole device)' },
-                { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
-                { scope: 'enc', key: String(encoderGroup), title: `Encoders & Enc.Buttons, group ${encoderGroup + 1}` },
-                { scope: 'fad', key: String(faderGroup), title: `Faders & Green Buttons, group ${faderGroup + 1}` }
-            ];
-            grid.innerHTML = cols.map(c => `
-                <div class="notes-col">
-                    <div class="notes-title" title="${escapeHtml(c.title)}${c.scope === 'enc' ? ' - UC4 name: ' + escapeHtml(getGroupName(currentSetup, encoderGroup)) : c.scope === 'fad' ? ' - UC4 name: ' + escapeHtml(getGroupName(currentSetup, faderGroup)) : ''}">${escapeHtml(c.title)}</div>
-                    <input type="text" class="note-name" placeholder="Label" maxlength="${c.scope === 'setup' ? 24 : 60}" value="${escapeHtml(noteGet(c.scope, c.key, 'label'))}"
-                        oninput="noteSet('${c.scope}','${c.key}','label',this.value)">
-                    <textarea class="note-desc" placeholder="Description" rows="2" maxlength="1000"
-                        oninput="noteSet('${c.scope}','${c.key}','description',this.value)">${escapeHtml(noteGet(c.scope, c.key, 'description'))}</textarea>
-                </div>`).join('');
+            const nm = document.getElementById('projName');
+            if (nm && !nm.querySelector('input')) {
+                nm.textContent = projectMeta.label || 'Untitled project';
+                nm.classList.toggle('empty', !projectMeta.label);
+            }
+            const pd = document.getElementById('projDescIn');
+            if (pd && document.activeElement !== pd) pd.value = projectMeta.description || '';
+            const pb = document.getElementById('projDescBtn');
+            if (pb) pb.classList.toggle('has', !!projectMeta.description);
+            if (!rawBuffer) return;
+            const li = document.getElementById('setupLabelIn'), di = document.getElementById('setupDescIn');
+            if (li && document.activeElement !== li) li.value = noteGet('setup', '', 'label');
+            if (di && document.activeElement !== di) { di.value = noteGet('setup', '', 'description'); autoGrow(di); }
         }
+        function projRename() {
+            const nm = document.getElementById('projName');
+            if (!nm || nm.querySelector('input')) return;
+            const cur = projectMeta.label || '';
+            const input = document.createElement('input');
+            input.className = 'proj-ren'; input.maxLength = 60; input.value = cur; input.placeholder = 'Project name';
+            nm.textContent = ''; nm.appendChild(input);
+            input.focus(); input.select();
+            let done = false;
+            const finish = (save) => {
+                if (done) return; done = true;
+                if (save && input.value !== cur) noteSet('project', '', 'label', input.value.trim());
+                nm.textContent = '';
+                renderNotesBar();
+            };
+            input.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') finish(true); else if (e.key === 'Escape') finish(false); });
+            input.addEventListener('blur', () => finish(true));
+            input.addEventListener('click', (e) => e.stopPropagation());
+        }
+        function projDescToggle(e) {
+            e.stopPropagation();
+            const pop = document.getElementById('projDescPop');
+            pop.classList.toggle('open');
+            if (pop.classList.contains('open')) document.getElementById('projDescIn').focus();
+        }
+        document.addEventListener('click', (e) => {
+            const pop = document.getElementById('projDescPop');
+            if (pop && pop.classList.contains('open') && !pop.contains(e.target) && e.target.id !== 'projDescBtn') pop.classList.remove('open');
+        });
 
+        let cvInspBuilding = false;
         function attachCardNote(card, key) {
+            const open = cvInspBuilding;
             const name = noteGet('ctl', key, 'label'), desc = noteGet('ctl', key, 'description');
             const wrap = document.createElement('div');
             wrap.className = 'ctl-note';
@@ -12242,10 +12377,10 @@ ${description}
                 <input type="text" class="ctl-note-name" placeholder="label" maxlength="60" value="${escapeHtml(name)}"
                     title="Label (saved in the project, not on the UC4)"
                     oninput="noteSet('ctl','${key}','label',this.value)">
-                <button type="button" class="ctl-note-btn ${desc ? 'has' : ''}" title="Description"
-                    onclick="const t=this.nextElementSibling; t.style.display = t.style.display === 'none' ? 'block' : 'none'; if (t.style.display === 'block') t.focus();">&#9998;</button>
-                <textarea class="ctl-note-desc" rows="2" maxlength="1000" placeholder="Description" style="display:${desc ? 'block' : 'none'}"
-                    oninput="noteSet('ctl','${key}','description',this.value); this.previousElementSibling.classList.toggle('has', !!this.value)">${escapeHtml(desc)}</textarea>`;
+                ${open ? '' : `<button type="button" class="ctl-note-btn ${desc ? 'has' : ''}" title="Description"
+                    onclick="const t=this.nextElementSibling; t.style.display = t.style.display === 'none' ? 'block' : 'none'; if (t.style.display === 'block') t.focus();">&#9998;</button>`}
+                <textarea class="ctl-note-desc" rows="${open ? 3 : 2}" maxlength="1000" placeholder="Description" style="display:${(desc || open) ? 'block' : 'none'}"
+                    oninput="noteSet('ctl','${key}','description',this.value); const b=this.previousElementSibling; if (b && b.classList) b.classList.toggle('has', !!this.value)">${escapeHtml(desc)}</textarea>`;
             const header = card.querySelector('.control-header');
             if (header) header.insertAdjacentElement('afterend', wrap); else card.prepend(wrap);
         }
@@ -12312,12 +12447,14 @@ ${description}
             return project;
         }
 
+        function fileSafe(name, fallback) {
+            return String(name || '').trim().replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, '').replace(/\s+/g, '_') || fallback;
+        }
         function projectSave(kind) {
             if (!rawBuffer) return;
             let project;
             try { project = projectBuild(kind); } catch (e) { showToast('Cannot build project: ' + e.message, 'error'); return; }
-            const base = (project.label || (kind === 'device' ? 'uc4_project' : `uc4_setup_${currentSetup + 1}`))
-                .trim().replace(/[^\w\- ]+/g, '').replace(/\s+/g, '_') || 'uc4_project';
+            const base = fileSafe(project.label, kind === 'device' ? 'uc4_project' : `uc4_setup_${currentSetup + 1}`);
             promptFilename(base + '.uc4proj.json', kind === 'device' ? 'Save project (whole device)' : `Save Setup ${currentSetup + 1} as project`, (filename) => {
                 const text = JSON.stringify(project, null, 1);
                 downloadBytes(new TextEncoder().encode(text), filename);
@@ -12699,6 +12836,17 @@ ${description}
             return `<span class="gb-chips">${chips}</span>`;
         }
 
+        const gbEditing = { enc: false, fad: false };
+        function gbEditToggle(kind) {
+            gbEditing[kind] = !gbEditing[kind];
+            const b = document.querySelector(`.group-block.${kind}`);
+            if (b) b.classList.toggle('editing', gbEditing[kind]);
+        }
+        function gbGroupName(input, kind) {
+            const g = kind === 'enc' ? encoderGroup : faderGroup;
+            cvApplyRename(`g${currentSetup}${kind === 'enc' ? 'e' : 'f'}${g}`, input.value);
+            renderCurrentView();
+        }
         function buildGroupBlock(kind) {
             const isEnc = kind === 'enc';
             const active = isEnc ? encoderGroup : faderGroup;
@@ -12711,16 +12859,25 @@ ${description}
                 return `<button type="button" class="gb-tab ${g === active ? 'active' : ''}" onclick="${selFn}(${g})"
                     title="Group ${g + 1}, name on the UC4: ${escapeHtml(name)}"><span class="gb-num">${g + 1}</span>${escapeHtml(name)}</button>`;
             }).join('');
+            const gk = isEnc ? 'enc' : 'fad';
+            const gMeta = { label: noteGet(gk, String(active), 'label'), description: noteGet(gk, String(active), 'description') };
+            if (gbEditing[kind]) block.classList.add('editing');
             const head = document.createElement('div');
             head.className = 'gb-head';
             head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders &amp; Enc.Buttons' : 'Faders &amp; Green Buttons'}</div>
                 <div class="gb-tabs">${tabs}</div>
                 <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">All Chan</button>
-                <div class="gb-tools">
-                    <button type="button" onclick="showGroupNameEditor(currentSetup, ${isEnc ? 'encoderGroup' : 'faderGroup'})" title="Rename this group (4 characters, stored on the UC4)">&#9998;</button>
-                    <button type="button" class="gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>
-                </div>`;
+                <button type="button" class="gb-ico ${(gMeta.label || gMeta.description) ? 'has' : ''}" onclick="gbEditToggle('${kind}')" title="Group name, label and description">&#9998;</button>
+                <button type="button" class="gb-ico gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>`;
+            const edit = document.createElement('div');
+            edit.className = 'gb-edit';
+            edit.innerHTML = `<input type="text" class="gb-uc4" maxlength="4" value="${escapeHtml(getGroupName(currentSetup, active).trim())}" title="Name on the UC4 display (4 characters)" onchange="gbGroupName(this, '${kind}')">
+                <input type="text" maxlength="60" placeholder="Group label" value="${escapeHtml(gMeta.label)}" title="Saved in the project, not on the UC4"
+                    oninput="noteSet('${gk}','${active}','label',this.value)">
+                <textarea rows="2" maxlength="1000" placeholder="Group description" title="Saved in the project, not on the UC4"
+                    oninput="noteSet('${gk}','${active}','description',this.value)">${escapeHtml(gMeta.description)}</textarea>`;
             block.appendChild(head);
+            block.appendChild(edit);
             const body = document.createElement('div');
             body.className = 'gb-body';
             const section = (title, cls, inner, chips) => {
@@ -12738,10 +12895,10 @@ ${description}
                 for (let i = 0; i < 8; i++) g2.appendChild(createPushCard(i));
                 body.appendChild(section('Enc.Buttons', 'push', g2, buildChips('push', encoderGroup, 8, false)));
             } else {
-                const g1 = document.createElement('div'); g1.className = 'gb-row9';
+                const g1 = document.createElement('div'); g1.className = 'gb-row8';
                 for (let i = 0; i < 8; i++) g1.appendChild(createFaderCard(i));
-                const sep = document.createElement('div'); sep.className = 'fader-sep'; g1.appendChild(sep);
-                g1.appendChild(createFader9Card());
+                const f9 = createFader9Card();
+                g1.appendChild(f9);
                 body.appendChild(section('Faders', 'faders', g1, buildChips('fader', faderGroup, 8, true)));
                 const g2 = document.createElement('div'); g2.className = 'gb-row8';
                 for (let i = 0; i < 8; i++) g2.appendChild(createGreenCard(i));
@@ -12822,12 +12979,13 @@ ${description}
                 ${text ? `<text x="${c}" y="${c + 3.5}" text-anchor="middle" style="fill:var(--text-dim);font-size:${Math.round(size * 0.26)}px;font-family:var(--font-mono)">${text}</text>` : ''}</svg>`;
         }
 
-        function cvSummary(type, g, idx) {
-            if (type === 'encoder') { const d = getEncoderData(currentSetup, g, idx); return `ch${d.channel} ${cvEncSummary(d)}`; }
-            if (type === 'push') { const d = getPushData(currentSetup, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
-            if (type === 'green') { const d = getGreenData(currentSetup, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
-            if (type === 'fader') { const d = getFaderData(currentSetup, g, idx); return `ch${d.channel} ${cvFaderSummary(d)}`; }
-            const d = getFader9Data(currentSetup, g); return `ch${d.channel} CC ${d.cc}`;
+        function cvSummary(type, g, idx, setup) {
+            const cs = setup == null ? currentSetup : setup;
+            if (type === 'encoder') { const d = getEncoderData(cs, g, idx); return `ch${d.channel} ${cvEncSummary(d)}`; }
+            if (type === 'push') { const d = getPushData(cs, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
+            if (type === 'green') { const d = getGreenData(cs, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
+            if (type === 'fader') { const d = getFaderData(cs, g, idx); return `ch${d.channel} ${cvFaderSummary(d)}`; }
+            const d = getFader9Data(cs, g); return `ch${d.channel} CC ${d.cc}`;
         }
         function cvDefaultName(type, idx) {
             return { encoder: `Encoder ${idx + 1}`, push: `Enc.Button ${idx + 1}`, green: `Green Button ${idx + 1}`, fader: `Fader ${idx + 1}`, fader9: 'Fader 9' }[type];
@@ -12843,7 +13001,7 @@ ${description}
             const sum = cvSummary(type, g, idx);
             let visual;
             if (type === 'encoder') visual = cvKnobSvg(46, 22, idx + 1);
-            else if (type === 'push') visual = cvKnobSvg(26, 14, '');
+            else if (type === 'push') visual = cvKnobSvg(32, 16, '');
             else if (type === 'green') visual = `<div class="cv-green"></div>`;
             else if (type === 'fader') visual = `<div class="cv-fader"><i>${idx + 1}</i></div>`;
             else visual = `<div class="cv-hfader"><span class="cv-hcap"></span></div>`;
@@ -12901,26 +13059,24 @@ ${description}
             const node = cv.node ? cv.node.kind : null;
             const arrow = (id, has) => has ? `<span class="cv-arrow" onclick="event.stopPropagation(); cvToggle('${id}')">${cv.open.has(id) ? '&#9662;' : '&#9656;'}</span>` : '<span class="cv-arrow"></span>';
             const pad = (d) => `style="padding-left:${0.5 + d * 0.9}rem"`;
-            let h = `<div class="cv-node ${node === 'project' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('root')">${arrow('root', true)}<span class="cv-txt" data-id="root" title="Click twice to rename">Project${projectMeta.label ? ` <span class="cv-lab">${escapeHtml(projectMeta.label)}</span>` : ''}</span></div>`;
-            if (cv.open.has('root')) {
-                for (let i = 0; i < 18; i++) {
-                    const isCur = i === currentSetup;
-                    const lab = setupLabelShown(i);
-                    const sid = `s${i}`;
-                    h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(1)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt" data-id="${sid}" title="Click twice to rename">${lab ? `Setup ${i + 1} <span class="cv-lab">${escapeHtml(lab)}</span>` : escapeHtml(setupBaseName(i))}</span></div>`;
-                    if (!cv.open.has(sid)) continue;
-                    for (const [half, title, gcur] of [['e', 'Encoders &amp; Enc.Buttons', encoderGroup], ['f', 'Faders &amp; Green Buttons', faderGroup]]) {
-                        const fid = `s${i}${half}`;
-                        h += `<div class="cv-node" ${pad(2)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
-                        if (!cv.open.has(fid)) continue;
-                        for (let g = 0; g < 8; g++) {
-                            const active = isCur && g === gcur;
-                            const meta = metaSetup(i, false);
-                            const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
-                            const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
-                            const nm = getGroupName(i, g);
-                            h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(3)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
-                        }
+            let h = '';
+            for (let i = 0; i < 18; i++) {
+                const isCur = i === currentSetup;
+                const lab = setupLabelShown(i);
+                const sid = `s${i}`;
+                h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt" data-id="${sid}" title="Click twice to rename">${lab ? `Setup ${i + 1} <span class="cv-lab">${escapeHtml(lab)}</span>` : escapeHtml(setupBaseName(i))}</span></div>`;
+                if (!cv.open.has(sid)) continue;
+                for (const [half, title, gcur] of [['e', 'Encoders &amp; Enc.Buttons', encoderGroup], ['f', 'Faders &amp; Green Buttons', faderGroup]]) {
+                    const fid = `s${i}${half}`;
+                    h += `<div class="cv-node" ${pad(1)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
+                    if (!cv.open.has(fid)) continue;
+                    for (let g = 0; g < 8; g++) {
+                        const active = isCur && g === gcur;
+                        const meta = metaSetup(i, false);
+                        const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
+                        const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
+                        const nm = getGroupName(i, g);
+                        h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(2)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
                     }
                 }
             }
@@ -12937,12 +13093,16 @@ ${description}
             }
             if (cv.sel) {
                 const t = cv.sel.type, i = cv.sel.idx;
-                const card = t === 'encoder' ? createEncoderCard(i) : t === 'push' ? createPushCard(i)
-                           : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
+                cvInspBuilding = true;
+                let card;
+                try {
+                    card = t === 'encoder' ? createEncoderCard(i) : t === 'push' ? createPushCard(i)
+                         : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
+                } finally { cvInspBuilding = false; }
                 el.appendChild(card);
                 return;
             }
-            const kind = cv.node ? cv.node.kind : 'setup';
+            const kind = cv.node && cv.node.kind !== 'project' ? cv.node.kind : 'setup';
             const spec = {
                 project: { scope: 'project', key: '', title: 'Project' },
                 setup: { scope: 'setup', key: '', title: setupBaseName(currentSetup) },
@@ -13602,6 +13762,140 @@ ${description}
         
         ensureFactoryBuf();
         initializeEditor();
+
+        // ============================================================
+        // Cheat sheets: printable pages with the device drawing and a settings list
+        // ============================================================
+        const CS_CSS = `
+            @page { size: A4 landscape; margin: 8mm; }
+            :root { --bg-input: #eceff1; --text-dim: #555; --green-btn: #2e9e64; }
+            * { box-sizing: border-box; }
+            body { margin: 0; font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace; color: #111; background: #fff; }
+            .page { height: 192mm; display: grid; grid-template-columns: 64mm minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 4mm 8mm; page-break-after: always; overflow: hidden; }
+            .page:last-child { page-break-after: auto; }
+            .pg-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 5mm; border-bottom: 0.3mm solid #999; padding-bottom: 2mm; }
+            .pg-head b { font-size: 16px; }
+            .pg-head span { color: #666; }
+            .pg-head .proj { margin-left: auto; }
+            .side { overflow: hidden; }
+            .side h4 { margin: 0 0 1mm; font-size: 11px; }
+            .side h4 small { color: #666; font-weight: 400; }
+            .side p { margin: 0 0 3mm; color: #333; white-space: pre-wrap; }
+            .side ul { list-style: none; margin: 0; padding: 0; }
+            .side li { margin-bottom: 1.2mm; }
+            .side li i { font-style: normal; font-weight: 700; }
+            .dev { display: flex; flex-direction: column; gap: 3mm; }
+            .half-title { color: #666; font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; }
+            .row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 2mm; }
+            .row.one { display: flex; justify-content: center; }
+            .row.one .el { width: 12.5%; min-width: 24mm; }
+            .el { text-align: center; min-width: 0; }
+            .el svg { display: block; margin: 0 auto 1mm; }
+            .nm { font-weight: 700; word-break: break-word; }
+            .sm { color: #666; font-size: 9px; }
+            .green { width: 30px; height: 30px; border-radius: 50%; background: var(--green-btn); margin: 3px auto 5px; }
+            .fader { width: 12px; height: 58px; margin: 14px auto 6px; background: var(--bg-input); border: 1px solid #aaa; border-radius: 6px; position: relative; }
+            .fader::after { content: ''; position: absolute; left: -9px; right: -9px; top: 36%; height: 14px; background: #666; border-radius: 3px; }
+            .fader i { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: 9px; font-style: normal; color: #888; margin-bottom: 1px; }
+            .hfader { width: 64px; height: 12px; margin: 8px auto 12px; background: var(--bg-input); border: 1px solid #aaa; border-radius: 6px; position: relative; }
+            .hfader::after { content: ''; position: absolute; top: -5px; bottom: -5px; left: 55%; width: 12px; background: #666; border-radius: 3px; }
+            hr { border: none; border-top: 0.3mm solid #ccc; margin: 1mm 0; width: 100%; }
+            .bar { position: sticky; top: 0; padding: 6px 10px; background: #222; color: #fff; font: 12px system-ui; }
+            .bar button { margin-right: 8px; }
+            @media print { .bar { display: none; } }`;
+
+        function csEsc(t) { return escapeHtml(String(t == null ? '' : t)); }
+        function csCtl(setup, type, g, idx) {
+            const st = metaSetup(setup, false);
+            const c = st && st.ctl && st.ctl[ctlKey(type, g, idx)];
+            return { label: c ? c.label : '', desc: c ? c.description : '' };
+        }
+        function csEl(setup, type, g, idx) {
+            const c = csCtl(setup, type, g, idx);
+            let visual;
+            if (type === 'encoder') visual = cvKnobSvg(54, 22, idx + 1);
+            else if (type === 'push') visual = cvKnobSvg(34, 16, '');
+            else if (type === 'green') visual = '<div class="green"></div>';
+            else if (type === 'fader') visual = `<div class="fader"><i>${idx + 1}</i></div>`;
+            else visual = '<div class="hfader"></div>';
+            return `<div class="el">${visual}<div class="nm">${csEsc(c.label || cvDefaultName(type, idx))}</div><div class="sm">${csEsc(cvSummary(type, g, idx, setup).trim())}</div></div>`;
+        }
+        function csGroupMeta(setup, kind, g) {
+            const st = metaSetup(setup, false);
+            const bag = st ? st[kind] : null;
+            const m = bag && bag[String(g)];
+            return { label: m ? m.label : '', desc: m ? m.description : '' };
+        }
+        function csPage(setup, eg, fg, projName) {
+            const st = metaSetup(setup, false);
+            const setupLab = setupLabelShown(setup);
+            const em = csGroupMeta(setup, 'enc', eg), fm = csGroupMeta(setup, 'fad', fg);
+            const side = [];
+            if (st && st.description) side.push(`<p>${csEsc(st.description)}</p>`);
+            side.push(`<h4>Encoders &amp; Enc.Buttons<br><small>group ${eg + 1} ${csEsc(getGroupName(setup, eg))}${em.label ? ' - ' + csEsc(em.label) : ''}</small></h4>${em.desc ? `<p>${csEsc(em.desc)}</p>` : '<p></p>'}`);
+            side.push(`<h4>Faders &amp; Green Buttons<br><small>group ${fg + 1} ${csEsc(getGroupName(setup, fg))}${fm.label ? ' - ' + csEsc(fm.label) : ''}</small></h4>${fm.desc ? `<p>${csEsc(fm.desc)}</p>` : '<p></p>'}`);
+            const notes = [];
+            const add = (type, g, n) => { for (let i = 0; i < n; i++) { const c = csCtl(setup, type, g, i); if (c.desc) notes.push(`<li><i>${csEsc(c.label || cvDefaultName(type, i))}</i> ${csEsc(c.desc)}</li>`); } };
+            add('encoder', eg, 8); add('push', eg, 8); add('fader', fg, 8); add('fader9', fg, 1); add('green', fg, 8);
+            if (notes.length) side.push(`<ul>${notes.join('')}</ul>`);
+            const row = (type, g, n) => `<div class="row">${Array.from({ length: n }, (_, i) => csEl(setup, type, g, i)).join('')}</div>`;
+            const encCols = Array.from({ length: 8 }, (_, i) => `<div>${csEl(setup, 'encoder', eg, i)}${csEl(setup, 'push', eg, i)}</div>`).join('');
+            return `<section class="page">
+                <div class="pg-head"><b>${csEsc(setupBaseName(setup))}${setupLab ? ' - ' + csEsc(setupLab) : ''}</b><span>group ${eg + 1} / ${fg + 1}</span>${projName ? `<span class="proj">${csEsc(projName)}</span>` : ''}</div>
+                <div class="side">${side.join('')}</div>
+                <div class="dev">
+                    <div class="half-title">Encoders &amp; Enc.Buttons - ${eg + 1} ${csEsc(getGroupName(setup, eg))}</div>
+                    <div class="row">${encCols}</div>
+                    <hr>
+                    <div class="half-title">Faders &amp; Green Buttons - ${fg + 1} ${csEsc(getGroupName(setup, fg))}</div>
+                    ${row('fader', fg, 8)}
+                    <div class="row one">${csEl(setup, 'fader9', fg, 0)}</div>
+                    ${row('green', fg, 8)}
+                </div></section>`;
+        }
+        function csPages(scope) {
+            if (scope === 'screen') return [{ setup: currentSetup, eg: encoderGroup, fg: faderGroup }];
+            const setups = scope === 'all' ? Array.from({ length: 18 }, (_, i) => i) : [currentSetup];
+            const out = [];
+            for (const s of setups) for (let g = 0; g < 8; g++) out.push({ setup: s, eg: g, fg: g });
+            return out;
+        }
+        function csBuildHtml(scope, withBar) {
+            const name = projectMeta.label || '';
+            const pages = csPages(scope).map(pg => csPage(pg.setup, pg.eg, pg.fg, name)).join('');
+            return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${csEsc(name || 'UC4')} - cheat sheet</title><style>${CS_CSS}</style></head><body>
+                ${withBar ? '<div class="bar"><button onclick="window.print()">Print / Save as PDF</button></div>' : ''}${pages}</body></html>`;
+        }
+        function showCheatSheetDialog() {
+            if (!rawBuffer) { showToast('Load data first', 'warning'); return; }
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.style.zIndex = 10004;
+            overlay.innerHTML = `<div class="modal-dialog"><h3>Cheat sheet</h3>
+                <div class="cs-opts">
+                    <label><input type="radio" name="csScope" value="screen" checked> Current screen (1 page)</label>
+                    <label><input type="radio" name="csScope" value="setup"> This setup (8 pages)</label>
+                    <label><input type="radio" name="csScope" value="all"> All setups (144 pages)</label>
+                </div>
+                <div class="modal-actions"><button class="btn" id="csClose">Close</button><button class="btn" id="csDl">Download HTML</button><button class="btn btn-primary" id="csPrint">Print / PDF</button></div></div>`;
+            document.body.appendChild(overlay);
+            const scope = () => overlay.querySelector('input[name="csScope"]:checked').value;
+            overlay.querySelector('#csClose').onclick = () => overlay.remove();
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+            overlay.querySelector('#csDl').onclick = () => {
+                const sc = scope();
+                const base = fileSafe(projectMeta.label, 'uc4') + '_cheatsheet' + (sc === 'screen' ? `_setup${currentSetup + 1}` : sc === 'setup' ? `_setup${currentSetup + 1}_all` : '_all');
+                downloadBytes(new TextEncoder().encode(csBuildHtml(sc, true)), base + '.html');
+                overlay.remove();
+            };
+            overlay.querySelector('#csPrint').onclick = () => {
+                const w = window.open('', '_blank');
+                if (!w) { showToast('The browser blocked the new window', 'error'); return; }
+                w.document.open(); w.document.write(csBuildHtml(scope(), true)); w.document.close();
+                setTimeout(() => { try { w.print(); } catch (e) {} }, 400);
+                overlay.remove();
+            };
+        }
     </script>
 </body>
 </html>
