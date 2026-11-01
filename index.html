@@ -3103,6 +3103,68 @@
         #ovBar .bb-head { flex-wrap: wrap; }
         #ovBar label { display: flex; align-items: center; gap: 0.3rem; color: var(--text-dim); font-size: 0.75rem; }
         #ovBar input { font-family: inherit; font-size: 0.75rem; background: var(--bg-input); color: var(--text); border: 1px solid var(--border); padding: 0.25rem 0.4rem; width: 3.6rem; }
+    
+        /* ---- polish ---- */
+        .logo-wrap { position: relative; }
+        .logo { cursor: default; text-decoration: none; }
+        .logo-pop { display: none; position: absolute; top: 100%; left: 0; z-index: 200; margin-top: 0.3rem; min-width: 14rem; padding: 0.7rem 0.9rem; background: var(--bg-panel); border: 1px solid var(--border); font-size: 0.75rem; line-height: 1.7; color: var(--text-dim); white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+        .logo-wrap:hover .logo-pop, .logo-pop:hover { display: block; }
+        .logo-pop a { color: var(--text); text-decoration: none; }
+        .logo-pop a:hover { color: var(--accent); }
+        .file-actions { align-items: flex-start; }
+        .file-actions > .btn-divider { align-self: flex-start; margin-top: 0.4rem; }
+        .act-main { display: flex; flex-direction: column; gap: 0.2rem; }
+        .act-row { display: flex; gap: 0.5rem; align-items: center; }
+        .mod-note { height: 1.1rem; line-height: 1.1rem; font-size: 0.72rem; color: var(--warning); white-space: nowrap; }
+        .status-bar { bottom: 0; }
+        @media (min-width: 641px) { .status-bar { bottom: 0; z-index: 51; } }
+        .batch-bar { bottom: 39px; }
+        .has-tooltip { border-bottom: none; }
+        .param-input input, .param-input select, .ctl-note input, .cv-ins-field input { text-align: center; text-align-last: center; }
+        .param-input select { text-align: center; }
+        .cv-lab-in { border-bottom-color: transparent; }
+        .cv-lab-in:hover { border-color: var(--border-light); background: var(--bg-input); }
+        .cv-tree, .cv-inspector { border: none; background: transparent; }
+        .cv-inspector .control-card { border: none; padding: 0; background: transparent; }
+        .cv-inspector .control-header { border-bottom: none; }
+        .cv-ins-title { color: var(--text); text-transform: none; letter-spacing: 0; font-size: 0.9rem; font-weight: 700; }
+        .cv-ins-note { color: var(--text-dim); font-size: 0.8rem; }
+        .cv-ren { width: 100%; font-family: var(--font-mono); font-size: 0.75rem; background: var(--bg-input); color: var(--text); border: 1px solid var(--accent); padding: 0.1rem 0.3rem; }
+        .cv-marquee { position: absolute; border: 1px dashed var(--accent); background: rgba(0, 212, 170, 0.1); pointer-events: none; z-index: 5; }
+        .cv-device { position: relative; user-select: none; }
+        .cv-row.one { display: flex; justify-content: center; }
+        .cv-row.one .cv-el { width: 12.5%; min-width: 96px; }
+        .cv-hfader { width: 64px; height: 12px; margin: 0.9rem auto 0.9rem; }
+        .cv-hcap { left: 55%; width: 12px; top: -5px; bottom: -5px; }
+        .cv-green { box-shadow: none; border: none; }
+        .cv-el.sel { border-color: var(--accent); }
+        /* Overview cell states: factory = quiet, saved = clear, changed = bluish */
+        .ov-table td.ov-cell.st-factory { color: var(--text-muted); }
+        .ov-table td.ov-cell.st-saved { color: var(--text); background: var(--bg-input); }
+        .ov-table td.ov-cell.st-fresh { color: var(--text); background: rgba(90, 160, 255, 0.2); }
+        html[data-theme="light"] .ov-table td.ov-cell.st-fresh { background: rgba(60, 130, 230, 0.2); }
+        .ov-table td.ov-cell.st-factory .overview-cell { color: inherit; }
+        .ov-legend { margin-left: auto; display: flex; gap: 0.9rem; font-size: 0.7rem; color: var(--text-dim); align-items: center; }
+        .ov-legend i { display: inline-block; width: 0.8rem; height: 0.8rem; margin-right: 0.3rem; vertical-align: -0.1rem; border: 1px solid var(--border-light); }
+        .ov-legend .l-fac { background: var(--bg-panel); }
+        .ov-legend .l-sav { background: var(--bg-input); }
+        .ov-legend .l-new { background: rgba(90, 160, 255, 0.35); }
+        
+        /* header: two columns, the notes live under their buttons */
+        .act-main { display: grid; grid-template-columns: 8.2rem auto; gap: 0.2rem 0.5rem; align-items: center; }
+        .act-row { display: contents; }
+        .act-main .import-dropdown, .act-main .import-dropdown-btn { width: 100%; }
+        #deviceToggle .view-btn { width: 7.4rem; text-align: center; }
+        .mod-note { height: 1.5rem; line-height: 1.5rem; }
+        .act-main .device-status { display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; padding: 0 0.5rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+        /* no bottom status bar: the unsaved note and the connection status live in the header */
+        .status-bar { display: none !important; }
+        .batch-bar { bottom: 0; }
+        @media (max-width: 640px) { .batch-bar { bottom: 0; } }
+        .main-content { padding-bottom: 24px; }
+        body.batch-open .main-content { padding-bottom: calc(24px + var(--batch-h, 0px)); }
+        .cv-ins-cap { color: var(--text-dim); font-size: 0.72rem; margin-bottom: 0.2rem; }
     </style>
 </head>
 <body>
@@ -3124,7 +3186,12 @@
     </div>
     
     <header class="header">
-        <div class="logo">UC4 <span>Mom</span></div>
+        <div class="logo-wrap">
+            <div class="logo">UC4 <span>Mom</span></div>
+            <div class="logo-pop">UC4 Mom v<span id="versionDisplay">1.2.0</span><br>
+                <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
+                Fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne</div>
+        </div>
         <div class="view-toggle">
             <button class="view-btn" id="controllerViewBtn" onclick="setView('controller')">Controller</button>
             <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
@@ -3133,6 +3200,9 @@
         <div class="file-actions">
             <input type="file" id="sysexInput" accept=".syx" class="hidden-input">
             <input type="file" id="jsonInput" accept=".json" class="hidden-input">
+            <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
+            <div class="act-main">
+                <div class="act-row">
             <div class="import-dropdown" id="projectDropdown">
                 <button class="btn import-dropdown-btn" onclick="toggleProjectDropdown(event)">Project</button>
                 <div class="import-dropdown-menu">
@@ -3143,17 +3213,20 @@
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeProjectDropdown();" title="All 18 setups or one setup">Import SysEx...</div>
                     <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeProjectDropdown();">Import JSON...</div>
-                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">New setup from Library...</div>
+                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">Import Setup from Library...</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="exportBtn" onclick="exportSysEx(); closeProjectDropdown();">Export SysEx (all)...</div>
                     <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeProjectDropdown();">Export SysEx (this setup)...</div>
                     <div class="import-dropdown-item" id="exportJsonBtn" onclick="exportJSON(); closeProjectDropdown();">Export JSON...</div>
                 </div>
             </div>
-            <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
             <div class="view-toggle" id="deviceToggle">
                 <button class="view-btn" id="downloadBtn" onclick="openReceiveDialog()" title="Get setups from the UC4">Download</button>
                 <button class="view-btn" id="uploadBtn" onclick="openUploadDialog()" title="Send setups to the UC4">Upload</button>
+            </div>
+                </div>
+                <div class="mod-note" id="modNote"></div>
+                <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)">UC4: not connected</div>
             </div>
             <span class="btn-divider"></span>
             <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">Undo</button>
@@ -3179,10 +3252,9 @@
         </div>
         
         <div class="nav-section">
-            <label class="link-groups-toggle" title="Change both groups together">
+            <label class="link-groups-toggle" title="When on, picking a group on one half picks the same group number on the other half">
                 <input type="checkbox" id="linkGroupsCheckbox" onchange="toggleLinkGroups(this.checked)">
-                <span class="link-icon">🔗</span>
-                <span class="nav-label">Link</span>
+                <span class="nav-label">Link groups</span>
             </label>
         </div>
         
@@ -3219,13 +3291,7 @@
         </div>
     </main>
     
-    <footer class="app-footer">
-        <span class="version-label">UC4 Mom v<span id="versionDisplay">1.2.0</span></span>
-        <span class="footer-sep">|</span>
-        <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a>
-        <span class="footer-sep">|</span>
-        <span>fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne</span>
-    </footer>
+
     
     <footer class="status-bar">
         <div class="status-indicator">
@@ -3233,7 +3299,6 @@
             <span id="statusText">No data loaded</span>
         </div>
         <div class="status-right">
-            <span id="deviceStatus" class="device-status idle" onclick="deviceStatusClick()" title="UC4 connection status (click for details)">UC4: not connected</span>
             <span id="fileInfo">--</span>
         </div>
     </footer>
@@ -5420,6 +5485,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function selectSetup(idx) {
             if (typeof batchSel !== 'undefined') batchSel.clear();
+            if (typeof cv !== 'undefined' && cv.multi) { cv.multi.clear(); cv.multiKeys.clear(); }
             currentSetup = parseInt(idx);
             updateGroupNames();
             updateLibrarySourceBadge();
@@ -5549,6 +5615,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
             // Store original for reset
             originalBuffer = new Uint8Array(rawBuffer);
+            markBaseline();
         
             // Clear previous session - new import is clean slate
             clearSession();
@@ -5626,6 +5693,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 // Clear session - user saved their work
                 clearSession();
                 isModified = false;
+                markBaseline();
+                if (currentView === 'overview') renderOverview();
                 updateStatus('loaded', 'Exported successfully');
                 showToast('SysEx exported', 'success');
             });
@@ -5791,7 +5860,15 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             const txt = document.getElementById('statusText');
             
             dot.className = 'status-dot ' + state;
+            const note = document.getElementById('modNote');
+            if (state === 'modified') {
+                if (note) note.textContent = 'Unsaved changes';
+                return;
+            }
+            if (note) note.textContent = '';
             txt.textContent = text;
+            const pb = document.querySelector('#projectDropdown .import-dropdown-btn');
+            if (pb) pb.title = text;
         }
         
         // ============================================================
@@ -6241,6 +6318,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 // Reset to imported SysEx
                 rawBuffer = new Uint8Array(originalBuffer);
                 sectionIndex = buildIndex(rawBuffer);
+                markBaseline();
                 
                 // Re-initialize factory templates
                 initFactoryTemplates();
@@ -6594,6 +6672,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Allow Reset to function after restore
             originalBuffer = new Uint8Array(rawBuffer);
+            markBaseline();
             
             // Restore UI state
             currentSetup = session.uiState.currentSetup || 0;
@@ -6620,6 +6699,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             // Build conflict map for restored setup
             rebuildConflictMap();
             
+            updateImportDropdownState();
             loadMetaFromStorage();
             setView(currentView);
             
@@ -8670,8 +8750,10 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             dialog.id = 'importSubdialog';
             
             dialog.innerHTML = `
-                <h4>Import JSON to Slot</h4>
+                <h4>Import to Slot</h4>
                 <div class="import-file-section">
+                    <button class="btn" onclick="closeImportSlotDialog(); closeSetupManager(); openLibraryModal();">Import Setup from Library...</button>
+                    <div style="margin: 0.6rem 0 0.4rem; color: var(--text-dim); font-size: 0.8rem;">or from a file</div>
                     <input type="file" id="importSlotFileInput" accept=".json" style="display: none;">
                     <button class="btn" onclick="document.getElementById('importSlotFileInput').click()">Choose JSON file...</button>
                     <span id="importFileName" style="margin-left: 0.5rem; color: var(--text-dim);">No file selected</span>
@@ -9252,7 +9334,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 const option = select.options[i + 1]; // +1 for the "--" placeholder
                 if (option) {
                     const label = labels.get(i);
-                    option.textContent = label ? `${i + 1}: ${label}` : `${i + 1}`;
+                    const shown = (i >= 16 && label === 'Ableton') ? '' : label;
+                    option.textContent = shown ? `Setup ${i + 1}: ${shown}` : setupBaseName(i);
                 }
             }
             if (!previewMode && typeof persistLabels === 'function') persistLabels();
@@ -9429,6 +9512,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             rawBuffer = bytes;
             sectionIndex = buildIndex(rawBuffer);
+            markBaseline();
             
             // Initialize factory templates from loaded SysEx
             // Must be done before any differsFromFactory checks
@@ -12081,6 +12165,13 @@ ${description}
             if (!projectMeta.setups[k] && create) projectMeta.setups[k] = cleanMetaSetup(null);
             return projectMeta.setups[k] || null;
         }
+        function setupBaseName(i) {
+            return i === 16 ? 'Setup 17 (Ableton 1-8)' : i === 17 ? 'Setup 18 (Ableton 9-16)' : `Setup ${i + 1}`;
+        }
+        function setupLabelShown(i) {
+            const l = setupLabels.get(i) || '';
+            return (i >= 16 && l === 'Ableton') ? '' : l;
+        }
         function ctlKey(type, group, idx) { return type === 'fader9' ? `fader9:${group}` : `${type}:${group}:${idx}`; }
         function noteBag(scope, create) {
             const st = metaSetup(currentSetup, create);
@@ -12230,6 +12321,7 @@ ${description}
             promptFilename(base + '.uc4proj.json', kind === 'device' ? 'Save project (whole device)' : `Save Setup ${currentSetup + 1} as project`, (filename) => {
                 const text = JSON.stringify(project, null, 1);
                 downloadBytes(new TextEncoder().encode(text), filename);
+                if (kind === 'device') { isModified = false; markBaseline(); updateStatus('loaded', 'Saved'); if (currentView === 'overview') renderOverview(); }
                 showToast(`Saved ${filename}`, 'success');
             });
         }
@@ -12389,7 +12481,7 @@ ${description}
             if (!el) return;
             const bar = document.getElementById('batchBar');
             if (!bar || bar.style.display === 'none') return;
-            const limit = window.innerHeight - 63 - bar.offsetHeight - 16;
+            const limit = window.innerHeight - bar.offsetHeight - 16;
             const r = el.getBoundingClientRect();
             if (r.bottom > limit) window.scrollBy(0, r.bottom - limit);
         }
@@ -12436,7 +12528,14 @@ ${description}
             }
             syncBatchUI();
         }
-        function batchClear() { batchSel.clear(); syncBatchUI(); }
+        function batchClear() {
+            batchSel.clear();
+            if (typeof cv !== 'undefined' && cv.multi) {
+                cv.multi.clear(); cv.multiKeys.clear();
+                if (document.getElementById('cvPanel')) { cvMarkSel(); cvRenderInspector(); }
+            }
+            syncBatchUI();
+        }
         function syncBatchUI() {
             document.querySelectorAll('.batch-cb').forEach(cb => { cb.checked = batchSel.has(cb.dataset.k); });
             document.querySelectorAll('.gb-chip[data-ctype]').forEach(ch => ch.classList.toggle('on', chipIsOn(ch)));
@@ -12526,7 +12625,8 @@ ${description}
                 </div>`;
             }).join('');
             bar.style.display = 'block';
-            bar.innerHTML = `<div class="bb-head"><b>${cells.length} selected</b>
+            const headTxt = (currentView === 'controller' && cv.multi.size >= 2) ? `${cv.multi.size} controls selected` : `${cells.length} selected`;
+            bar.innerHTML = `<div class="bb-head"><b>${headTxt}</b>
                 <button class="btn" onclick="batchClear()">Clear</button></div>${rows}`;
             document.documentElement.style.setProperty('--batch-h', bar.offsetHeight + 'px');
             document.body.classList.add('batch-open');
@@ -12706,7 +12806,7 @@ ${description}
             return false;
         }
 
-        // Knob with a shallow knurled edge (encoder cap profile)
+        // Knob with a shallow knurled edge (the profile of an encoder cap)
         function cvKnobSvg(size, teeth, text) {
             const c = size / 2, rOut = c - 1.5, rIn = rOut - Math.max(1.4, size * 0.05);
             const pts = [];
@@ -12717,10 +12817,8 @@ ${description}
                     pts.push(`${(c + r * Math.sin(a)).toFixed(1)},${(c - r * Math.cos(a)).toFixed(1)}`);
                 }
             }
-            const cap = rIn - size * 0.12;
             return `<svg class="cv-knob" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
                 <polygon points="${pts.join(' ')}" style="fill:var(--bg-input);stroke:var(--text-dim);stroke-width:1"/>
-                <circle cx="${c}" cy="${c}" r="${cap}" style="fill:var(--bg-control);stroke:var(--border-light);stroke-width:1"/>
                 ${text ? `<text x="${c}" y="${c + 3.5}" text-anchor="middle" style="fill:var(--text-dim);font-size:${Math.round(size * 0.26)}px;font-family:var(--font-mono)">${text}</text>` : ''}</svg>`;
         }
 
@@ -12730,6 +12828,13 @@ ${description}
             if (type === 'green') { const d = getGreenData(currentSetup, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
             if (type === 'fader') { const d = getFaderData(currentSetup, g, idx); return `ch${d.channel} ${cvFaderSummary(d)}`; }
             const d = getFader9Data(currentSetup, g); return `ch${d.channel} CC ${d.cc}`;
+        }
+        function cvDefaultName(type, idx) {
+            return { encoder: `Encoder ${idx + 1}`, push: `Enc.Button ${idx + 1}`, green: `Green Button ${idx + 1}`, fader: `Fader ${idx + 1}`, fader9: 'Fader 9' }[type];
+        }
+
+        function cvIsSelected(type, idx) {
+            return (cv.sel && cv.sel.type === type && cv.sel.idx === idx) || cv.multi.has(`${type}|${idx}`);
         }
 
         function cvElHtml(type, idx, extraClass) {
@@ -12742,20 +12847,17 @@ ${description}
             else if (type === 'green') visual = `<div class="cv-green"></div>`;
             else if (type === 'fader') visual = `<div class="cv-fader"><i>${idx + 1}</i></div>`;
             else visual = `<div class="cv-hfader"><span class="cv-hcap"></span></div>`;
-            const sel = cv.sel && cv.sel.type === type && cv.sel.idx === idx ? ' sel' : '';
-            const bs = cvHasBatch(type, idx) ? ' bsel' : '';
-            return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs}" data-type="${type}" data-idx="${idx}" onclick="cvSelectEl('${type}', ${idx})" title="${escapeHtml(sum)}">
+            const sel = cvIsSelected(type, idx) ? ' sel' : '';
+            const bs = cvHasBatch(type, idx) && !cv.multi.size ? ' bsel' : '';
+            return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs}" data-type="${type}" data-idx="${idx}" onclick="cvElClick(event, '${type}', ${idx})" title="${escapeHtml(cvDefaultName(type, idx) + ' - ' + sum)}">
                 ${visual}
-                <input type="text" class="cv-lab-in" maxlength="60" placeholder="${escapeHtml(sum)}" value="${escapeHtml(label)}"
-                    onclick="event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})">
-                <div class="cv-sum" ${label ? '' : 'hidden'}>${escapeHtml(sum)}</div></div>`;
+                <input type="text" class="cv-lab-in" maxlength="60" placeholder="${escapeHtml(cvDefaultName(type, idx))}" value="${escapeHtml(label)}"
+                    onclick="event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})"></div>`;
         }
 
         function cvLabelInput(input, type, idx) {
             const g = cvGroupOf(type);
             noteSet('ctl', ctlKey(type, g, idx), 'label', input.value);
-            const sum = input.parentElement.querySelector('.cv-sum');
-            if (sum) sum.hidden = !input.value;
             const ins = document.querySelector(`#cvInspector .control-card[data-ctype="${type}"][data-idx="${idx}"] .ctl-note-name`);
             if (ins) ins.value = input.value;
         }
@@ -12780,7 +12882,7 @@ ${description}
                     <div class="cv-rowtitle"><span>Faders &amp; Green Buttons</span><span class="cv-grp">group ${grp(faderGroup)}</span>
                         <button type="button" class="gb-chip" data-block="fad" onclick="batchBlockChannel('fad')" title="Select Chan of every fader, Fader 9 and Green Button in this group">All Chan</button></div>
                     <div class="cv-row">${row('fader', 8)}</div>
-                    <div class="cv-row one">${cvElHtml('fader9', 0, ' wide')}</div>
+                    <div class="cv-row one">${cvElHtml('fader9', 0)}</div>
                     <div class="cv-row">${row('green', 8)}</div>
                 </div>`;
             document.querySelectorAll('#cvPanel .gb-chip[data-block]').forEach(ch => {
@@ -12799,13 +12901,13 @@ ${description}
             const node = cv.node ? cv.node.kind : null;
             const arrow = (id, has) => has ? `<span class="cv-arrow" onclick="event.stopPropagation(); cvToggle('${id}')">${cv.open.has(id) ? '&#9662;' : '&#9656;'}</span>` : '<span class="cv-arrow"></span>';
             const pad = (d) => `style="padding-left:${0.5 + d * 0.9}rem"`;
-            let h = `<div class="cv-node ${node === 'project' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('root')">${arrow('root', true)}<span class="cv-txt">Project${projectMeta.label ? ` <span class="cv-lab">${escapeHtml(projectMeta.label)}</span>` : ''}</span></div>`;
+            let h = `<div class="cv-node ${node === 'project' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('root')">${arrow('root', true)}<span class="cv-txt" data-id="root" title="Click twice to rename">Project${projectMeta.label ? ` <span class="cv-lab">${escapeHtml(projectMeta.label)}</span>` : ''}</span></div>`;
             if (cv.open.has('root')) {
                 for (let i = 0; i < 18; i++) {
                     const isCur = i === currentSetup;
-                    const lab = setupLabels.get(i);
+                    const lab = setupLabelShown(i);
                     const sid = `s${i}`;
-                    h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(1)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt">${i + 1}${lab ? ` <span class="cv-lab">${escapeHtml(lab)}</span>` : ''}</span></div>`;
+                    h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(1)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt" data-id="${sid}" title="Click twice to rename">${lab ? `Setup ${i + 1} <span class="cv-lab">${escapeHtml(lab)}</span>` : escapeHtml(setupBaseName(i))}</span></div>`;
                     if (!cv.open.has(sid)) continue;
                     for (const [half, title, gcur] of [['e', 'Encoders &amp; Enc.Buttons', encoderGroup], ['f', 'Faders &amp; Green Buttons', faderGroup]]) {
                         const fid = `s${i}${half}`;
@@ -12817,7 +12919,7 @@ ${description}
                             const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
                             const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
                             const nm = getGroupName(i, g);
-                            h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(3)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
+                            h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(3)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
                         }
                     }
                 }
@@ -12829,36 +12931,41 @@ ${description}
             const el = document.getElementById('cvInspector');
             if (!el) return;
             el.innerHTML = '';
+            if (cv.multi.size >= 2) {
+                el.innerHTML = `<div class="cv-ins-title">${cv.multi.size} controls selected</div><div class="cv-ins-note">Change them together in the bar at the bottom.</div>`;
+                return;
+            }
             if (cv.sel) {
                 const t = cv.sel.type, i = cv.sel.idx;
-                const title = { encoder: `Encoder ${i + 1}`, push: `Enc.Button ${i + 1}`, green: `Green Button ${i + 1}`, fader: `Fader ${i + 1}`, fader9: 'Fader 9' }[t];
-                el.insertAdjacentHTML('beforeend', `<div class="cv-ins-title">${title}</div>`);
-                const wrap = document.createElement('div');
-                const cards = t === 'encoder' ? [createEncoderCard(i)]
-                            : t === 'push' ? [createPushCard(i)]
-                            : t === 'green' ? [createGreenCard(i)]
-                            : t === 'fader' ? [createFaderCard(i)] : [createFader9Card()];
-                for (const c of cards) { const d = document.createElement('div'); d.className = 'cv-ins-card'; d.appendChild(c); wrap.appendChild(d); }
-                el.appendChild(wrap);
+                const card = t === 'encoder' ? createEncoderCard(i) : t === 'push' ? createPushCard(i)
+                           : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
+                el.appendChild(card);
                 return;
             }
             const kind = cv.node ? cv.node.kind : 'setup';
             const spec = {
                 project: { scope: 'project', key: '', title: 'Project' },
-                setup: { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
+                setup: { scope: 'setup', key: '', title: setupBaseName(currentSetup) },
                 enc: { scope: 'enc', key: String(encoderGroup), title: `Encoders & Enc.Buttons, group ${encoderGroup + 1}` },
                 fad: { scope: 'fad', key: String(faderGroup), title: `Faders & Green Buttons, group ${faderGroup + 1}` }
             }[kind];
             const lbl = noteGet(spec.scope, spec.key, 'label'), dsc = noteGet(spec.scope, spec.key, 'description');
-            const grp = kind === 'enc' ? encoderGroup : kind === 'fad' ? faderGroup : null;
             el.innerHTML = `<div class="cv-ins-title">${escapeHtml(spec.title)}</div>
                 <div class="cv-ins-field"><input type="text" placeholder="Label" maxlength="${spec.scope === 'setup' ? 24 : 60}" value="${escapeHtml(lbl)}"
                     oninput="noteSet('${spec.scope}','${spec.key}','label',this.value); cvAfterNote()"></div>
                 <div class="cv-ins-field"><textarea rows="4" placeholder="Description" maxlength="1000"
                     oninput="noteSet('${spec.scope}','${spec.key}','description',this.value)">${escapeHtml(dsc)}</textarea></div>
-                ${grp !== null ? `<button type="button" class="btn" onclick="showGroupNameEditor(currentSetup, ${grp})" title="The 4-character name stored on the UC4">UC4 name: ${escapeHtml(getGroupName(currentSetup, grp))}</button>` : ''}`;
+                ${(kind === 'enc' || kind === 'fad') ? `<div class="cv-ins-field"><div class="cv-ins-cap">Name on the UC4 display (4 characters)</div>
+                    <input type="text" class="cv-uc4name" maxlength="4" value="${escapeHtml(getGroupName(currentSetup, kind === 'enc' ? encoderGroup : faderGroup).trim())}"
+                        onchange="cvInspectorGroupName(this, '${kind}')"></div>` : ''}`;
         }
 
+        function cvInspectorGroupName(input, kind) {
+            const g = kind === 'enc' ? encoderGroup : faderGroup;
+            cvApplyRename(`g${currentSetup}${kind === 'enc' ? 'e' : 'f'}${g}`, input.value);
+            input.value = getGroupName(currentSetup, g).trim();
+            cvRenderTree(); cvRenderPanel();
+        }
         function cvAfterNote() { cvRenderTree(); cvRenderPanel(); }
 
         function renderControllerView() {
@@ -12873,6 +12980,7 @@ ${description}
                 <section class="cv-main" id="cvPanel"></section>
                 <aside class="cv-inspector" id="cvInspector"></aside></div>`;
             cvRenderTree(); cvRenderPanel(); cvRenderInspector();
+            cvBindDrag(document.getElementById('cvPanel'));
             const insp = document.getElementById('cvInspector');
             const refresh = () => setTimeout(() => { cvRenderPanel(); }, 0);
             insp.addEventListener('change', refresh);
@@ -12881,13 +12989,128 @@ ${description}
             syncBatchUI();
         }
 
+        // ---- several elements at once: Ctrl/Cmd+click, Shift+click, drag a rectangle ----
+        const CV_PARAMS = {
+            encoder: ['channel', 'cc', 'type', 'acc', 'display', 'min', 'max'],
+            push: ['channel', 'cc', 'typeNibble', 'mode', 'lower', 'upper'],
+            green: ['channel', 'cc', 'typeNibble', 'mode', 'display', 'lower', 'upper'],
+            fader: ['channel', 'cc', 'type', 'mode', 'display', 'min', 'max'],
+            fader9: ['channel', 'cc', 'mode', 'min', 'max']
+        };
+        cv.multi = new Map();       // "type|idx" -> { type, idx }
+        cv.multiKeys = new Set();   // batch keys that came from the multi-selection
+        cv.anchor = null;
+        let cvDragInfo = null;
+
+        function cvMarkSel() {
+            document.querySelectorAll('#cvPanel .cv-el').forEach(el => {
+                el.classList.toggle('sel', cvIsSelected(el.dataset.type, +el.dataset.idx));
+            });
+        }
+        function cvApplyMulti() {
+            for (const k of cv.multiKeys) batchSel.delete(k);
+            cv.multiKeys.clear();
+            if (cv.multi.size >= 2) {
+                for (const e of cv.multi.values()) {
+                    const g = cvGroupOf(e.type);
+                    for (const p of CV_PARAMS[e.type]) {
+                        const k = batchKey(e.type, g, e.idx, p);
+                        batchSel.set(k, { type: e.type, group: g, idx: e.idx, param: p });
+                        cv.multiKeys.add(k);
+                    }
+                }
+            }
+            cvMarkSel();
+            cvRenderInspector();
+            syncBatchUI();
+        }
+        function cvSetMulti(list) {
+            cv.multi = new Map(list.map(e => [`${e.type}|${e.idx}`, e]));
+            if (cv.multi.size === 1) {
+                const only = [...cv.multi.values()][0];
+                cv.multi.clear();
+                cv.sel = { type: only.type, idx: only.idx };
+            } else {
+                cv.sel = null;
+            }
+            cv.node = null;
+            cvApplyMulti();
+        }
+        function cvElClick(ev, type, idx) {
+            if (cvDragInfo && cvDragInfo.moved) { cvDragInfo = null; return; }
+            const add = ev.ctrlKey || ev.metaKey;
+            if (ev.shiftKey && cv.anchor) {
+                const els = [...document.querySelectorAll('#cvPanel .cv-el')];
+                const find = (t, i) => els.find(e => e.dataset.type === t && +e.dataset.idx === i);
+                const a = find(cv.anchor.type, cv.anchor.idx), b = find(type, idx);
+                if (a && b) {
+                    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+                    const box = { l: Math.min(ra.left, rb.left), r: Math.max(ra.right, rb.right), t: Math.min(ra.top, rb.top), b: Math.max(ra.bottom, rb.bottom) };
+                    cvSetMulti(cvElementsIn(box));
+                    return;
+                }
+            }
+            if (add) {
+                const list = new Map(cv.multi);
+                if (!list.size && cv.sel) list.set(`${cv.sel.type}|${cv.sel.idx}`, { type: cv.sel.type, idx: cv.sel.idx });
+                const k = `${type}|${idx}`;
+                if (list.has(k)) list.delete(k); else list.set(k, { type, idx });
+                cv.anchor = { type, idx };
+                cvSetMulti([...list.values()]);
+                return;
+            }
+            cv.anchor = { type, idx };
+            cvSelectEl(type, idx);
+        }
+        function cvElementsIn(box) {
+            const out = [];
+            document.querySelectorAll('#cvPanel .cv-el').forEach(el => {
+                const r = el.getBoundingClientRect();
+                if (r.right > box.l && r.left < box.r && r.bottom > box.t && r.top < box.b) out.push({ type: el.dataset.type, idx: +el.dataset.idx });
+            });
+            return out;
+        }
+        function cvBindDrag(panel) {
+            panel.addEventListener('mousedown', (e) => {
+                if (e.button !== 0 || e.target.closest('input, button')) return;
+                const dev = e.target.closest('.cv-device');
+                if (!dev) return;
+                const dr = dev.getBoundingClientRect();
+                cvDragInfo = { x0: e.clientX, y0: e.clientY, dr, moved: false, add: e.ctrlKey || e.metaKey, base: new Map(cv.multi), marquee: null };
+            });
+        }
+        document.addEventListener('mousemove', (e) => {
+            const d = cvDragInfo;
+            if (!d) return;
+            if (!d.moved && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 5) return;
+            if (!d.moved) {
+                d.moved = true;
+                const dev = document.querySelector('#cvPanel .cv-device');
+                if (!dev) { cvDragInfo = null; return; }
+                d.marquee = document.createElement('div');
+                d.marquee.className = 'cv-marquee';
+                dev.appendChild(d.marquee);
+            }
+            const box = { l: Math.min(d.x0, e.clientX), r: Math.max(d.x0, e.clientX), t: Math.min(d.y0, e.clientY), b: Math.max(d.y0, e.clientY) };
+            Object.assign(d.marquee.style, { left: (box.l - d.dr.left) + 'px', top: (box.t - d.dr.top) + 'px', width: (box.r - box.l) + 'px', height: (box.b - box.t) + 'px' });
+            const hit = cvElementsIn(box);
+            const list = d.add ? new Map(d.base) : new Map();
+            for (const h of hit) list.set(`${h.type}|${h.idx}`, h);
+            cvSetMulti([...list.values()]);
+        });
+        document.addEventListener('mouseup', () => {
+            const d = cvDragInfo;
+            if (!d) return;
+            if (d.marquee) d.marquee.remove();
+            if (d.moved) setTimeout(() => { cvDragInfo = null; }, 0); else cvDragInfo = null;
+        });
+
         function cvSelectEl(type, idx) {
+            if (cv.multi.size) { cv.multi.clear(); cvApplyMulti(); }
             if (cv.sel && cv.sel.type === type && cv.sel.idx === idx && !cv.node) return;
             cv.sel = { type, idx };
             cv.node = null;
-            document.querySelectorAll('#cvPanel .cv-el.sel').forEach(e => e.classList.remove('sel'));
-            const el = document.querySelector(`#cvPanel .cv-el[data-type="${type}"][data-idx="${idx}"]`);
-            if (el) el.classList.add('sel');
+            cvMarkSel();
             cvRenderInspector();
             cvRenderTree();
         }
@@ -12895,7 +13118,71 @@ ${description}
             if (cv.open.has(id)) cv.open.delete(id); else cv.open.add(id);
             cvRenderTree();
         }
+        const cvLastClick = { id: null, t: 0 };
+        function cvIsSecondClick(id) {
+            const now = Date.now();
+            const second = cvLastClick.id === id && now - cvLastClick.t < 600;
+            cvLastClick.id = second ? null : id;
+            cvLastClick.t = now;
+            return second;
+        }
+        function cvRenameLater(id) {
+            setTimeout(() => {
+                const span = document.querySelector(`#cvTree .cv-txt[data-id="${id}"]`);
+                if (span) cvRename(span, id);
+            }, 0);
+        }
+        function cvRename(span, id) {
+            let cur = '', max = 24;
+            if (id === 'root') { cur = projectMeta.label || ''; max = 60; }
+            else if (id.startsWith('g')) {
+                const m = /^g(\d+)([ef])(\d+)$/.exec(id);
+                cur = getGroupName(+m[1], +m[3]).trim(); max = 4;
+            } else { cur = setupLabels.get(parseInt(id.slice(1), 10)) || ''; }
+            const input = document.createElement('input');
+            input.className = 'cv-ren';
+            input.value = cur;
+            input.maxLength = max;
+            span.replaceWith(input);
+            input.focus(); input.select();
+            let done = false;
+            const finish = (save) => {
+                if (done) return;
+                done = true;
+                if (save && input.value !== cur) cvApplyRename(id, input.value);
+                cvRenderTree(); cvRenderPanel();
+                if (cv.node || !cv.sel) cvRenderInspector();
+            };
+            input.addEventListener('keydown', (e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter') { e.preventDefault(); finish(true); }
+                else if (e.key === 'Escape') { finish(false); }
+            });
+            input.addEventListener('blur', () => finish(true));
+            input.addEventListener('click', (e) => e.stopPropagation());
+        }
+        function cvApplyRename(id, value) {
+            if (id === 'root') { noteSet('project', '', 'label', value); return; }
+            if (id.startsWith('g')) {
+                const m = /^g(\d+)([ef])(\d+)$/.exec(id);
+                const r = stringToGroupNameValues(value);
+                if (r.error) { showToast(r.error, 'error'); return; }
+                if (changeGroupNameWithUndo(+m[1], +m[3], r.values)) updateGroupNameDisplays();
+                return;
+            }
+            const i = parseInt(id.slice(1), 10);
+            const before = setupLabels.get(i) || null;
+            const l = cleanLabel(value);
+            if (l.trim()) setupLabels.set(i, l); else setupLabels.delete(i);
+            const after = setupLabels.get(i) || null;
+            if (before === after) return;
+            recordUndo({ type: 'setup-label', description: `Change Setup ${i + 1} label`, idx: i, labelBefore: before, labelAfter: after });
+            dirtySinceLoad = true;
+            updateSetupDropdownLabels();
+        }
+
         function cvClickNode(id) {
+            const second = cvIsSecondClick(id);
             cv.sel = null;
             if (id === 'root') {
                 cv.node = { kind: 'project' };
@@ -12904,15 +13191,18 @@ ${description}
                 const i = parseInt(id.slice(1), 10);
                 cv.node = { kind: 'setup' };
                 cv.open.add(id); cv.open.add(`${id}e`); cv.open.add(`${id}f`);
-                if (i !== currentSetup) { selectSetup(i); return; }
+                if (i !== currentSetup) { selectSetup(i); if (second) cvRenameLater(id); return; }
             }
             cvRenderTree(); cvRenderPanel(); cvRenderInspector();
+            if (second) cvRenameLater(id);
         }
         function cvLeaf(setup, half, g) {
+            const second = cvIsSecondClick(`g${setup}${half}${g}`);
             cv.sel = null;
             cv.node = { kind: half === 'e' ? 'enc' : 'fad' };
             if (setup !== currentSetup) selectSetup(setup);
             if (half === 'e') selectEncoderGroup(g); else selectFaderGroup(g);
+            if (second) cvRenameLater(`g${setup}${half}${g}`);
         }
 
 
@@ -12937,6 +13227,37 @@ ${description}
         let ovCollapsed = {};
         try { ovCollapsed = JSON.parse(localStorage.getItem('uc4_mom_ovc')) || {}; } catch (e) { ovCollapsed = {}; }
 
+        // factory (quiet) / saved (clear) / changed since the last load or save (bluish)
+        let baselineBuf = null;   // what was loaded or last saved
+        let factoryBuf = null;    // factory_default.syx
+        function ovWithBuf(buf, fn) {
+            if (!buf) return null;
+            const pm = previewMode, pb = previewBuffer;
+            previewBuffer = buf; previewMode = true;
+            try { return fn(); } finally { previewMode = pm; previewBuffer = pb; }
+        }
+        function ovStates() {
+            const st = new Map();
+            for (const sec of OV_SECTIONS) {
+                for (let g = 0; g < 8; g++) {
+                    for (let i = 0; i < sec.rows; i++) {
+                        const read = () => JSON.stringify(getControlData(sec.type, currentSetup, g, i));
+                        const cur = read();
+                        const base = baselineBuf ? ovWithBuf(baselineBuf, read) : cur;
+                        const fac = factoryBuf ? ovWithBuf(factoryBuf, read) : cur;
+                        st.set(`${sec.type}|${g}|${i}`, cur !== base ? 'fresh' : (cur !== fac ? 'saved' : 'factory'));
+                    }
+                }
+            }
+            return st;
+        }
+        function markBaseline() { if (rawBuffer) baselineBuf = new Uint8Array(rawBuffer); }
+        async function ensureFactoryBuf() {
+            try {
+                const r = await fetch('factory_default.syx');
+                if (r.ok) { factoryBuf = new Uint8Array(await r.arrayBuffer()); if (currentView === 'overview') renderOverview(); }
+            } catch (e) {}
+        }
         const ovK = (t, g, i) => `${t}|${g}|${i}`;
         const ovSecOf = (type) => OV_SECTIONS.find(x => x.type === type);
 
@@ -12966,10 +13287,12 @@ ${description}
                     <span class="checkmark">${showMutuallyExclusiveConflicts ? '&#10003;' : ''}</span>
                     Other groups
                     <span class="count" id="meCount">${conflicts.mutuallyExclusive.size}</span>
-                </div>`;
+                </div>
+                <span class="ov-legend"><span><i class="l-fac"></i>factory</span><span><i class="l-sav"></i>saved</span><span><i class="l-new"></i>changed</span></span>`;
             container.appendChild(filters);
 
-            for (const sec of OV_SECTIONS) container.appendChild(ovBuildSection(sec));
+            const states = ovStates();
+            for (const sec of OV_SECTIONS) container.appendChild(ovBuildSection(sec, states));
 
             // conflict list
             const visible = [];
@@ -12999,7 +13322,7 @@ ${description}
             ovPaint();
         }
 
-        function ovBuildSection(sec) {
+        function ovBuildSection(sec, states) {
             const el = document.createElement('div');
             el.className = 'ov-section' + (ovCollapsed[sec.id] ? ' collapsed' : '');
             el.dataset.sec = sec.id;
@@ -13030,6 +13353,7 @@ ${description}
                     const td = document.createElement('td');
                     td.className = 'ov-cell';
                     td.dataset.type = sec.type; td.dataset.group = g; td.dataset.index = i;
+                    td.classList.add('st-' + ((states && states.get(`${sec.type}|${g}|${i}`)) || 'factory'));
                     const ct = getControlConflictType(sec.type, g, i);
                     if (ct === 'concurrent') td.classList.add('conflict');
                     else if (ct === 'mutuallyExclusive') td.classList.add('conflict-dim');
@@ -13276,6 +13600,7 @@ ${description}
         // Set version display in footer
         document.getElementById('versionDisplay').textContent = CURRENT_EDITOR_VERSION;
         
+        ensureFactoryBuf();
         initializeEditor();
     </script>
 </body>
