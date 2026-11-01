@@ -396,7 +396,7 @@
         .device-status.busy { color: var(--bg-dark); background: var(--accent); animation: devPulse 0.8s ease-in-out infinite; }
         .device-status.warn { color: var(--warning); border-color: var(--warning); }
         .device-status.bad { color: var(--error); border-color: var(--error); }
-        #importBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
+        #downloadBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
         #uploadBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
         @media (max-width: 900px) { .notes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 520px) { .notes-grid { grid-template-columns: 1fr; } }
@@ -2995,6 +2995,10 @@
         .gb-row8 { grid-template-columns: repeat(8, minmax(158px, 1fr)); gap: 0.6rem; }
         .gb-row9 { grid-template-columns: repeat(8, minmax(144px, 1fr)) 1px minmax(144px, 1fr); gap: 0.6rem; }
         .group-block .ctl-note { margin: 0.25rem 0 0.4rem; }
+    
+        /* Group tabs live in the blocks now */
+        .nav-bar .nav-section:has(#encoderGroupTabs), .nav-bar .nav-section:has(#faderGroupTabs) { display: none; }
+        .view-toggle .view-btn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
     </style>
 </head>
 <body>
@@ -3027,41 +3031,32 @@
             <div class="import-dropdown" id="projectDropdown">
                 <button class="btn import-dropdown-btn" onclick="toggleProjectDropdown(event)">Project</button>
                 <div class="import-dropdown-menu">
-                    <div class="import-dropdown-item" onclick="projectNew(); closeProjectDropdown();">New project (factory defaults)</div>
-                    <div class="import-dropdown-item" onclick="document.getElementById('projectInput').click(); closeProjectDropdown();">Open project...</div>
+                    <div class="import-dropdown-item" onclick="projectNew(); closeProjectDropdown();">New</div>
+                    <div class="import-dropdown-item" onclick="document.getElementById('projectInput').click(); closeProjectDropdown();">Open...</div>
+                    <div class="import-dropdown-item" onclick="projectSave('device'); closeProjectDropdown();">Save</div>
+                    <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save this setup</div>
                     <div class="import-dropdown-divider"></div>
-                    <div class="import-dropdown-item" onclick="projectSave('device'); closeProjectDropdown();">Save project (whole device)</div>
-                    <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save current setup as project</div>
+                    <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeProjectDropdown();" title="All 18 setups or one setup">Import SysEx...</div>
+                    <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeProjectDropdown();">Import JSON...</div>
+                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">Library...</div>
+                    <div class="import-dropdown-divider"></div>
+                    <div class="import-dropdown-item" id="exportBtn" onclick="exportSysEx(); closeProjectDropdown();">Export SysEx (all)...</div>
+                    <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeProjectDropdown();">Export SysEx (this setup)...</div>
+                    <div class="import-dropdown-item" id="exportJsonBtn" onclick="exportJSON(); closeProjectDropdown();">Export JSON...</div>
                 </div>
             </div>
             <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
-            <div class="import-dropdown" id="importDropdown">
-                <button class="btn import-dropdown-btn" id="importBtn" onclick="toggleImportDropdown(event)">Import</button>
-                <div class="import-dropdown-menu">
-                    <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeImportDropdown();" title="All 18 setups (100,640 bytes) or one setup (5,072 bytes)">Import SysEx (all or one setup)</div>
-                    <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeImportDropdown();">Import JSON</div>
-                    <div class="import-dropdown-item" id="importFromDeviceItem" onclick="openReceiveDialog(); closeImportDropdown();" title="Receive a dump directly from the UC4 over USB MIDI">From UC4 (USB MIDI)...</div>
-                    <div class="import-dropdown-divider"></div>
-                    <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeImportDropdown();">Browse Library...</div>
-                </div>
+            <div class="view-toggle" id="deviceToggle">
+                <button class="view-btn" id="downloadBtn" onclick="openReceiveDialog()" title="Get setups from the UC4">Download</button>
+                <button class="view-btn" id="uploadBtn" onclick="openUploadDialog()" title="Send setups to the UC4">Upload</button>
             </div>
-            <div class="import-dropdown" id="exportDropdown">
-                <button class="btn import-dropdown-btn" id="exportBtn" onclick="toggleExportDropdown(event)" disabled>Export SysEx</button>
-                <div class="import-dropdown-menu">
-                    <div class="import-dropdown-item" onclick="exportSysEx(); closeExportDropdown();">All 18 setups (.syx)</div>
-                    <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeExportDropdown();">Current setup only (.syx, 5,072 bytes)</div>
-                </div>
-            </div>
-            <button class="btn" id="exportJsonBtn" onclick="exportJSON()" disabled>Export JSON</button>
-            <button class="btn" id="uploadBtn" onclick="openUploadDialog()" title="Send the current setup or all setups to the UC4 over USB MIDI">Upload</button>
-
             <span class="btn-divider"></span>
-            <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">↶ Undo</button>
-            <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">↷ Redo</button>
-            <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">⟲ Reset</button>
+            <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">Undo</button>
+            <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">Redo</button>
+            <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">Reset</button>
             <span class="btn-divider"></span>
-            <a href="UC4_EDITOR_GUIDE.html" class="btn help-link" target="_blank" title="Usage Guide">? Guide</a>
-            <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Switch light/dark theme">&#9728; Light</button>
+            <a href="UC4_EDITOR_GUIDE.html" class="btn help-link" target="_blank" title="Usage Guide">Guide</a>
+            <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Switch light/dark theme">Light</button>
         </div>
     </header>
     
@@ -3104,7 +3099,7 @@
     </nav>
     
     <details class="notes-bar" id="notesBar" open>
-        <summary>Notes <span class="notes-hint">names and descriptions are saved in the project file, not on the UC4</span></summary>
+        <summary title="Names and descriptions are saved in the project file, not on the UC4">Notes</summary>
         <div class="notes-grid" id="notesGrid"></div>
     </details>
     
@@ -5963,7 +5958,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             updateGroupTabs('faderGroupTabs', 0);
             updateGroupNames();
             updateStatus('loaded', `Loaded: ${fileName}`);
-            document.getElementById('fileInfo').textContent = `${fileName} (${rawBuffer.length.toLocaleString()} bytes)`;
+            document.getElementById('fileInfo').textContent = `${rawBuffer.length.toLocaleString()} bytes`;
         
             // Build initial conflict map
             rebuildConflictMap();
@@ -6101,7 +6096,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                         const idx = parseInt(key, 10);
                         if (!isNaN(idx) && idx >= 0 && idx < 18 && typeof value === 'string') {
                             // Sanitize label (max 12 chars, valid chars only)
-                            const sanitized = value.slice(0, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                            const sanitized = cleanLabel(value);
                             if (sanitized) {
                                 setupLabels.set(idx, sanitized);
                             }
@@ -7008,7 +7003,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 updateStatus('loaded', 'Session restored');
             }
             
-            document.getElementById('fileInfo').textContent = `Restored session (${rawBuffer.length.toLocaleString()} bytes)`;
+            document.getElementById('fileInfo').textContent = `${rawBuffer.length.toLocaleString()} bytes`;
             
             showToast('Session restored', 'success');
         }
@@ -9977,7 +9972,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             dialog.innerHTML = `
                 <h4>Edit Label - Setup ${idx + 1}</h4>
                 <div class="label-editor">
-                    <input type="text" id="labelInput" value="${escapeHtml(currentLabel)}" maxlength="12" placeholder="Enter label...">
+                    <input type="text" id="labelInput" value="${escapeHtml(currentLabel)}" maxlength="24" placeholder="Enter label...">
                     <div class="label-editor-hint">Max 12 characters. Letters, numbers, space, hyphen, underscore.</div>
                     <div id="labelError" class="label-editor-error" style="display: none;"></div>
                 </div>
@@ -10009,8 +10004,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             const error = document.getElementById('labelError');
             const value = input.value;
             
-            // Valid characters: alphanumeric, space, hyphen, underscore
-            const sanitized = value.replace(/[^a-zA-Z0-9 \-_]/g, '');
+            // Any printable characters, 24 at most
+            const sanitized = cleanLabel(value);
             
             if (sanitized !== value) {
                 input.value = sanitized;
@@ -10544,7 +10539,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Handle label
             if (importLabel && sourceSetup.label) {
-                const sanitized = sourceSetup.label.slice(0, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                const sanitized = cleanLabel(sourceSetup.label);
                 if (sanitized) {
                     setupLabels.set(targetIdx, sanitized);
                 } else {
@@ -10653,10 +10648,11 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             for (let i = 0; i < 18; i++) {
                 const option = select.options[i + 1]; // +1 for the "--" placeholder
                 if (option) {
-                    const label = labels.get(i) || noteShortName(i);
+                    const label = labels.get(i);
                     option.textContent = label ? `${i + 1}: ${label}` : `${i + 1}`;
                 }
             }
+            if (!previewMode && typeof persistLabels === 'function') persistLabels();
         }
         
         // Unified post-mutation hook for setup state changes
@@ -10861,7 +10857,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             updateGroupTabs('faderGroupTabs', 0);
             updateGroupNames();
             updateStatus('loaded', 'Loaded: factory_default.syx');
-            document.getElementById('fileInfo').textContent = `factory_default.syx (${rawBuffer.length.toLocaleString()} bytes)`;
+            document.getElementById('fileInfo').textContent = `${rawBuffer.length.toLocaleString()} bytes`;
             updateImportDropdownState();
             
             // Build initial conflict map
@@ -12206,7 +12202,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Handle label
             if (importLabel && sourceLabel) {
-                const sanitized = sourceLabel.slice(0, 12).replace(/[^a-zA-Z0-9 \\-_]/g, '');
+                const sanitized = cleanLabel(sourceLabel);
                 if (sanitized) {
                     setupLabels.set(targetSlot, sanitized);
                 } else {
@@ -12338,7 +12334,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 if (configData.labels) {
                     configData.labels.forEach((label, i) => {
                         if (label && label.length > 0) {
-                            const sanitized = label.slice(0, 12).replace(/[^a-zA-Z0-9 \\-_]/g, '');
+                            const sanitized = cleanLabel(label);
                             if (sanitized) setupLabels.set(i, sanitized);
                         }
                     });
@@ -12496,7 +12492,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 // Handle label for this slot
                 if (importLabels && configData.labels && configData.labels[i]) {
                     const label = configData.labels[i];
-                    const sanitized = label.slice(0, 12).replace(/[^a-zA-Z0-9 \\-_]/g, '');
+                    const sanitized = cleanLabel(label);
                     if (sanitized) {
                         setupLabels.set(targetSlot, sanitized);
                     } else {
@@ -13195,7 +13191,7 @@ ${description}
             midiState.error = '';
             if (!midiSupported()) {
                 midiState.error = 'Web MIDI is not available in this browser. Use Chrome or Edge.';
-                setDeviceStatus('UC4: Web MIDI not available (use Chrome or Edge)', 'bad', midiState.dialogMode);
+                setDeviceStatus('Web MIDI needs Chrome or Edge', 'bad', midiState.dialogMode);
                 renderDeviceDialog();
                 return;
             }
@@ -13206,7 +13202,7 @@ ${description}
                 setDeviceStatus(midiPortSummary(), midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'ok' : 'warn', midiState.dialogMode);
             } catch (e) {
                 midiState.error = 'MIDI access was denied: ' + (e && e.message ? e.message : e);
-                setDeviceStatus('UC4: MIDI access denied', 'bad', midiState.dialogMode);
+                setDeviceStatus('MIDI access denied', 'bad', midiState.dialogMode);
             }
             renderDeviceDialog();
         }
@@ -13298,15 +13294,15 @@ ${description}
             const parsed = uc4ParseDump(bytes);
             if (parsed.error) {
                 midiState.last = { bytes, error: parsed.error, time: new Date() };
-                setDeviceStatus('UC4: received data is not a valid dump', 'bad', 'receive');
-                showToast('Received data is not a valid UC4 dump: ' + parsed.error, 'error');
+                setDeviceStatus('Not a valid UC4 dump', 'bad', 'receive');
+                showToast('Not a valid UC4 dump: ' + parsed.error, 'error');
             } else {
                 deviceFirmware = { major: parsed.fwMajor, minor: parsed.fwMinor };
                 midiState.last = { bytes, parsed, time: new Date(), checks: midiVerifyReceived(parsed) };
                 midiState.waitSince = Date.now();
                 const bad = (midiState.last.checks || []).filter(c => !c.ok).length;
-                setDeviceStatus(`UC4: received ${parsed.kind === 'all' ? 'all 18 setups' : 'one setup'} at ${new Date().toLocaleTimeString()}`, bad ? 'warn' : 'ok', 'receive');
-                showToast(parsed.kind === 'all' ? 'Received all 18 setups from UC4' : 'Received one setup from UC4', 'success');
+                setDeviceStatus(`Downloaded ${parsed.kind === 'all' ? 'all 18 setups' : 'one setup'}`, bad ? 'warn' : 'ok', 'receive');
+                showToast(parsed.kind === 'all' ? 'Downloaded all 18 setups' : 'Downloaded one setup', 'success');
             }
             if (!document.getElementById('deviceModal')) openReceiveDialog();
             else { midiState.dialogMode = 'receive'; renderDeviceDialog(); }
@@ -13323,11 +13319,9 @@ ${description}
             if (midiState.status && midiState.status.mode === 'receive') openReceiveDialog(); else openUploadDialog();
         }
         function midiPortSummary() {
-            const i = midiState.inputs.find(p => p.id === midiState.inId);
             if (!midiState.access) return 'UC4: not connected';
-            if (!i && !midiState.inputs.length) return 'UC4: no MIDI ports found';
             const uc = midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || ''));
-            return uc ? `UC4: connected (${i ? i.name : 'no input'})` : 'UC4: connected, but no UC4 port found';
+            return uc ? 'UC4 connected' : 'UC4 not found';
         }
 
         // A dump started arriving: make it obvious that the browser is receiving.
@@ -13341,12 +13335,12 @@ ${description}
         function updateRxProgress() {
             const r = midiState.rx;
             const pct = r.active && r.expected ? Math.min(100, Math.round(r.len / r.expected * 100)) : null;
-            const btn = document.getElementById('importBtn');
+            const btn = document.getElementById('downloadBtn');
             if (btn) {
-                btn.textContent = r.active ? (pct !== null ? `Receiving ${pct}%` : 'Receiving...') : 'Import';
+                btn.textContent = r.active ? 'Downloading...' : 'Download';
                 btn.classList.toggle('rx-active', !!r.active);
             }
-            if (r.active) { setDeviceStatus(pct !== null ? `UC4: receiving ${pct}%` : 'UC4: receiving...', 'busy', 'receive'); startWaitTicker(); }
+            if (r.active) { setDeviceStatus('Downloading...', 'busy', 'receive'); startWaitTicker(); }
             refreshWaitLine();
             const box = document.getElementById('deviceRxProgress');
             if (!box) return;
@@ -13404,7 +13398,7 @@ ${description}
                 return false;
             }
             midiState.lastSent = { what, size: bytes.length, port: out.name, time: new Date(), parsed: uc4ParseDump(bytes) };
-            if (!quiet) showToast(`Sent ${what} (${bytes.length.toLocaleString()} bytes) to ${out.name}`, 'success');
+            
             return true;
         }
 
@@ -13426,7 +13420,7 @@ ${description}
             midiState.sendStatus = null;
             if (!midiSendDump(bytes, what, true)) {
                 midiState.sendStatus = { ok: false, scope, what, time: new Date() };
-                setDeviceStatus('UC4: send failed', 'bad', 'upload');
+                setDeviceStatus('Upload failed', 'bad', 'upload');
                 renderDeviceDialog();
                 return;
             }
@@ -13445,13 +13439,11 @@ ${description}
             if (!i) { clearInterval(midiState.sendTimer); return; }
             const f = Math.min(1, (Date.now() - i.t0) / i.ms);
             const pct = Math.round(f * 100);
-            setDeviceStatus(`UC4: sending ${i.what} ~${pct}%`, 'busy', 'upload');
+            setDeviceStatus('Uploading...', 'busy', 'upload');
             const up = document.getElementById('uploadBtn');
-            if (up) { up.textContent = `Sending ${pct}%`; up.classList.add('rx-active'); }
+            if (up) { up.textContent = 'Uploading...'; up.classList.add('rx-active'); }
             const bar = document.getElementById('deviceSendBar');
             if (bar) bar.style.width = pct + '%';
-            const txt = document.getElementById('deviceSendText');
-            if (txt) txt.textContent = `Sending ${i.what}... about ${pct}% (estimate, ${Math.max(0, Math.ceil((1 - f) * i.ms / 1000))} s left)`;
             if (f >= 1) { clearInterval(midiState.sendTimer); finishSend(); }
         }
 
@@ -13462,8 +13454,8 @@ ${description}
             midiState.sendStatus = { ok: true, scope: i.scope, what: i.what, time: new Date() };
             const up = document.getElementById('uploadBtn');
             if (up) { up.textContent = 'Upload'; up.classList.remove('rx-active'); }
-            setDeviceStatus(`UC4: sent ${i.what} at ${new Date().toLocaleTimeString()} - UC4 display shows SE.. if stored`, 'ok', 'upload');
-            showToast(`Finished sending ${i.what} (${i.size.toLocaleString()} bytes)`, 'success');
+            setDeviceStatus(`Uploaded ${i.what}`, 'ok', 'upload');
+            showToast(`Uploaded ${i.what}`, 'success');
             renderDeviceDialog();
             const st = document.querySelector('#deviceModal .dev-ok');
             if (st) st.scrollIntoView({ block: 'nearest' });
@@ -13515,91 +13507,67 @@ ${description}
             const overlay = document.getElementById('deviceModal');
             if (!overlay) return;
             const s = midiState;
-            const mode = s.dialogMode || 'receive';
-            const opt = (list, sel) => list.length
-                ? list.map(p => `<option value="${escapeHtml(p.id)}" ${p.id === sel ? 'selected' : ''}>${escapeHtml(p.name || p.id)}</option>`).join('')
-                : '<option value="">(none)</option>';
+            const down = (s.dialogMode || 'receive') === 'receive';
             const connected = !!s.access;
-            const connHtml = `
-                <div class="dev-sec">
-                    <div class="dev-title">Connection</div>
-                    ${connected ? `
-                    <div class="dev-row">
-                        <label>In <select id="midiInSel" onchange="midiSelectPorts()">${opt(s.inputs, s.inId)}</select></label>
-                        <label>Out <select id="midiOutSel" onchange="midiSelectPorts()">${opt(s.outputs, s.outId)}</select></label>
-                    </div>
-                    <div class="dev-note">${s.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'UC4 found.' : 'No port named UC4/Faderfox found. Check the USB cable, close other MIDI programs, then reselect.'}</div>
-                    ` : `
-                    <div class="dev-row"><button class="btn btn-primary" onclick="midiConnect()">Connect MIDI</button></div>
-                    <div class="dev-note">The browser will ask for MIDI access with SysEx. Works in Chrome and Edge. Close other programs that hold the UC4 port (Ableton, SysEx Librarian, MIDI-OX).</div>
-                    `}
-                    ${s.error ? `<div class="dev-card dev-bad">${escapeHtml(s.error)}</div>` : ''}
-                </div>`;
-
-            let bodyHtml = '';
-            if (mode === 'receive') {
+            const list = down ? s.inputs : s.outputs;
+            const sel = down ? s.inId : s.outId;
+            const found = list.some(p => /faderfox|uc4/i.test(p.name || ''));
+            const opts = list.length
+                ? list.map(p => `<option value="${escapeHtml(p.id)}" ${p.id === sel ? 'selected' : ''}>${escapeHtml(p.name || p.id)}</option>`).join('')
+                : '<option value="">(no MIDI ports)</option>';
+            const connHtml = connected
+                ? `<div class="dev-row"><select id="${down ? 'midiInSel' : 'midiOutSel'}" onchange="midiSelectPorts()">${opts}</select>
+                   ${found ? '' : '<span class="dev-warn-line">UC4 not found</span>'}</div>`
+                : '<div class="dev-row"><button class="btn btn-primary" onclick="midiConnect()">Connect MIDI</button></div>';
+            const errHtml = s.error ? `<div class="dev-card dev-bad">${escapeHtml(s.error)}</div>` : '';
+            let body = '';
+            if (down) {
                 const last = s.last;
-                let recvHtml = '';
+                let res = '';
                 if (last && last.error) {
-                    recvHtml = `<div class="dev-card dev-bad">Received ${last.bytes.length.toLocaleString()} bytes, but it is not a valid UC4 dump: ${escapeHtml(last.error)}</div>`;
+                    res = `<div class="dev-card dev-bad">${escapeHtml(last.error)}</div>`;
                 } else if (last) {
                     const p = last.parsed;
-                    recvHtml = `<div class="dev-card">
-                        <div>Received <b>${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b>,
-                        ${last.bytes.length.toLocaleString()} bytes, firmware ${uc4FwString(p)}, ${last.time.toLocaleTimeString()}.</div>
-                        ${(last.checks || []).map(c => `<div class="${c.ok ? 'dev-ok-line' : 'dev-warn-line'}">${c.ok ? '&#10003;' : '&#8800;'} ${escapeHtml(c.text)}</div>`).join('')}
+                    res = `<div class="dev-card">
+                        <div><b>Downloaded ${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b></div>
+                        ${(last.checks || []).map(c => `<div class="${c.ok ? 'dev-ok-line' : 'dev-warn-line'}">${escapeHtml(c.text)}</div>`).join('')}
                         <div class="dev-row">
                             ${p.kind === 'all'
                                 ? '<button class="btn btn-primary" onclick="deviceUseReceived(\'load\')">Load into editor</button>'
-                                : '<button class="btn btn-primary" onclick="deviceUseReceived(\'import\')">Import into a setup...</button>'}
-                            <button class="btn" onclick="deviceUseReceived('save')">Save .syx</button>
+                                : '<button class="btn btn-primary" onclick="deviceUseReceived(\'import\')">Put into a setup...</button>'}
+                            <button class="btn" onclick="deviceUseReceived('save')">Save file</button>
                         </div></div>`;
                 }
-                bodyHtml = `
-                <div class="dev-sec">
-                    <div class="dev-title">Receive from UC4</div>
-                    ${connected ? `<div class="dev-listen" id="deviceWaitLine"></div>` : ''}
-                    <div class="dev-note">On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc: the selected setup) or <b>encoder 8</b> (SndA: all 18 setups) until the UC4 display starts counting.</div>
-                    <div class="dev-note">Chrome hands a SysEx to the page only after it has arrived completely (checked on a real UC4: nothing arrives before the full dump), so the browser cannot see when the UC4 starts sending or how far it is. The UC4 display counts while it sends. As soon as the whole dump is in, it shows up here as a green result and in the status line at the bottom.</div>
-                    <div id="deviceRxProgress" class="dev-progress"></div>
-                    ${recvHtml}
-                </div>`;
+                body = `
+                    <div class="dev-note">On the UC4: Shift + Edit twice, then hold encoder 4 (one setup) or encoder 8 (all).</div>
+                    <div class="dev-note">The UC4 display counts the items while it sends. The result appears here when it is done.</div>
+                    <div id="deviceWaitLine" class="dev-listen"></div>
+                    <div id="deviceRxProgress"></div>
+                    ${res}`;
             } else {
-                let sendStatusHtml = '';
+                let status = '';
                 if (s.sendStatus) {
-                    const st = s.sendStatus;
-                    sendStatusHtml = st.ok
-                        ? `<div class="dev-card dev-ok"><b>&#10003; Finished sending ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes, end of transfer estimated).
-                            <div class="dev-note">The browser cannot see whether the UC4 accepted it, but the UC4 display tells you. <b>Stored:</b> after a single-setup dump the display shows the number of the setup it was stored in (for example SE06). <b>Not stored:</b> the display stays on rC00 (or shows what it showed before). The flashing dot on the display only means MIDI is arriving, it does not mean the data was taken.
-                            <br>To verify what is inside: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). Import &gt; From UC4 compares what comes back with what was sent.</div></div>`
-                        : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
-                } else if (s.lastSent) {
-                    sendStatusHtml = `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>`;
+                    status = s.sendStatus.ok
+                        ? `<div class="dev-card dev-ok"><b>Uploaded ${escapeHtml(s.sendStatus.what)}</b><div class="dev-note">The UC4 display shows the setup number (SE06) when it is stored.</div></div>`
+                        : '<div class="dev-card dev-bad">Upload failed</div>';
                 }
-                bodyHtml = `
-                <div class="dev-sec">
-                    <div class="dev-title">Upload to UC4</div>
-                    <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then tick the box and press one of the Send buttons. Success: the display shows the setup number (SE06).</div>
-                    <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
+                const can = connected && s.outId && rawBuffer && !s.sending;
+                body = `
+                    <div class="dev-note">On the UC4: Shift + Edit twice, pick the setup with encoder 1, then hold encoder 7 until the display shows rC00.</div>
+                    <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup. This overwrites the UC4.</label>
                     <div class="dev-row">
-                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected('one')">${s.sending && s.sendingScope === 'one' ? 'Sending...' : `Send Setup ${currentSetup + 1} to UC4`}</button>
-                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected('all')">${s.sending && s.sendingScope === 'all' ? 'Sending...' : 'Send all 18 setups to UC4'}</button>
+                        <button class="btn btn-primary" ${can ? '' : 'disabled'} onclick="deviceSendSelected('one')">Upload Setup ${currentSetup + 1}</button>
+                        <button class="btn btn-primary" ${can ? '' : 'disabled'} onclick="deviceSendSelected('all')">Upload all 18</button>
                     </div>
-                    <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; use Import > From UC4 once to take your UC4\'s own value)'}.</div>
-                    ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> <span id="deviceSendText">Sending...</span></div><div class="dev-bar"><div id="deviceSendBar" style="width:0%"></div></div><div class="dev-note">The UC4 does not report progress to the browser, so this bar is an estimate from the data size. The UC4 display shows the real progress.</div></div>' : ''}
-                    ${sendStatusHtml}
-                </div>`;
+                    ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Uploading...</div><div class="dev-bar"><div id="deviceSendBar" style="width:0%"></div></div></div>' : ''}
+                    ${status}`;
             }
             overlay.innerHTML = `
                 <div class="device-dialog">
-                    <div class="dev-head"><h3>${mode === 'receive' ? 'Receive from UC4' : 'Upload to UC4'}</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
-                    ${connHtml}
-                    ${bodyHtml}
+                    <div class="dev-head"><h3>${down ? 'Download from UC4' : 'Upload to UC4'}</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
+                    ${connHtml}${errHtml}${body}
                 </div>`;
-            if (mode === 'receive' && connected && !s.waitSince) s.waitSince = Date.now();
-            refreshWaitLine();
-            startWaitTicker();
-            updateRxProgress();
+            if (down) { refreshWaitLine(); startWaitTicker(); updateRxProgress(); }
         }
 
         function fmtElapsed(ms) {
@@ -13613,10 +13581,9 @@ ${description}
             if (r.active) {
                 const dots = '.'.repeat(1 + (midiState.waitTick || 0) % 3);
                 const pct = r.expected ? ` ${Math.min(100, Math.round(r.len / r.expected * 100))}%` : '';
-                el.innerHTML = `<span class="dev-pulse"></span> <b>Loading from UC4</b><span class="dev-dots">${dots}</span>${pct}`;
+                el.innerHTML = `<span class="dev-pulse"></span> Downloading<span class="dev-dots">${dots}</span>`;
             } else {
-                const port = (midiState.inputs.find(p => p.id === midiState.inId) || {}).name || 'no input';
-                el.innerHTML = `<span class="dev-pulse idle"></span> Ready, listening on ${escapeHtml(port)}`;
+                el.innerHTML = '';
             }
         }
         function startWaitTicker() {
@@ -13666,28 +13633,51 @@ ${description}
         //       fad: { "<group>": {name, description} },      // fader/button group
         //       ctl: { "encoder:g:i" | "push:g:i" | "green:g:i" | "fader:g:i" | "fader9:g": {name, description} } } } }
         const META_KEY = 'uc4_mom_meta';
-        let projectMeta = { name: '', description: '', setups: {} };
+        const LABELS_KEY = 'uc4_mom_labels';
+        function persistLabels() {
+            try {
+                const o = {};
+                for (const [k, v] of setupLabels) o[k] = v;
+                localStorage.setItem(LABELS_KEY, JSON.stringify(o));
+            } catch (e) {}
+        }
+        function restoreLabels() {
+            try {
+                const j = localStorage.getItem(LABELS_KEY);
+                if (!j) return;
+                const o = JSON.parse(j);
+                setupLabels.clear();
+                for (const [k, v] of Object.entries(o)) {
+                    if (!/^(1[0-7]|[0-9])$/.test(k)) continue;
+                    const l = cleanLabel(v);
+                    if (l.trim()) setupLabels.set(parseInt(k, 10), l);
+                }
+            } catch (e) {}
+        }
+        let projectMeta = { label: '', description: '', setups: {} };
 
         function cleanStr(v, max) { return typeof v === 'string' ? v.slice(0, max) : ''; }
+        // Setup labels: any printable characters, 24 at most (kept in the editor/project, never written to the UC4)
+        function cleanLabel(v) { return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 24); }
         function cleanBag(b) {
             const out = {};
             if (b && typeof b === 'object') {
                 for (const [k, v] of Object.entries(b)) {
                     if (!/^[a-z0-9:]{1,16}$/.test(k)) continue;
-                    const n = cleanStr(v && v.name, 60), d = cleanStr(v && v.description, 1000);
-                    if (n || d) out[k] = { name: n, description: d };
+                    const n = cleanStr(v && (v.label ?? v.name), 60), d = cleanStr(v && v.description, 1000);
+                    if (n || d) out[k] = { label: n, description: d };
                 }
             }
             return out;
         }
         function cleanMetaSetup(m) {
             m = m && typeof m === 'object' ? m : {};
-            return { name: cleanStr(m.name, 60), description: cleanStr(m.description, 1000),
+            return { description: cleanStr(m.description, 1000),
                      enc: cleanBag(m.enc), fad: cleanBag(m.fad), ctl: cleanBag(m.ctl) };
         }
         function cleanMetaProject(m) {
             m = m && typeof m === 'object' ? m : {};
-            const out = { name: cleanStr(m.name, 60), description: cleanStr(m.description, 1000), setups: {} };
+            const out = { label: cleanStr(m.label ?? m.name, 60), description: cleanStr(m.description, 1000), setups: {} };
             if (m.setups && typeof m.setups === 'object') {
                 for (const [k, v] of Object.entries(m.setups)) {
                     if (/^(1[0-7]|[0-9])$/.test(k)) out.setups[k] = cleanMetaSetup(v);
@@ -13696,6 +13686,7 @@ ${description}
             return out;
         }
         function loadMetaFromStorage() {
+            restoreLabels();
             try {
                 const j = localStorage.getItem(META_KEY);
                 projectMeta = j ? cleanMetaProject(JSON.parse(j)) : cleanMetaProject(null);
@@ -13705,7 +13696,7 @@ ${description}
         }
         function resetMeta() {
             projectMeta = cleanMetaProject(null);
-            try { localStorage.removeItem(META_KEY); } catch (e) {}
+            try { localStorage.removeItem(META_KEY); localStorage.removeItem(LABELS_KEY); } catch (e) {}
         }
         function metaSetup(i, create) {
             const k = String(i);
@@ -13720,22 +13711,34 @@ ${description}
         }
         function noteGet(scope, key, field) {
             if (scope === 'project') return projectMeta[field] || '';
-            if (scope === 'setup') { const st = metaSetup(currentSetup, false); return st ? (st[field] || '') : ''; }
+            if (scope === 'setup') {
+                if (field === 'label') return setupLabels.get(currentSetup) || '';
+                const st = metaSetup(currentSetup, false);
+                return st ? (st[field] || '') : '';
+            }
             const bag = noteBag(scope, false);
             return (bag && bag[key] && bag[key][field]) || '';
         }
         function noteSet(scope, key, field, value) {
-            value = cleanStr(String(value), field === 'name' ? 60 : 1000);
+            value = cleanStr(String(value), field === 'label' ? 60 : 1000);
             if (scope === 'project') projectMeta[field] = value;
+            else if (scope === 'setup' && field === 'label') {
+                // one label per setup: the same one Setup Manager and the setup list use
+                const l = cleanLabel(value);
+                if (l.trim()) setupLabels.set(currentSetup, l); else setupLabels.delete(currentSetup);
+                dirtySinceLoad = true;
+                updateSetupDropdownLabels();
+                if (typeof setupManagerOpen !== 'undefined' && setupManagerOpen) renderSetupManager();
+                return;
+            }
             else if (scope === 'setup') metaSetup(currentSetup, true)[field] = value;
             else {
                 const bag = noteBag(scope, true);
-                if (!bag[key]) bag[key] = { name: '', description: '' };
+                if (!bag[key]) bag[key] = { label: '', description: '' };
                 bag[key][field] = value;
-                if (!bag[key].name && !bag[key].description) delete bag[key];
+                if (!bag[key].label && !bag[key].description) delete bag[key];
             }
             try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
-            if (scope === 'setup' && field === 'name') updateSetupDropdownLabels();
         }
         function noteShortName(i) {
             const st = metaSetup(i, false);
@@ -13755,21 +13758,21 @@ ${description}
             grid.innerHTML = cols.map(c => `
                 <div class="notes-col">
                     <div class="notes-title" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>
-                    <input type="text" class="note-name" placeholder="Name" maxlength="60" value="${escapeHtml(noteGet(c.scope, c.key, 'name'))}"
-                        oninput="noteSet('${c.scope}','${c.key}','name',this.value)">
+                    <input type="text" class="note-name" placeholder="Label" maxlength="${c.scope === 'setup' ? 24 : 60}" value="${escapeHtml(noteGet(c.scope, c.key, 'label'))}"
+                        oninput="noteSet('${c.scope}','${c.key}','label',this.value)">
                     <textarea class="note-desc" placeholder="Description" rows="2" maxlength="1000"
                         oninput="noteSet('${c.scope}','${c.key}','description',this.value)">${escapeHtml(noteGet(c.scope, c.key, 'description'))}</textarea>
                 </div>`).join('');
         }
 
         function attachCardNote(card, key) {
-            const name = noteGet('ctl', key, 'name'), desc = noteGet('ctl', key, 'description');
+            const name = noteGet('ctl', key, 'label'), desc = noteGet('ctl', key, 'description');
             const wrap = document.createElement('div');
             wrap.className = 'ctl-note';
             wrap.innerHTML = `
-                <input type="text" class="ctl-note-name" placeholder="name" maxlength="60" value="${escapeHtml(name)}"
-                    title="Name of this control (saved in the project, not on the UC4)"
-                    oninput="noteSet('ctl','${key}','name',this.value)">
+                <input type="text" class="ctl-note-name" placeholder="label" maxlength="60" value="${escapeHtml(name)}"
+                    title="Label (saved in the project, not on the UC4)"
+                    oninput="noteSet('ctl','${key}','label',this.value)">
                 <button type="button" class="ctl-note-btn ${desc ? 'has' : ''}" title="Description"
                     onclick="const t=this.nextElementSibling; t.style.display = t.style.display === 'none' ? 'block' : 'none'; if (t.style.display === 'block') t.focus();">&#9998;</button>
                 <textarea class="ctl-note-desc" rows="2" maxlength="1000" placeholder="Description" style="display:${desc ? 'block' : 'none'}"
@@ -13806,15 +13809,6 @@ ${description}
             for (let i = 0; i < str.length; i++) u[i] = str.charCodeAt(i);
             return u;
         }
-        function toggleExportDropdown(event) {
-            event.stopPropagation();
-            document.getElementById('exportDropdown').classList.toggle('open');
-        }
-        function closeExportDropdown() { document.getElementById('exportDropdown').classList.remove('open'); }
-        document.addEventListener('click', (e) => {
-            const dd = document.getElementById('exportDropdown');
-            if (dd && !dd.contains(e.target)) closeExportDropdown();
-        });
         function toggleProjectDropdown(event) {
             event.stopPropagation();
             document.getElementById('projectDropdown').classList.toggle('open');
@@ -13832,7 +13826,7 @@ ${description}
                 firmware: uc4FwString(uc4CurrentFirmware())
             };
             if (kind === 'device') {
-                project.name = projectMeta.name;
+                project.label = projectMeta.label;
                 project.description = projectMeta.description;
                 project.sysex = b64FromBytes(uc4BuildFullDump());
                 project.labels = {};
@@ -13840,12 +13834,10 @@ ${description}
                 project.meta = { setups: JSON.parse(JSON.stringify(projectMeta.setups)) };
             } else {
                 const st = metaSetup(currentSetup, false) || cleanMetaSetup(null);
-                project.name = st.name;
+                project.label = setupLabels.get(currentSetup) || '';
                 project.description = st.description;
                 project.sourceSetup = currentSetup;
                 project.sysex = b64FromBytes(uc4BuildOneSetupDump(currentSetup));
-                const label = setupLabels.get(currentSetup);
-                if (label) project.label = label;
                 project.meta = { setups: { [String(currentSetup)]: JSON.parse(JSON.stringify(st)) } };
             }
             return project;
@@ -13855,7 +13847,7 @@ ${description}
             if (!rawBuffer) return;
             let project;
             try { project = projectBuild(kind); } catch (e) { showToast('Cannot build project: ' + e.message, 'error'); return; }
-            const base = (project.name || (kind === 'device' ? 'uc4_project' : `uc4_setup_${currentSetup + 1}`))
+            const base = (project.label || (kind === 'device' ? 'uc4_project' : `uc4_setup_${currentSetup + 1}`))
                 .trim().replace(/[^\w\- ]+/g, '').replace(/\s+/g, '_') || 'uc4_project';
             promptFilename(base + '.uc4proj.json', kind === 'device' ? 'Save project (whole device)' : `Save Setup ${currentSetup + 1} as project`, (filename) => {
                 const text = JSON.stringify(project, null, 1);
@@ -13886,27 +13878,27 @@ ${description}
                 if (parsed.kind !== 'all' || bytes.length !== UC4_FULL_LEN) { showToast('Project does not contain all 18 setups', 'error'); return; }
                 if (isModified && !(await confirmDialog('Open project', 'This replaces the current data. Unsaved changes are lost.', 'Replace'))) return;
                 deviceFirmware = null;
-                applyLoadedBuffer(bytes, `${obj.name || fileName} (project)`);
+                applyLoadedBuffer(bytes, `${obj.label ?? obj.name ?? fileName} (project)`);
                 if (obj.labels && typeof obj.labels === 'object') {
                     for (const [k, v] of Object.entries(obj.labels)) {
                         if (!/^(1[0-7]|[0-9])$/.test(k)) continue;
-                        const clean = cleanStr(v, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                        const clean = cleanLabel(v);
                         if (clean) setupLabels.set(parseInt(k, 10), clean);
                     }
                 }
-                projectMeta = cleanMetaProject({ name: obj.name, description: obj.description, setups: obj.meta && obj.meta.setups });
+                projectMeta = cleanMetaProject({ label: obj.label ?? obj.name, description: obj.description, setups: obj.meta && obj.meta.setups });
                 try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
                 afterSetupStateMutation(Array.from({ length: 18 }, (_, i) => i));
                 renderNotesBar();
                 renderCurrentView();
-                showToast(`Opened project ${obj.name || fileName}`, 'success');
+                showToast(`Opened ${obj.label || obj.name || fileName}`, 'success');
             } else {
                 if (parsed.kind !== 'one') { showToast('Setup project does not contain a single setup', 'error'); return; }
                 const src = Number.isInteger(obj.sourceSetup) ? obj.sourceSetup : null;
-                promptSingleSetupImport(bytes, `Project ${obj.name || fileName}`, {
+                promptSingleSetupImport(bytes, `Project ${obj.label || fileName}`, {
                     onImported(t) {
                         if (obj.label) {
-                            const clean = cleanStr(obj.label, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                            const clean = cleanLabel(obj.label);
                             if (clean) setupLabels.set(t, clean);
                         }
                         const m = obj.meta && obj.meta.setups && src !== null ? obj.meta.setups[String(src)] : null;
@@ -14128,22 +14120,21 @@ ${description}
                     <span class="bb-sep"></span>
                     <button class="btn" onclick="batchApplyStep('${kdAttr}', -1, this)" title="Subtract the step from every selected value">&minus;</button>
                     <button class="btn" onclick="batchApplyStep('${kdAttr}', 1, this)" title="Add the step to every selected value">+</button>
-                    <label>step <input type="number" class="bb-step" min="1" max="127" value="1"></label>
+                    <label>by <input type="number" class="bb-step" min="1" max="127" value="1"></label>
                     <span class="bb-sep"></span>
-                    <label>sequence: start <input type="number" class="bb-start" min="${isChan ? 1 : 0}" max="${isChan ? 16 : 127}" value="${isChan ? (cur.channel || 1) : (cur[first.param] ?? 0)}"></label>
-                    <label>every <input type="number" class="bb-seqstep" min="-127" max="127" value="1"></label>
-                    <button class="btn" onclick="batchApplySeq('${kdAttr}', this)" title="First selected gets 'start', each next one adds 'every'">Fill</button>` : '';
+                    <label>from <input type="number" class="bb-start" min="${isChan ? 1 : 0}" max="${isChan ? 16 : 127}" value="${isChan ? (cur.channel || 1) : (cur[first.param] ?? 0)}"></label>
+                    <label>step <input type="number" class="bb-seqstep" min="-127" max="127" value="1"></label>
+                    <button class="btn" onclick="batchApplySeq('${kdAttr}', this)" title="The first selected gets 'from', each next one adds 'step'">Fill</button>` : '';
                 return `<div class="bb-row" data-kind="${kdAttr}">
                     <span class="bb-label">${escapeHtml(label)} <i>&times;${list.length}</i></span>
                     ${editor}
-                    <button class="btn btn-primary" onclick="batchApplySet('${kdAttr}', this)" title="Set every selected value to this">Set all</button>
+                    <button class="btn btn-primary" onclick="batchApplySet('${kdAttr}', this)" title="Set every selected value to this">Set</button>
                     ${stepHtml}
                 </div>`;
             }).join('');
             bar.style.display = 'block';
             bar.innerHTML = `<div class="bb-head"><b>${cells.length} selected</b>
-                <span>change them together, or tick/untick single boxes on the cards</span>
-                <button class="btn" onclick="batchClear()">Clear selection</button></div>${rows}`;
+                <button class="btn" onclick="batchClear()">Clear</button></div>${rows}`;
         }
         function batchRowOf(btn) { return btn.closest('.bb-row'); }
         function batchMutate(kind, fn, desc) {
@@ -14210,7 +14201,7 @@ ${description}
                 `<button type="button" class="gb-chip" data-ctype="${type}" data-group="${group}" data-param="${param}" data-count="${count}" data-withf9="${withF9 ? 1 : 0}"
                     title="Select/unselect ${escapeHtml(label)} on all ${count}${withF9 ? ' (+ Fader 9)' : ''} controls"
                     onclick="batchChipClick(this)">${escapeHtml(label)}</button>`).join('');
-            return `<span class="gb-chips">select all:${chips}</span>`;
+            return `<span class="gb-chips">${chips}</span>`;
         }
 
         function buildGroupBlock(kind) {
@@ -14229,7 +14220,7 @@ ${description}
             head.className = 'gb-head';
             head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders' : 'Faders &amp; buttons'}</div>
                 <div class="gb-tabs">${tabs}</div>
-                <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">select all Chan</button>
+                <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">All Chan</button>
                 <div class="gb-tools">
                     <button type="button" onclick="showGroupNameEditor(currentSetup, ${isEnc ? 'encoderGroup' : 'faderGroup'})" title="Rename this group (4 characters, stored on the UC4)">&#9998;</button>
                     <button type="button" class="gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>
@@ -14283,7 +14274,7 @@ ${description}
             try { localStorage.setItem('uc4_mom_theme', t); } catch (e) {}
             const b = document.getElementById('themeBtn');
             if (b) {
-                b.innerHTML = t === 'light' ? '&#9790; Dark' : '&#9728; Light';
+                b.textContent = t === 'light' ? 'Dark' : 'Light';
                 b.title = t === 'light' ? 'Switch to the dark theme' : 'Switch to the light theme';
             }
         }
