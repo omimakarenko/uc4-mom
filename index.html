@@ -13276,8 +13276,8 @@ ${description}
                 const st = s.sendStatus;
                 sendStatusHtml = st.ok
                     ? `<div class="dev-card dev-ok"><b>&#10003; Sent ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes).
-                        <div class="dev-note">The browser cannot see whether the UC4 accepted it. Look at the UC4 display: it should count up (rC00 and onward) while receiving and then return to normal. If it stayed on rC00 or never counted, it did not get the data (put it in receive mode first, then send again).
-                        <br>To verify: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). This window compares what comes back with what was sent.</div></div>`
+                        <div class="dev-note">The browser cannot see whether the UC4 accepted it, but the UC4 display tells you. <b>Stored:</b> after a single-setup dump the display shows the number of the setup it was stored in (for example SE06). <b>Not stored:</b> the display stays on rC00 (or shows what it showed before). The flashing dot on the display only means MIDI is arriving, it does not mean the data was taken.
+                        <br>To verify what is inside: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). This window compares what comes back with what was sent.</div></div>`
                     : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
             } else if (s.lastSent) {
                 sendStatusHtml = `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>`;
@@ -13315,7 +13315,7 @@ ${description}
                             <label><input type="radio" name="devSendScope" value="one" ${s.sendScope === 'one' ? 'checked' : ''} onchange="midiState.sendScope='one'"> Current setup (${currentSetup + 1})</label>
                             <label><input type="radio" name="devSendScope" value="all" ${s.sendScope === 'all' ? 'checked' : ''} onchange="midiState.sendScope='all'"> All 18 setups</label>
                         </div>
-                        <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>hold encoder 7</b> until the display shows <b>rC00</b>. A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send.</div>
+                        <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send. Success: the display shows the setup number (SE06).</div>
                         <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
                         <div class="dev-row">
                             <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected()">${s.sending ? 'Sending...' : 'Send to UC4'}</button>
