@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UC4 SysEx Editor</title>
+    <title>UC4 Mom</title>
+    <script>try { document.documentElement.dataset.theme = localStorage.getItem('uc4_mom_theme') || 'dark'; } catch (e) {}</script>
     <style>
         /* System fonts - no external dependencies for offline support */
         
@@ -399,6 +400,34 @@
         #uploadBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
         @media (max-width: 900px) { .notes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 520px) { .notes-grid { grid-template-columns: 1fr; } }
+
+
+        /* Color scheme */
+        :root { color-scheme: dark; }
+        html[data-theme="light"] {
+            color-scheme: light;
+            --bg-dark: #f1f2f5;
+            --bg-panel: #ffffff;
+            --bg-control: #f6f7f9;
+            --bg-input: #eceef2;
+            --border: #cfd3db;
+            --border-light: #b9beca;
+            --text: #1b1d24;
+            --text-dim: #5a5f6e;
+            --text-muted: #8a8f9c;
+            --accent: #00806a;
+            --accent-dim: #006a58;
+            --warning: #a85f00;
+            --error: #c4203f;
+            --encoder: #0072b8;
+            --push: #7a3fc4;
+            --green-btn: #1f9a3f;
+            --fader: #c85a14;
+        }
+        html[data-theme="light"] .preview-banner { background: linear-gradient(90deg, #dff0f6 0%, #eaf6fa 100%); border-color: #9cc7d6; }
+        html[data-theme="light"] .modal-overlay { background: rgba(30, 34, 44, 0.45); }
+        .dev-dots { display: inline-block; min-width: 1.4em; text-align: left; }
+        .dev-elapsed { color: var(--text-muted); margin-left: 0.5rem; }
 
         /* Group Name Editor Modal */
         .group-name-dialog input {
@@ -2917,7 +2946,7 @@
     </div>
     
     <header class="header">
-        <div class="logo">UC4 <span>SysEx Editor</span></div>
+        <div class="logo">UC4 <span>Mom</span></div>
         <div class="view-toggle">
             <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
             <button class="view-btn" id="overviewBtn" onclick="setView('overview')">Overview</button>
@@ -2925,6 +2954,17 @@
         <div class="file-actions">
             <input type="file" id="sysexInput" accept=".syx" class="hidden-input">
             <input type="file" id="jsonInput" accept=".json" class="hidden-input">
+            <div class="import-dropdown" id="projectDropdown">
+                <button class="btn import-dropdown-btn" onclick="toggleProjectDropdown(event)">Project</button>
+                <div class="import-dropdown-menu">
+                    <div class="import-dropdown-item" onclick="projectNew(); closeProjectDropdown();">New project (factory defaults)</div>
+                    <div class="import-dropdown-item" onclick="document.getElementById('projectInput').click(); closeProjectDropdown();">Open project...</div>
+                    <div class="import-dropdown-divider"></div>
+                    <div class="import-dropdown-item" onclick="projectSave('device'); closeProjectDropdown();">Save project (whole device)</div>
+                    <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save current setup as project</div>
+                </div>
+            </div>
+            <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
             <div class="import-dropdown" id="importDropdown">
                 <button class="btn import-dropdown-btn" id="importBtn" onclick="toggleImportDropdown(event)">Import</button>
                 <div class="import-dropdown-menu">
@@ -2938,23 +2978,14 @@
             <button class="btn" id="exportBtn" onclick="exportSysEx()" disabled>Export SysEx</button>
             <button class="btn" id="exportJsonBtn" onclick="exportJSON()" disabled>Export JSON</button>
             <button class="btn" id="uploadBtn" onclick="openUploadDialog()" title="Send the current setup or all setups to the UC4 over USB MIDI">Upload</button>
-            <div class="import-dropdown" id="projectDropdown">
-                <button class="btn import-dropdown-btn" onclick="toggleProjectDropdown(event)">Project</button>
-                <div class="import-dropdown-menu">
-                    <div class="import-dropdown-item" onclick="projectNew(); closeProjectDropdown();">New project (factory defaults)</div>
-                    <div class="import-dropdown-item" onclick="document.getElementById('projectInput').click(); closeProjectDropdown();">Open project...</div>
-                    <div class="import-dropdown-divider"></div>
-                    <div class="import-dropdown-item" onclick="projectSave('device'); closeProjectDropdown();">Save project (whole device)</div>
-                    <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save current setup as project</div>
-                </div>
-            </div>
-            <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
+
             <span class="btn-divider"></span>
             <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">↶ Undo</button>
             <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">↷ Redo</button>
             <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">⟲ Reset</button>
             <span class="btn-divider"></span>
             <a href="UC4_EDITOR_GUIDE.html" class="btn help-link" target="_blank" title="Usage Guide">? Guide</a>
+            <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Switch light/dark theme">&#9728; Light</button>
         </div>
     </header>
     
@@ -3010,9 +3041,11 @@
     </main>
     
     <footer class="app-footer">
-        <span class="version-label">UC4 SysEx Editor v<span id="versionDisplay">1.2.0</span></span>
+        <span class="version-label">UC4 Mom v<span id="versionDisplay">1.2.0</span></span>
         <span class="footer-sep">|</span>
-        <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a>
+        <span class="footer-sep">|</span>
+        <span>fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne</span>
     </footer>
     
     <footer class="status-bar">
@@ -13174,6 +13207,7 @@ ${description}
             } else {
                 deviceFirmware = { major: parsed.fwMajor, minor: parsed.fwMinor };
                 midiState.last = { bytes, parsed, time: new Date(), checks: midiVerifyReceived(parsed) };
+                midiState.waitSince = Date.now();
                 const bad = (midiState.last.checks || []).filter(c => !c.ok).length;
                 setDeviceStatus(`UC4: received ${parsed.kind === 'all' ? 'all 18 setups' : 'one setup'} at ${new Date().toLocaleTimeString()}`, bad ? 'warn' : 'ok', 'receive');
                 showToast(parsed.kind === 'all' ? 'Received all 18 setups from UC4' : 'Received one setup from UC4', 'success');
@@ -13217,13 +13251,14 @@ ${description}
                 btn.classList.toggle('rx-active', !!r.active);
             }
             if (r.active) setDeviceStatus(pct !== null ? `UC4: receiving ${pct}%` : 'UC4: receiving...', 'busy', 'receive');
+            refreshWaitLine();
             const box = document.getElementById('deviceRxProgress');
             if (!box) return;
             if (!r.active) { box.innerHTML = ''; return; }
             const txt = r.expected
                 ? `${pct}% (${r.len.toLocaleString()} of ${r.expected.toLocaleString()} bytes)`
                 : `${r.len.toLocaleString()} bytes`;
-            box.innerHTML = `<div class="dev-rx"><span class="dev-pulse"></span> Browser is receiving from UC4: ${txt}</div>
+            box.innerHTML = `<div class="dev-rx">${txt}</div>
                 <div class="dev-bar"><div style="width:${pct === null ? 5 : pct}%"></div></div>`;
         }
 
@@ -13341,6 +13376,7 @@ ${description}
             midiState.dialogMode = mode || midiState.dialogMode || 'receive';
             const existing = document.getElementById('deviceModal');
             if (existing) { renderDeviceDialog(); return; }
+            midiState.waitSince = Date.now();
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
             overlay.id = 'deviceModal';
@@ -13398,8 +13434,9 @@ ${description}
                 bodyHtml = `
                 <div class="dev-sec">
                     <div class="dev-title">Receive from UC4</div>
-                    ${connected ? `<div class="dev-listen"><span class="dev-pulse idle"></span> Listening on ${escapeHtml((s.inputs.find(p => p.id === s.inId) || {}).name || 'no input')}</div>` : ''}
-                    <div class="dev-note">On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc: the selected setup) or <b>encoder 8</b> (SndA: all 18 setups) until the transfer starts. This window and the Import button show the progress, and the status line at the bottom keeps the result.</div>
+                    ${connected ? `<div class="dev-listen" id="deviceWaitLine"></div>` : ''}
+                    <div class="dev-note">On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc: the selected setup) or <b>encoder 8</b> (SndA: all 18 setups) until the UC4 display starts counting.</div>
+                    <div class="dev-note">Chrome hands a SysEx to the page only after it has arrived completely, so this window cannot show a percentage or the exact moment the UC4 starts. The line above keeps moving while the browser is listening. When the whole dump is in, it turns into the green result below and the status line at the bottom keeps the result.</div>
                     <div id="deviceRxProgress" class="dev-progress"></div>
                     ${recvHtml}
                 </div>`;
@@ -13440,7 +13477,39 @@ ${description}
                     ${connHtml}
                     ${bodyHtml}
                 </div>`;
+            if (mode === 'receive' && connected && !s.waitSince) s.waitSince = Date.now();
+            refreshWaitLine();
+            startWaitTicker();
             updateRxProgress();
+        }
+
+        function fmtElapsed(ms) {
+            const t = Math.max(0, Math.floor(ms / 1000));
+            return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+        }
+        function refreshWaitLine() {
+            const el = document.getElementById('deviceWaitLine');
+            if (!el) return;
+            const r = midiState.rx;
+            const dots = '.'.repeat(1 + (midiState.waitTick || 0) % 3);
+            if (r.active) {
+                const pct = r.expected ? ` ${Math.min(100, Math.round(r.len / r.expected * 100))}%` : '';
+                el.innerHTML = `<span class="dev-pulse"></span> <b>Loading from UC4</b><span class="dev-dots">${dots}</span>${pct}`;
+            } else {
+                const label = midiState.last ? 'Waiting for the next dump' : 'Waiting for the UC4 dump';
+                el.innerHTML = `<span class="dev-pulse"></span> ${label}<span class="dev-dots">${dots}</span><span class="dev-elapsed">${fmtElapsed(Date.now() - (midiState.waitSince || Date.now()))}</span>`;
+            }
+        }
+        function startWaitTicker() {
+            if (midiState.waitTimer) return;
+            midiState.waitTimer = setInterval(() => {
+                const modal = document.getElementById('deviceModal');
+                if (!modal || midiState.dialogMode !== 'receive' || !document.getElementById('deviceWaitLine')) {
+                    clearInterval(midiState.waitTimer); midiState.waitTimer = null; return;
+                }
+                midiState.waitTick = (midiState.waitTick || 0) + 1;
+                refreshWaitLine();
+            }, 400);
         }
 
         // Refactored loader: used by the file input and by "Load into editor".
@@ -13734,6 +13803,19 @@ ${description}
             }
             e.target.value = '';
         });
+
+        // ---- light / dark theme ----
+        function applyTheme(t) {
+            document.documentElement.dataset.theme = t;
+            try { localStorage.setItem('uc4_mom_theme', t); } catch (e) {}
+            const b = document.getElementById('themeBtn');
+            if (b) {
+                b.innerHTML = t === 'light' ? '&#9790; Dark' : '&#9728; Light';
+                b.title = t === 'light' ? 'Switch to the dark theme' : 'Switch to the light theme';
+            }
+        }
+        function toggleTheme() { applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'); }
+        applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
 
         initUI();
         initTooltipSystem();
