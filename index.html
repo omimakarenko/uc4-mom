@@ -371,6 +371,35 @@
         #deviceBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
         .dev-confirm { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.78rem; color: var(--warning); margin: 0.5rem 0; cursor: pointer; }
 
+
+        /* Notes bar, card notes, device status */
+        .notes-bar { border-bottom: 1px solid var(--border); background: var(--bg-panel); padding: 0.4rem 1.5rem; }
+        .notes-bar > summary { cursor: pointer; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+        .notes-hint { text-transform: none; letter-spacing: 0; color: var(--text-muted); margin-left: 0.75rem; }
+        .notes-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 0.6rem 0 0.4rem; }
+        .notes-col { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+        .notes-title { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .notes-col input, .notes-col textarea, .ctl-note input, .ctl-note textarea {
+            background: var(--bg-input); border: 1px solid var(--border); color: var(--text);
+            font-family: var(--font-mono); font-size: 0.78rem; padding: 0.3rem 0.45rem; width: 100%; min-width: 0;
+        }
+        .notes-col textarea, .ctl-note textarea { resize: vertical; }
+        .notes-col input:focus, .notes-col textarea:focus, .ctl-note input:focus, .ctl-note textarea:focus { outline: 1px solid var(--accent); }
+        .ctl-note { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem; margin: 0.35rem 0 0.5rem; }
+        .ctl-note textarea { grid-column: 1 / -1; }
+        .ctl-note-btn { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; padding: 0 0.5rem; font-size: 0.8rem; }
+        .ctl-note-btn.has { color: var(--accent); border-color: var(--accent); }
+        .status-right { display: flex; gap: 1.25rem; align-items: center; }
+        .device-status { cursor: pointer; font-size: 0.75rem; padding: 0.1rem 0.5rem; border: 1px solid var(--border); color: var(--text-dim); }
+        .device-status.ok { color: var(--accent); border-color: var(--accent); }
+        .device-status.busy { color: var(--bg-dark); background: var(--accent); animation: devPulse 0.8s ease-in-out infinite; }
+        .device-status.warn { color: var(--warning); border-color: var(--warning); }
+        .device-status.bad { color: var(--error); border-color: var(--error); }
+        #importBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
+        #uploadBtn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
+        @media (max-width: 900px) { .notes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 520px) { .notes-grid { grid-template-columns: 1fr; } }
+
         /* Group Name Editor Modal */
         .group-name-dialog input {
             font-family: var(--font-mono);
@@ -2863,6 +2892,10 @@
                 padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
             }
         }
+    
+        /* Keep the status bar (device status chip) above the fixed footer */
+        @media (min-width: 641px) { .status-bar { bottom: 24px; z-index: 51; } }
+        .main-content { padding-bottom: 72px; }
     </style>
 </head>
 <body>
@@ -2893,17 +2926,29 @@
             <input type="file" id="sysexInput" accept=".syx" class="hidden-input">
             <input type="file" id="jsonInput" accept=".json" class="hidden-input">
             <div class="import-dropdown" id="importDropdown">
-                <button class="btn import-dropdown-btn" onclick="toggleImportDropdown(event)">Import</button>
+                <button class="btn import-dropdown-btn" id="importBtn" onclick="toggleImportDropdown(event)">Import</button>
                 <div class="import-dropdown-menu">
                     <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeImportDropdown();" title="All 18 setups (100,640 bytes) or one setup (5,072 bytes)">Import SysEx (all or one setup)</div>
                     <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeImportDropdown();">Import JSON</div>
+                    <div class="import-dropdown-item" id="importFromDeviceItem" onclick="openReceiveDialog(); closeImportDropdown();" title="Receive a dump directly from the UC4 over USB MIDI">From UC4 (USB MIDI)...</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeImportDropdown();">Browse Library...</div>
                 </div>
             </div>
             <button class="btn" id="exportBtn" onclick="exportSysEx()" disabled>Export SysEx</button>
             <button class="btn" id="exportJsonBtn" onclick="exportJSON()" disabled>Export JSON</button>
-            <button class="btn" id="deviceBtn" onclick="openDeviceDialog()" title="Receive from / send to the UC4 over USB MIDI">Device</button>
+            <button class="btn" id="uploadBtn" onclick="openUploadDialog()" title="Send the current setup or all setups to the UC4 over USB MIDI">Upload</button>
+            <div class="import-dropdown" id="projectDropdown">
+                <button class="btn import-dropdown-btn" onclick="toggleProjectDropdown(event)">Project</button>
+                <div class="import-dropdown-menu">
+                    <div class="import-dropdown-item" onclick="projectNew(); closeProjectDropdown();">New project (factory defaults)</div>
+                    <div class="import-dropdown-item" onclick="document.getElementById('projectInput').click(); closeProjectDropdown();">Open project...</div>
+                    <div class="import-dropdown-divider"></div>
+                    <div class="import-dropdown-item" onclick="projectSave('device'); closeProjectDropdown();">Save project (whole device)</div>
+                    <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save current setup as project</div>
+                </div>
+            </div>
+            <input type="file" id="projectInput" accept=".json,.uc4proj" class="hidden-input">
             <span class="btn-divider"></span>
             <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">↶ Undo</button>
             <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">↷ Redo</button>
@@ -2951,6 +2996,11 @@
         </div>
     </nav>
     
+    <details class="notes-bar" id="notesBar" open>
+        <summary>Notes <span class="notes-hint">names and descriptions are saved in the project file, not on the UC4</span></summary>
+        <div class="notes-grid" id="notesGrid"></div>
+    </details>
+    
     <main class="main-content" id="mainContent">
         <div class="no-data">
             <h2>No SysEx Data Loaded</h2>
@@ -2970,7 +3020,8 @@
             <div class="status-dot" id="statusDot"></div>
             <span id="statusText">No data loaded</span>
         </div>
-        <div>
+        <div class="status-right">
+            <span id="deviceStatus" class="device-status idle" onclick="deviceStatusClick()" title="UC4 connection status (click for details)">UC4: not connected</span>
             <span id="fileInfo">--</span>
         </div>
     </footer>
@@ -4668,6 +4719,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
+            attachCardNote(card, ctlKey('encoder', encoderGroup, idx));
             return card;
         }
         
@@ -4734,6 +4786,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
+            attachCardNote(card, ctlKey('push', encoderGroup, idx));
             return card;
         }
         
@@ -4810,6 +4863,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
+            attachCardNote(card, ctlKey('green', faderGroup, idx));
             return card;
         }
         
@@ -4886,6 +4940,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
+            attachCardNote(card, ctlKey('fader', faderGroup, idx));
             return card;
         }
         
@@ -4944,6 +4999,7 @@ ${last ? `Last Error:
                 </div>
             `;
             
+            attachCardNote(card, ctlKey('fader9', faderGroup, 0));
             return card;
         }
         
@@ -5718,6 +5774,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         }
         
         function renderCurrentView() {
+            renderNotesBar();
             if (!rawBuffer) return;
             if (currentView === 'focused') {
                 renderFocusedView();
@@ -5747,6 +5804,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         // Replace the editor contents with a validated full dump
         function applyLoadedBuffer(bytes, fileName) {
+            resetMeta();
             rawBuffer = bytes;
             sectionIndex = buildIndex(rawBuffer);
         
@@ -6828,6 +6886,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             // Build conflict map for restored setup
             rebuildConflictMap();
             
+            loadMetaFromStorage();
             setView(currentView);
             
             if (isModified) {
@@ -10465,7 +10524,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             for (let i = 0; i < 18; i++) {
                 const option = select.options[i + 1]; // +1 for the "--" placeholder
                 if (option) {
-                    const label = labels.get(i);
+                    const label = labels.get(i) || noteShortName(i);
                     option.textContent = label ? `${i + 1}: ${label}` : `${i + 1}`;
                 }
             }
@@ -10679,6 +10738,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             // Build initial conflict map
             rebuildConflictMap();
             
+            loadMetaFromStorage();
             renderFocusedView();
         }
         
@@ -12946,7 +13006,7 @@ ${description}
         }
 
         // ---- Import a single-setup .syx / received dump into a chosen slot ----
-        function promptSingleSetupImport(bytes, sourceLabel) {
+        function promptSingleSetupImport(bytes, sourceLabel, extra) {
             const parsed = uc4ParseDump(bytes);
             if (parsed.error || parsed.kind !== 'one') {
                 showError(ErrorCode.SYSEX_WRONG_LENGTH, parsed.error || 'This is not a single-setup dump');
@@ -12982,7 +13042,10 @@ ${description}
             overlay.querySelector('#singleImportOk').onclick = () => {
                 const t = parseInt(overlay.querySelector('#singleImportTarget').value, 10);
                 overlay.remove();
-                if (importSingleSetupDump(parsed, t)) showToast(`Imported to Setup ${t + 1}`, 'success');
+                if (importSingleSetupDump(parsed, t)) {
+                    if (extra && extra.onImported) extra.onImported(t);
+                    showToast(`Imported to Setup ${t + 1}`, 'success');
+                }
             };
         }
 
@@ -12993,7 +13056,8 @@ ${description}
             error: '', rx: { active: false, parts: [], len: 0, expected: 0, lastUi: 0 },
             last: null,       // last complete dump received: { bytes, parsed, time, checks }
             lastSent: null,   // { what, size, port, time, parsed }
-            sendScope: 'one', sendConfirm: false, sending: false, sendStatus: null
+            sendScope: 'one', sendConfirm: false, sending: false, sendStatus: null,
+            dialogMode: 'receive', status: null
         };
 
         function midiSupported() { return typeof navigator !== 'undefined' && !!navigator.requestMIDIAccess; }
@@ -13002,15 +13066,18 @@ ${description}
             midiState.error = '';
             if (!midiSupported()) {
                 midiState.error = 'Web MIDI is not available in this browser. Use Chrome or Edge.';
+                setDeviceStatus('UC4: Web MIDI not available (use Chrome or Edge)', 'bad', midiState.dialogMode);
                 renderDeviceDialog();
                 return;
             }
             try {
                 midiState.access = await navigator.requestMIDIAccess({ sysex: true });
-                midiState.access.onstatechange = () => { midiRefreshPorts(); renderDeviceDialog(); };
+                midiState.access.onstatechange = () => { midiRefreshPorts(); setDeviceStatus(midiPortSummary(), midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'ok' : 'warn', midiState.status ? midiState.status.mode : 'upload'); renderDeviceDialog(); };
                 midiRefreshPorts();
+                setDeviceStatus(midiPortSummary(), midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'ok' : 'warn', midiState.dialogMode);
             } catch (e) {
                 midiState.error = 'MIDI access was denied: ' + (e && e.message ? e.message : e);
+                setDeviceStatus('UC4: MIDI access denied', 'bad', midiState.dialogMode);
             }
             renderDeviceDialog();
         }
@@ -13042,6 +13109,7 @@ ${description}
             if (i) midiState.inId = i.value;
             if (o) midiState.outId = o.value;
             midiAttachInput();
+            setDeviceStatus(midiPortSummary(), 'ok', midiState.dialogMode);
             renderDeviceDialog();
         }
 
@@ -13101,29 +13169,54 @@ ${description}
             const parsed = uc4ParseDump(bytes);
             if (parsed.error) {
                 midiState.last = { bytes, error: parsed.error, time: new Date() };
+                setDeviceStatus('UC4: received data is not a valid dump', 'bad', 'receive');
                 showToast('Received data is not a valid UC4 dump: ' + parsed.error, 'error');
             } else {
                 deviceFirmware = { major: parsed.fwMajor, minor: parsed.fwMinor };
                 midiState.last = { bytes, parsed, time: new Date(), checks: midiVerifyReceived(parsed) };
+                const bad = (midiState.last.checks || []).filter(c => !c.ok).length;
+                setDeviceStatus(`UC4: received ${parsed.kind === 'all' ? 'all 18 setups' : 'one setup'} at ${new Date().toLocaleTimeString()}`, bad ? 'warn' : 'ok', 'receive');
                 showToast(parsed.kind === 'all' ? 'Received all 18 setups from UC4' : 'Received one setup from UC4', 'success');
             }
-            if (!document.getElementById('deviceModal')) openDeviceDialog(); else renderDeviceDialog();
+            if (!document.getElementById('deviceModal')) openReceiveDialog();
+            else { midiState.dialogMode = 'receive'; renderDeviceDialog(); }
+        }
+
+        function setDeviceStatus(text, kind, mode) {
+            midiState.status = { text, kind: kind || 'idle', mode: mode || 'upload' };
+            const el = document.getElementById('deviceStatus');
+            if (!el) return;
+            el.className = 'device-status ' + (kind || 'idle');
+            el.textContent = text;
+        }
+        function deviceStatusClick() {
+            if (midiState.status && midiState.status.mode === 'receive') openReceiveDialog(); else openUploadDialog();
+        }
+        function midiPortSummary() {
+            const i = midiState.inputs.find(p => p.id === midiState.inId);
+            if (!midiState.access) return 'UC4: not connected';
+            if (!i && !midiState.inputs.length) return 'UC4: no MIDI ports found';
+            const uc = midiState.inputs.some(p => /faderfox|uc4/i.test(p.name || ''));
+            return uc ? `UC4: connected (${i ? i.name : 'no input'})` : 'UC4: connected, but no UC4 port found';
         }
 
         // A dump started arriving: make it obvious that the browser is receiving.
         function midiRxStarted() {
-            if (!document.getElementById('deviceModal')) openDeviceDialog();
+            const modal = document.getElementById('deviceModal');
+            if (!modal) openReceiveDialog();
+            else if (midiState.dialogMode !== 'receive' && !midiState.sending) { midiState.dialogMode = 'receive'; renderDeviceDialog(); }
             updateRxProgress();
         }
 
         function updateRxProgress() {
             const r = midiState.rx;
             const pct = r.active && r.expected ? Math.min(100, Math.round(r.len / r.expected * 100)) : null;
-            const btn = document.getElementById('deviceBtn');
+            const btn = document.getElementById('importBtn');
             if (btn) {
-                btn.textContent = r.active ? (pct !== null ? `Receiving ${pct}%` : 'Receiving...') : 'Device';
+                btn.textContent = r.active ? (pct !== null ? `Receiving ${pct}%` : 'Receiving...') : 'Import';
                 btn.classList.toggle('rx-active', !!r.active);
             }
+            if (r.active) setDeviceStatus(pct !== null ? `UC4: receiving ${pct}%` : 'UC4: receiving...', 'busy', 'receive');
             const box = document.getElementById('deviceRxProgress');
             if (!box) return;
             if (!r.active) { box.innerHTML = ''; return; }
@@ -13190,6 +13283,9 @@ ${description}
             const scope = midiState.sendScope;
             midiState.sending = true;
             midiState.sendStatus = null;
+            setDeviceStatus('UC4: sending...', 'busy', 'upload');
+            const upBtn = document.getElementById('uploadBtn');
+            if (upBtn) { upBtn.textContent = 'Sending...'; upBtn.classList.add('rx-active'); }
             renderDeviceDialog();
             setTimeout(() => {
                 let ok = false, what = '';
@@ -13203,6 +13299,11 @@ ${description}
                 midiState.sending = false;
                 midiState.sendConfirm = false;   // must be ticked again for the next send
                 midiState.sendStatus = { ok, scope, what, time: new Date() };
+                const upBtn2 = document.getElementById('uploadBtn');
+                if (upBtn2) { upBtn2.textContent = 'Upload'; upBtn2.classList.remove('rx-active'); }
+                setDeviceStatus(ok
+                    ? `UC4: sent ${what} at ${new Date().toLocaleTimeString()} - UC4 display shows SE.. if stored`
+                    : 'UC4: send failed', ok ? 'ok' : 'bad', 'upload');
                 renderDeviceDialog();
                 const st = document.querySelector('#deviceModal .dev-ok, #deviceModal .dev-sec:last-child .dev-bad');
                 if (st) st.scrollIntoView({ block: 'nearest' });
@@ -13236,8 +13337,10 @@ ${description}
             if (m) m.remove();
         }
 
-        function openDeviceDialog() {
-            if (document.getElementById('deviceModal')) return;
+        function openDeviceDialog(mode) {
+            midiState.dialogMode = mode || midiState.dialogMode || 'receive';
+            const existing = document.getElementById('deviceModal');
+            if (existing) { renderDeviceDialog(); return; }
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
             overlay.id = 'deviceModal';
@@ -13245,87 +13348,97 @@ ${description}
             document.body.appendChild(overlay);
             renderDeviceDialog();
         }
+        function openReceiveDialog() { openDeviceDialog('receive'); }
+        function openUploadDialog() { openDeviceDialog('upload'); }
 
         function renderDeviceDialog() {
             const overlay = document.getElementById('deviceModal');
             if (!overlay) return;
             const s = midiState;
+            const mode = s.dialogMode || 'receive';
             const opt = (list, sel) => list.length
                 ? list.map(p => `<option value="${escapeHtml(p.id)}" ${p.id === sel ? 'selected' : ''}>${escapeHtml(p.name || p.id)}</option>`).join('')
                 : '<option value="">(none)</option>';
             const connected = !!s.access;
-            const last = s.last;
-            let recvHtml = '';
-            if (last && last.error) {
-                recvHtml = `<div class="dev-card dev-bad">Received ${last.bytes.length.toLocaleString()} bytes, but it is not a valid UC4 dump: ${escapeHtml(last.error)}</div>`;
-            } else if (last) {
-                const p = last.parsed;
-                recvHtml = `<div class="dev-card">
-                    <div>Received <b>${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b>,
-                    ${last.bytes.length.toLocaleString()} bytes, firmware ${uc4FwString(p)}, ${last.time.toLocaleTimeString()}.</div>
-                    ${(last.checks || []).map(c => `<div class="${c.ok ? 'dev-ok-line' : 'dev-warn-line'}">${c.ok ? '&#10003;' : '&#8800;'} ${escapeHtml(c.text)}</div>`).join('')}
+            const connHtml = `
+                <div class="dev-sec">
+                    <div class="dev-title">Connection</div>
+                    ${connected ? `
                     <div class="dev-row">
-                        ${p.kind === 'all'
-                            ? '<button class="btn btn-primary" onclick="deviceUseReceived(\'load\')">Load into editor</button>'
-                            : '<button class="btn btn-primary" onclick="deviceUseReceived(\'import\')">Import into a setup...</button>'}
-                        <button class="btn" onclick="deviceUseReceived('save')">Save .syx</button>
-                    </div></div>`;
-            }
-            let sendStatusHtml = '';
-            if (s.sendStatus) {
-                const st = s.sendStatus;
-                sendStatusHtml = st.ok
-                    ? `<div class="dev-card dev-ok"><b>&#10003; Sent ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes).
-                        <div class="dev-note">The browser cannot see whether the UC4 accepted it, but the UC4 display tells you. <b>Stored:</b> after a single-setup dump the display shows the number of the setup it was stored in (for example SE06). <b>Not stored:</b> the display stays on rC00 (or shows what it showed before). The flashing dot on the display only means MIDI is arriving, it does not mean the data was taken.
-                        <br>To verify what is inside: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). This window compares what comes back with what was sent.</div></div>`
-                    : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
-            } else if (s.lastSent) {
-                sendStatusHtml = `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>`;
+                        <label>In <select id="midiInSel" onchange="midiSelectPorts()">${opt(s.inputs, s.inId)}</select></label>
+                        <label>Out <select id="midiOutSel" onchange="midiSelectPorts()">${opt(s.outputs, s.outId)}</select></label>
+                    </div>
+                    <div class="dev-note">${s.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'UC4 found.' : 'No port named UC4/Faderfox found. Check the USB cable, close other MIDI programs, then reselect.'}</div>
+                    ` : `
+                    <div class="dev-row"><button class="btn btn-primary" onclick="midiConnect()">Connect MIDI</button></div>
+                    <div class="dev-note">The browser will ask for MIDI access with SysEx. Works in Chrome and Edge. Close other programs that hold the UC4 port (Ableton, SysEx Librarian, MIDI-OX).</div>
+                    `}
+                    ${s.error ? `<div class="dev-card dev-bad">${escapeHtml(s.error)}</div>` : ''}
+                </div>`;
+
+            let bodyHtml = '';
+            if (mode === 'receive') {
+                const last = s.last;
+                let recvHtml = '';
+                if (last && last.error) {
+                    recvHtml = `<div class="dev-card dev-bad">Received ${last.bytes.length.toLocaleString()} bytes, but it is not a valid UC4 dump: ${escapeHtml(last.error)}</div>`;
+                } else if (last) {
+                    const p = last.parsed;
+                    recvHtml = `<div class="dev-card">
+                        <div>Received <b>${p.kind === 'all' ? 'all 18 setups' : 'one setup'}</b>,
+                        ${last.bytes.length.toLocaleString()} bytes, firmware ${uc4FwString(p)}, ${last.time.toLocaleTimeString()}.</div>
+                        ${(last.checks || []).map(c => `<div class="${c.ok ? 'dev-ok-line' : 'dev-warn-line'}">${c.ok ? '&#10003;' : '&#8800;'} ${escapeHtml(c.text)}</div>`).join('')}
+                        <div class="dev-row">
+                            ${p.kind === 'all'
+                                ? '<button class="btn btn-primary" onclick="deviceUseReceived(\'load\')">Load into editor</button>'
+                                : '<button class="btn btn-primary" onclick="deviceUseReceived(\'import\')">Import into a setup...</button>'}
+                            <button class="btn" onclick="deviceUseReceived('save')">Save .syx</button>
+                        </div></div>`;
+                }
+                bodyHtml = `
+                <div class="dev-sec">
+                    <div class="dev-title">Receive from UC4</div>
+                    ${connected ? `<div class="dev-listen"><span class="dev-pulse idle"></span> Listening on ${escapeHtml((s.inputs.find(p => p.id === s.inId) || {}).name || 'no input')}</div>` : ''}
+                    <div class="dev-note">On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc: the selected setup) or <b>encoder 8</b> (SndA: all 18 setups) until the transfer starts. This window and the Import button show the progress, and the status line at the bottom keeps the result.</div>
+                    <div id="deviceRxProgress" class="dev-progress"></div>
+                    ${recvHtml}
+                </div>`;
+            } else {
+                let sendStatusHtml = '';
+                if (s.sendStatus) {
+                    const st = s.sendStatus;
+                    sendStatusHtml = st.ok
+                        ? `<div class="dev-card dev-ok"><b>&#10003; Sent ${escapeHtml(st.what)}</b> to ${escapeHtml(s.lastSent.port)} at ${st.time.toLocaleTimeString()} (${s.lastSent.size.toLocaleString()} bytes).
+                            <div class="dev-note">The browser cannot see whether the UC4 accepted it, but the UC4 display tells you. <b>Stored:</b> after a single-setup dump the display shows the number of the setup it was stored in (for example SE06). <b>Not stored:</b> the display stays on rC00 (or shows what it showed before). The flashing dot on the display only means MIDI is arriving, it does not mean the data was taken.
+                            <br>To verify what is inside: on the UC4 hold <b>encoder 4</b> (Sndc, or encoder 8 for all). Import &gt; From UC4 compares what comes back with what was sent.</div></div>`
+                        : '<div class="dev-card dev-bad">Nothing was sent. See the error message.</div>';
+                } else if (s.lastSent) {
+                    sendStatusHtml = `<div class="dev-note">Last sent: ${escapeHtml(s.lastSent.what)}, ${s.lastSent.size.toLocaleString()} bytes to ${escapeHtml(s.lastSent.port)} at ${s.lastSent.time.toLocaleTimeString()}.</div>`;
+                }
+                bodyHtml = `
+                <div class="dev-sec">
+                    <div class="dev-title">Upload to UC4</div>
+                    <div class="dev-row">
+                        <label><input type="radio" name="devSendScope" value="one" ${s.sendScope === 'one' ? 'checked' : ''} onchange="midiState.sendScope='one'"> Current setup (${currentSetup + 1})</label>
+                        <label><input type="radio" name="devSendScope" value="all" ${s.sendScope === 'all' ? 'checked' : ''} onchange="midiState.sendScope='all'"> All 18 setups</label>
+                    </div>
+                    <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send. Success: the display shows the setup number (SE06).</div>
+                    <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
+                    <div class="dev-row">
+                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected()">${s.sending ? 'Sending...' : 'Send to UC4'}</button>
+                        <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('one')">Save current setup .syx</button>
+                        <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('all')">Save all .syx</button>
+                    </div>
+                    <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; use Import > From UC4 once to take your UC4\'s own value)'}.</div>
+                    ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Sending to UC4...</div><div class="dev-bar"><div class="dev-bar-anim"></div></div></div>' : ''}
+                    ${sendStatusHtml}
+                </div>`;
             }
             overlay.innerHTML = `
                 <div class="device-dialog">
-                    <div class="dev-head"><h3>UC4 Device</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
-
-                    <div class="dev-sec">
-                        <div class="dev-title">1. Connection</div>
-                        ${connected ? `
-                        <div class="dev-row">
-                            <label>In <select id="midiInSel" onchange="midiSelectPorts()">${opt(s.inputs, s.inId)}</select></label>
-                            <label>Out <select id="midiOutSel" onchange="midiSelectPorts()">${opt(s.outputs, s.outId)}</select></label>
-                        </div>
-                        <div class="dev-note">${s.inputs.some(p => /faderfox|uc4/i.test(p.name || '')) ? 'UC4 found.' : 'No port named UC4/Faderfox found. Check the USB cable, close other MIDI programs, then reselect.'}</div>
-                        ` : `
-                        <div class="dev-row"><button class="btn btn-primary" onclick="midiConnect()">Connect MIDI</button></div>
-                        <div class="dev-note">The browser will ask for MIDI access with SysEx. Works in Chrome and Edge. Close other programs that hold the UC4 port (Ableton, SysEx Librarian, MIDI-OX).</div>
-                        `}
-                        ${s.error ? `<div class="dev-card dev-bad">${escapeHtml(s.error)}</div>` : ''}
-                    </div>
-
-                    <div class="dev-sec">
-                        <div class="dev-title">2. Receive from UC4 (backup / read)</div>
-                        ${connected ? `<div class="dev-listen"><span class="dev-pulse idle"></span> Listening on ${escapeHtml((s.inputs.find(p => p.id === s.inId) || {}).name || 'no input')}</div>` : ''}
-                        <div class="dev-note">The editor listens while this window is open or closed. On the UC4: hold <b>Shift</b> and press <b>Edit</b> twice (setup mode, red LED). Then hold <b>encoder 4</b> (Sndc, current setup) or <b>encoder 8</b> (SndA, all setups) until the display counts.</div>
-                        <div id="deviceRxProgress" class="dev-progress"></div>
-                        ${recvHtml}
-                    </div>
-
-                    <div class="dev-sec">
-                        <div class="dev-title">3. Send to UC4</div>
-                        <div class="dev-row">
-                            <label><input type="radio" name="devSendScope" value="one" ${s.sendScope === 'one' ? 'checked' : ''} onchange="midiState.sendScope='one'"> Current setup (${currentSetup + 1})</label>
-                            <label><input type="radio" name="devSendScope" value="all" ${s.sendScope === 'all' ? 'checked' : ''} onchange="midiState.sendScope='all'"> All 18 setups</label>
-                        </div>
-                        <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send. Success: the display shows the setup number (SE06).</div>
-                        <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
-                        <div class="dev-row">
-                            <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected()">${s.sending ? 'Sending...' : 'Send to UC4'}</button>
-                            <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('one')">Save current setup .syx</button>
-                            <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('all')">Save all .syx</button>
-                        </div>
-                        <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; connect and receive once to use your UC4\'s own value)'}.</div>
-                        ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Sending to UC4...</div><div class="dev-bar"><div class="dev-bar-anim"></div></div></div>' : ''}
-                        ${sendStatusHtml}
-                    </div>
+                    <div class="dev-head"><h3>${mode === 'receive' ? 'Receive from UC4' : 'Upload to UC4'}</h3><button class="btn" onclick="closeDeviceDialog()" aria-label="Close">&times;</button></div>
+                    ${connHtml}
+                    ${bodyHtml}
                 </div>`;
             updateRxProgress();
         }
@@ -13354,8 +13467,277 @@ ${description}
             applyLoadedBuffer(bytes, fileName);
         }
 
+
+        // ============================================================
+        // Notes (names and descriptions) and project files
+        // ============================================================
+        // Notes live in the project, never on the UC4. Structure:
+        //   projectMeta = { name, description, setups: { "<setupIdx>": {
+        //       name, description,
+        //       enc: { "<group>": {name, description} },      // encoder screen
+        //       fad: { "<group>": {name, description} },      // fader/button screen
+        //       ctl: { "encoder:g:i" | "push:g:i" | "green:g:i" | "fader:g:i" | "fader9:g": {name, description} } } } }
+        const META_KEY = 'uc4_mom_meta';
+        let projectMeta = { name: '', description: '', setups: {} };
+
+        function cleanStr(v, max) { return typeof v === 'string' ? v.slice(0, max) : ''; }
+        function cleanBag(b) {
+            const out = {};
+            if (b && typeof b === 'object') {
+                for (const [k, v] of Object.entries(b)) {
+                    if (!/^[a-z0-9:]{1,16}$/.test(k)) continue;
+                    const n = cleanStr(v && v.name, 60), d = cleanStr(v && v.description, 1000);
+                    if (n || d) out[k] = { name: n, description: d };
+                }
+            }
+            return out;
+        }
+        function cleanMetaSetup(m) {
+            m = m && typeof m === 'object' ? m : {};
+            return { name: cleanStr(m.name, 60), description: cleanStr(m.description, 1000),
+                     enc: cleanBag(m.enc), fad: cleanBag(m.fad), ctl: cleanBag(m.ctl) };
+        }
+        function cleanMetaProject(m) {
+            m = m && typeof m === 'object' ? m : {};
+            const out = { name: cleanStr(m.name, 60), description: cleanStr(m.description, 1000), setups: {} };
+            if (m.setups && typeof m.setups === 'object') {
+                for (const [k, v] of Object.entries(m.setups)) {
+                    if (/^(1[0-7]|[0-9])$/.test(k)) out.setups[k] = cleanMetaSetup(v);
+                }
+            }
+            return out;
+        }
+        function loadMetaFromStorage() {
+            try {
+                const j = localStorage.getItem(META_KEY);
+                projectMeta = j ? cleanMetaProject(JSON.parse(j)) : cleanMetaProject(null);
+            } catch (e) { projectMeta = cleanMetaProject(null); }
+            renderNotesBar();
+            updateSetupDropdownLabels();
+        }
+        function resetMeta() {
+            projectMeta = cleanMetaProject(null);
+            try { localStorage.removeItem(META_KEY); } catch (e) {}
+        }
+        function metaSetup(i, create) {
+            const k = String(i);
+            if (!projectMeta.setups[k] && create) projectMeta.setups[k] = cleanMetaSetup(null);
+            return projectMeta.setups[k] || null;
+        }
+        function ctlKey(type, group, idx) { return type === 'fader9' ? `fader9:${group}` : `${type}:${group}:${idx}`; }
+        function noteBag(scope, create) {
+            const st = metaSetup(currentSetup, create);
+            if (!st) return null;
+            return scope === 'enc' ? st.enc : scope === 'fad' ? st.fad : st.ctl;
+        }
+        function noteGet(scope, key, field) {
+            if (scope === 'project') return projectMeta[field] || '';
+            if (scope === 'setup') { const st = metaSetup(currentSetup, false); return st ? (st[field] || '') : ''; }
+            const bag = noteBag(scope, false);
+            return (bag && bag[key] && bag[key][field]) || '';
+        }
+        function noteSet(scope, key, field, value) {
+            value = cleanStr(String(value), field === 'name' ? 60 : 1000);
+            if (scope === 'project') projectMeta[field] = value;
+            else if (scope === 'setup') metaSetup(currentSetup, true)[field] = value;
+            else {
+                const bag = noteBag(scope, true);
+                if (!bag[key]) bag[key] = { name: '', description: '' };
+                bag[key][field] = value;
+                if (!bag[key].name && !bag[key].description) delete bag[key];
+            }
+            try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
+            if (scope === 'setup' && field === 'name') updateSetupDropdownLabels();
+        }
+        function noteShortName(i) {
+            const st = metaSetup(i, false);
+            return st && st.name ? truncateText(st.name, 22) : '';
+        }
+
+        function renderNotesBar() {
+            const grid = document.getElementById('notesGrid');
+            if (!grid || !rawBuffer) return;
+            if (grid.contains(document.activeElement)) return;   // do not rebuild while typing
+            const cols = [
+                { scope: 'project', key: '', title: 'Project (whole device)' },
+                { scope: 'setup', key: '', title: `Setup ${currentSetup + 1}` },
+                { scope: 'enc', key: String(encoderGroup), title: `Encoder screen ${encoderGroup + 1} (${getGroupName(currentSetup, encoderGroup)})` },
+                { scope: 'fad', key: String(faderGroup), title: `Fader/button screen ${faderGroup + 1} (${getGroupName(currentSetup, faderGroup)})` }
+            ];
+            grid.innerHTML = cols.map(c => `
+                <div class="notes-col">
+                    <div class="notes-title" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</div>
+                    <input type="text" class="note-name" placeholder="Name" maxlength="60" value="${escapeHtml(noteGet(c.scope, c.key, 'name'))}"
+                        oninput="noteSet('${c.scope}','${c.key}','name',this.value)">
+                    <textarea class="note-desc" placeholder="Description" rows="2" maxlength="1000"
+                        oninput="noteSet('${c.scope}','${c.key}','description',this.value)">${escapeHtml(noteGet(c.scope, c.key, 'description'))}</textarea>
+                </div>`).join('');
+        }
+
+        function attachCardNote(card, key) {
+            const name = noteGet('ctl', key, 'name'), desc = noteGet('ctl', key, 'description');
+            const wrap = document.createElement('div');
+            wrap.className = 'ctl-note';
+            wrap.innerHTML = `
+                <input type="text" class="ctl-note-name" placeholder="name" maxlength="60" value="${escapeHtml(name)}"
+                    title="Name of this control (saved in the project, not on the UC4)"
+                    oninput="noteSet('ctl','${key}','name',this.value)">
+                <button type="button" class="ctl-note-btn ${desc ? 'has' : ''}" title="Description"
+                    onclick="const t=this.nextElementSibling; t.style.display = t.style.display === 'none' ? 'block' : 'none'; if (t.style.display === 'block') t.focus();">&#9998;</button>
+                <textarea class="ctl-note-desc" rows="2" maxlength="1000" placeholder="Description" style="display:${desc ? 'block' : 'none'}"
+                    oninput="noteSet('ctl','${key}','description',this.value); this.previousElementSibling.classList.toggle('has', !!this.value)">${escapeHtml(desc)}</textarea>`;
+            const header = card.querySelector('.control-header');
+            if (header) header.insertAdjacentElement('afterend', wrap); else card.prepend(wrap);
+        }
+
+        // ---- small confirm dialog (promise based) ----
+        function confirmDialog(title, message, okLabel) {
+            return new Promise(resolve => {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                overlay.style.zIndex = 10004;
+                overlay.innerHTML = `<div class="modal-dialog"><h3>${escapeHtml(title)}</h3><p>${escapeHtml(message)}</p>
+                    <div class="modal-actions"><button class="btn" id="cdNo">Cancel</button><button class="btn btn-primary" id="cdYes">${escapeHtml(okLabel || 'OK')}</button></div></div>`;
+                document.body.appendChild(overlay);
+                const done = (v) => { overlay.remove(); resolve(v); };
+                overlay.querySelector('#cdNo').onclick = () => done(false);
+                overlay.querySelector('#cdYes').onclick = () => done(true);
+                overlay.onclick = (e) => { if (e.target === overlay) done(false); };
+            });
+        }
+
+        // ---- project files ----
+        function b64FromBytes(u8) {
+            let str = '';
+            for (let i = 0; i < u8.length; i += 0x8000) str += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+            return btoa(str);
+        }
+        function bytesFromB64(b64) {
+            const str = atob(b64);
+            const u = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++) u[i] = str.charCodeAt(i);
+            return u;
+        }
+        function toggleProjectDropdown(event) {
+            event.stopPropagation();
+            document.getElementById('projectDropdown').classList.toggle('open');
+        }
+        function closeProjectDropdown() { document.getElementById('projectDropdown').classList.remove('open'); }
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('projectDropdown');
+            if (dd && !dd.contains(e.target)) closeProjectDropdown();
+        });
+
+        function projectBuild(kind) {
+            const project = {
+                format: 'uc4-mom-project', version: 1, kind,
+                savedAt: new Date().toISOString(),
+                firmware: uc4FwString(uc4CurrentFirmware())
+            };
+            if (kind === 'device') {
+                project.name = projectMeta.name;
+                project.description = projectMeta.description;
+                project.sysex = b64FromBytes(uc4BuildFullDump());
+                project.labels = {};
+                for (const [k, v] of setupLabels) project.labels[String(k)] = v;
+                project.meta = { setups: JSON.parse(JSON.stringify(projectMeta.setups)) };
+            } else {
+                const st = metaSetup(currentSetup, false) || cleanMetaSetup(null);
+                project.name = st.name;
+                project.description = st.description;
+                project.sourceSetup = currentSetup;
+                project.sysex = b64FromBytes(uc4BuildOneSetupDump(currentSetup));
+                const label = setupLabels.get(currentSetup);
+                if (label) project.label = label;
+                project.meta = { setups: { [String(currentSetup)]: JSON.parse(JSON.stringify(st)) } };
+            }
+            return project;
+        }
+
+        function projectSave(kind) {
+            if (!rawBuffer) return;
+            let project;
+            try { project = projectBuild(kind); } catch (e) { showToast('Cannot build project: ' + e.message, 'error'); return; }
+            const base = (project.name || (kind === 'device' ? 'uc4_project' : `uc4_setup_${currentSetup + 1}`))
+                .trim().replace(/[^\w\- ]+/g, '').replace(/\s+/g, '_') || 'uc4_project';
+            promptFilename(base + '.uc4proj.json', kind === 'device' ? 'Save project (whole device)' : `Save Setup ${currentSetup + 1} as project`, (filename) => {
+                const text = JSON.stringify(project, null, 1);
+                downloadBytes(new TextEncoder().encode(text), filename);
+                showToast(`Saved ${filename}`, 'success');
+            });
+        }
+
+        async function projectNew() {
+            if (isModified && !(await confirmDialog('New project', 'This replaces the current data with factory defaults. Unsaved changes are lost.', 'Replace'))) return;
+            const bytes = await loadFactoryDefault();
+            if (!bytes) return;
+            deviceFirmware = null;
+            applyLoadedBuffer(bytes, 'factory_default.syx');
+            renderNotesBar();
+        }
+
+        async function projectLoad(obj, fileName) {
+            if (!obj || obj.format !== 'uc4-mom-project' || obj.version !== 1 || typeof obj.sysex !== 'string' || (obj.kind !== 'device' && obj.kind !== 'setup')) {
+                showToast('Not a UC4 project file', 'error');
+                return;
+            }
+            let bytes;
+            try { bytes = bytesFromB64(obj.sysex); } catch (e) { showToast('Project file is damaged (bad data)', 'error'); return; }
+            const parsed = uc4ParseDump(bytes);
+            if (parsed.error) { showToast('Project data is not a valid UC4 dump: ' + parsed.error, 'error'); return; }
+            if (obj.kind === 'device') {
+                if (parsed.kind !== 'all' || bytes.length !== UC4_FULL_LEN) { showToast('Project does not contain all 18 setups', 'error'); return; }
+                if (isModified && !(await confirmDialog('Open project', 'This replaces the current data. Unsaved changes are lost.', 'Replace'))) return;
+                deviceFirmware = null;
+                applyLoadedBuffer(bytes, `${obj.name || fileName} (project)`);
+                if (obj.labels && typeof obj.labels === 'object') {
+                    for (const [k, v] of Object.entries(obj.labels)) {
+                        if (!/^(1[0-7]|[0-9])$/.test(k)) continue;
+                        const clean = cleanStr(v, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                        if (clean) setupLabels.set(parseInt(k, 10), clean);
+                    }
+                }
+                projectMeta = cleanMetaProject({ name: obj.name, description: obj.description, setups: obj.meta && obj.meta.setups });
+                try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
+                afterSetupStateMutation(Array.from({ length: 18 }, (_, i) => i));
+                renderNotesBar();
+                renderCurrentView();
+                showToast(`Opened project ${obj.name || fileName}`, 'success');
+            } else {
+                if (parsed.kind !== 'one') { showToast('Setup project does not contain a single setup', 'error'); return; }
+                const src = Number.isInteger(obj.sourceSetup) ? obj.sourceSetup : null;
+                promptSingleSetupImport(bytes, `Project ${obj.name || fileName}`, {
+                    onImported(t) {
+                        if (obj.label) {
+                            const clean = cleanStr(obj.label, 12).replace(/[^a-zA-Z0-9 \-_]/g, '');
+                            if (clean) setupLabels.set(t, clean);
+                        }
+                        const m = obj.meta && obj.meta.setups && src !== null ? obj.meta.setups[String(src)] : null;
+                        if (m) projectMeta.setups[String(t)] = cleanMetaSetup(m);
+                        try { localStorage.setItem(META_KEY, JSON.stringify(projectMeta)); } catch (e) {}
+                        updateSetupDropdownLabels();
+                        renderNotesBar();
+                        renderCurrentView();
+                    }
+                });
+            }
+        }
+
+        document.getElementById('projectInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                await projectLoad(JSON.parse(text), file.name);
+            } catch (err) {
+                showToast('Cannot read project: ' + err.message, 'error');
+            }
+            e.target.value = '';
+        });
+
         initUI();
         initTooltipSystem();
+        setDeviceStatus('UC4: not connected', 'idle', 'receive');
         
         // Set version display in footer
         document.getElementById('versionDisplay').textContent = CURRENT_EDITOR_VERSION;

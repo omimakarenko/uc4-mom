@@ -245,3 +245,13 @@ MIT
 ## Acknowledgments
 
 Built for the Faderfox UC4. Not affiliated with Faderfox.
+
+## Fork additions (uc4-mom)
+
+- **Import > From UC4 (USB MIDI)**: receive a dump straight from the UC4 over Web MIDI (Chrome/Edge). On the UC4: setup mode (Shift + Edit twice), then hold encoder 4 (current setup) or encoder 8 (all setups). Progress shows in the dialog, on the Import button and in the status line at the bottom. A received dump is compared with the editor and with what was last sent.
+- **Upload**: send the current setup or all 18 setups to the UC4. Put the UC4 into receive mode first (setup mode, hold encoder 7 until `rC00`). After a single-setup dump is stored the UC4 display shows the setup number (`SE06`).
+- **Single-setup SysEx** (5072 bytes, the UC4's own "Sndc" dump) can be imported into any slot and exported.
+- **Notes**: names and descriptions for the project, each setup, each encoder screen, each fader/button screen and each control. Notes are stored in the project, not on the UC4.
+- **Project** menu: save/open a whole-device project or a single-setup project (`.uc4proj.json`: SysEx plus notes and labels).
+
+The dump format comes from vehka/uc4-tool (`docs/sysex-format.md`).
