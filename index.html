@@ -2975,7 +2975,13 @@
                     <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeImportDropdown();">Browse Library...</div>
                 </div>
             </div>
-            <button class="btn" id="exportBtn" onclick="exportSysEx()" disabled>Export SysEx</button>
+            <div class="import-dropdown" id="exportDropdown">
+                <button class="btn import-dropdown-btn" id="exportBtn" onclick="toggleExportDropdown(event)" disabled>Export SysEx</button>
+                <div class="import-dropdown-menu">
+                    <div class="import-dropdown-item" onclick="exportSysEx(); closeExportDropdown();">All 18 setups (.syx)</div>
+                    <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeExportDropdown();">Current setup only (.syx, 5,072 bytes)</div>
+                </div>
+            </div>
             <button class="btn" id="exportJsonBtn" onclick="exportJSON()" disabled>Export JSON</button>
             <button class="btn" id="uploadBtn" onclick="openUploadDialog()" title="Send the current setup or all setups to the UC4 over USB MIDI">Upload</button>
 
@@ -13089,7 +13095,7 @@ ${description}
             error: '', rx: { active: false, parts: [], len: 0, expected: 0, lastUi: 0 },
             last: null,       // last complete dump received: { bytes, parsed, time, checks }
             lastSent: null,   // { what, size, port, time, parsed }
-            sendScope: 'one', sendConfirm: false, sending: false, sendStatus: null,
+            sendingScope: 'one', sendConfirm: false, sending: false, sendStatus: null,
             dialogMode: 'receive', status: null
         };
 
@@ -13312,10 +13318,10 @@ ${description}
             return true;
         }
 
-        function deviceSendSelected() {
+        function deviceSendSelected(scope) {
             if (!rawBuffer || midiState.sending) return;
             if (!midiState.sendConfirm) { showToast('Tick the confirmation box first', 'info'); return; }
-            const scope = midiState.sendScope;
+            midiState.sendingScope = scope;
             midiState.sending = true;
             midiState.sendStatus = null;
             setDeviceStatus('UC4: sending...', 'busy', 'upload');
@@ -13455,16 +13461,11 @@ ${description}
                 bodyHtml = `
                 <div class="dev-sec">
                     <div class="dev-title">Upload to UC4</div>
-                    <div class="dev-row">
-                        <label><input type="radio" name="devSendScope" value="one" ${s.sendScope === 'one' ? 'checked' : ''} onchange="midiState.sendScope='one'"> Current setup (${currentSetup + 1})</label>
-                        <label><input type="radio" name="devSendScope" value="all" ${s.sendScope === 'all' ? 'checked' : ''} onchange="midiState.sendScope='all'"> All 18 setups</label>
-                    </div>
-                    <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then press Send. Success: the display shows the setup number (SE06).</div>
+                    <div class="dev-note">On the UC4 first: setup mode (Shift + Edit twice), choose the setup to overwrite with <b>encoder 1</b>, then press and <b>keep holding encoder 7</b> until the display shows <b>rC00</b> (a short press only shows rEc and the data is ignored). A single-setup dump is stored in whichever setup is selected on the UC4. Then tick the box and press one of the Send buttons. Success: the display shows the setup number (SE06).</div>
                     <label class="dev-confirm"><input type="checkbox" id="devSendConfirm" ${s.sendConfirm ? 'checked' : ''} onchange="midiState.sendConfirm=this.checked"> I have a backup of the data on the device. Sending overwrites it and cannot be undone on the UC4.</label>
                     <div class="dev-row">
-                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected()">${s.sending ? 'Sending...' : 'Send to UC4'}</button>
-                        <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('one')">Save current setup .syx</button>
-                        <button class="btn" ${rawBuffer ? '' : 'disabled'} onclick="deviceSaveCurrent('all')">Save all .syx</button>
+                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected('one')">${s.sending && s.sendingScope === 'one' ? 'Sending...' : `Send Setup ${currentSetup + 1} to UC4`}</button>
+                        <button class="btn btn-primary" ${connected && s.outId && rawBuffer && !s.sending ? '' : 'disabled'} onclick="deviceSendSelected('all')">${s.sending && s.sendingScope === 'all' ? 'Sending...' : 'Send all 18 setups to UC4'}</button>
                     </div>
                     <div class="dev-note">Dump firmware tag: ${uc4FwString(uc4CurrentFirmware())}${deviceFirmware ? ' (from your UC4)' : ' (from the loaded file; use Import > From UC4 once to take your UC4\'s own value)'}.</div>
                     ${s.sending ? '<div class="dev-card"><div class="dev-rx"><span class="dev-pulse"></span> Sending to UC4...</div><div class="dev-bar"><div class="dev-bar-anim"></div></div></div>' : ''}
@@ -13687,6 +13688,15 @@ ${description}
             for (let i = 0; i < str.length; i++) u[i] = str.charCodeAt(i);
             return u;
         }
+        function toggleExportDropdown(event) {
+            event.stopPropagation();
+            document.getElementById('exportDropdown').classList.toggle('open');
+        }
+        function closeExportDropdown() { document.getElementById('exportDropdown').classList.remove('open'); }
+        document.addEventListener('click', (e) => {
+            const dd = document.getElementById('exportDropdown');
+            if (dd && !dd.contains(e.target)) closeExportDropdown();
+        });
         function toggleProjectDropdown(event) {
             event.stopPropagation();
             document.getElementById('projectDropdown').classList.toggle('open');
