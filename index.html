@@ -3034,6 +3034,7 @@
         .cv.tree-off.cv-three { grid-template-columns: minmax(0, 1fr) 300px; }
         .cv.tree-off .cv-tree { display: none; }
         .cv.cv-two { grid-template-columns: 200px minmax(0, 1fr); }
+        .cv.cv-ovw { grid-template-columns: minmax(0, 1fr) 300px; }
         .cv.cv-three { grid-template-columns: 240px minmax(0, 1fr) 300px; }
         @media (max-width: 1300px) { .cv.cv-three { grid-template-columns: 200px minmax(0, 1fr) 280px; } }
         @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 170px minmax(0, 1fr); } }
@@ -3632,7 +3633,7 @@
         let conflictsByControl = new Map(); // Quick lookup: "type-group-index" -> [conflict keys]
         
         // Conflict filter state
-        let showConcurrentConflicts = true;
+        let showConcurrentConflicts = false;
         let showMutuallyExclusiveConflicts = false;
         
         // Link Groups State
@@ -12792,9 +12793,27 @@ ${description}
             }
             el.dispatchEvent(new Event('change', { bubbles: true }));
         }
+        // hold a step button to repeat
+        let stepHold = { t: null, i: null, did: false };
+        function stepHoldStop() { clearTimeout(stepHold.t); clearInterval(stepHold.i); stepHold.t = stepHold.i = null; }
+        document.addEventListener('mousedown', (e) => {
+            const b = e.target.closest('.step-btn');
+            if (!b || e.button !== 0) return;
+            const el = b.closest('.param-input') && b.closest('.param-input').querySelector('input[type="number"], select');
+            if (!el) return;
+            stepHold.did = false;
+            const d = parseInt(b.dataset.d, 10) * ((e.shiftKey && el.tagName === 'INPUT') ? 10 : 1);
+            stepHoldStop();
+            stepHold.t = setTimeout(() => {
+                stepHold.i = setInterval(() => { stepHold.did = true; stepElement(el, d); ovMultiSyncFrom(el); }, 70);
+            }, 450);
+        });
+        document.addEventListener('mouseup', stepHoldStop);
+        document.addEventListener('dragstart', stepHoldStop);
         document.addEventListener('click', (e) => {
             const b = e.target.closest('.step-btn');
             if (!b) return;
+            if (stepHold.did) { stepHold.did = false; return; }
             const el = b.closest('.param-input').querySelector('input[type="number"], select');
             if (!el) return;
             const big = e.shiftKey && el.tagName === 'INPUT';
@@ -13333,7 +13352,7 @@ ${description}
             const tree = document.createElement('aside');
             tree.className = 'cv-tree';
             tree.id = 'cvTree';
-            wrap.appendChild(tree);
+            if (!withInspector) wrap.appendChild(tree);
             wrap.appendChild(body);
             if (cv.treeOff === undefined) cv.treeOff = false;
             const bar = document.createElement('div');
@@ -13344,17 +13363,17 @@ ${description}
             const sync = () => { tb.innerHTML = cv.treeOff ? '&#9656; Tree' : '&#9662; Tree'; wrap.classList.toggle('tree-off', !!cv.treeOff); };
             tb.onclick = () => { cv.treeOff = !cv.treeOff; sync(); };
             bar.appendChild(tb);
-            main.appendChild(bar);
+            if (!withInspector) main.appendChild(bar);
             wrap.classList.toggle('tree-off', !!cv.treeOff);
             sync();
             if (withInspector) {
-                wrap.className = 'cv cv-three';
+                wrap.className = 'cv cv-ovw';
                 const insp = document.createElement('aside');
                 insp.className = 'cv-inspector';
                 insp.id = 'ovInspector';
                 const refresh = () => setTimeout(() => { renderCurrentView(); }, 0);
-                insp.addEventListener('change', refresh);
-                insp.addEventListener('click', (e) => { if (e.target.closest('.step-btn')) refresh(); });
+                insp.addEventListener('change', (e) => { ovMultiSyncFrom(e.target); refresh(); });
+                insp.addEventListener('click', (e) => { if (e.target.closest('.step-btn')) { const el = e.target.closest('.param-input').querySelector('input[type="number"], select'); ovMultiSyncFrom(el); refresh(); } });
                 wrap.appendChild(insp);
             }
             main.appendChild(wrap);
@@ -13362,6 +13381,7 @@ ${description}
                 cv.open.add(`s${currentSetup}`); cv.open.add(`s${currentSetup}e`); cv.open.add(`s${currentSetup}f`);
                 cv.lastSetup = currentSetup;
             }
+            if (withInspector) return;
             const keepNode = cv.node; cv.node = null;
             cvRenderTree();
             cv.node = keepNode;
@@ -13790,13 +13810,13 @@ ${description}
             const filters = document.createElement('div');
             filters.className = 'conflict-filters';
             filters.innerHTML = `
-                <span class="conflict-filters-label">Conflicts:</span>
-                <div class="filter-chip ${showConcurrentConflicts ? 'active' : ''}" onclick="toggleConcurrentFilter()" title="Same message on controls that are active together">
+                <span class="conflict-filters-label" title="Controls that send the same message. Often on purpose, so this is only information.">Same message:</span>
+                <div class="filter-chip ${showConcurrentConflicts ? 'active' : ''}" onclick="toggleConcurrentFilter()" title="Same channel and number on controls that are active together. Often on purpose.">
                     <span class="checkmark">${showConcurrentConflicts ? '&#10003;' : ''}</span>
                     Same time
                     <span class="count" id="concurrentCount">${conflicts.concurrent.size}</span>
                 </div>
-                <div class="filter-chip ${showMutuallyExclusiveConflicts ? 'active dim' : ''}" onclick="toggleMEFilter()" title="Same message in different groups">
+                <div class="filter-chip ${showMutuallyExclusiveConflicts ? 'active dim' : ''}" onclick="toggleMEFilter()" title="Same channel and number in different groups. Normal: only one group of a half is active at a time.">
                     <span class="checkmark">${showMutuallyExclusiveConflicts ? '&#10003;' : ''}</span>
                     Other groups
                     <span class="count" id="meCount">${conflicts.mutuallyExclusive.size}</span>
@@ -13814,7 +13834,7 @@ ${description}
             if (visible.length) {
                 const panel = document.createElement('div');
                 panel.className = 'conflict-panel';
-                panel.innerHTML = `<div class="conflict-panel-header"><span>${visible.length} conflict${visible.length !== 1 ? 's' : ''}</span></div>`;
+                panel.innerHTML = `<div class="conflict-panel-header"><span>${visible.length} duplicate${visible.length !== 1 ? "s" : ""}</span></div>`;
                 for (const { key, entry, type } of visible.slice(0, 20)) {
                     const item = document.createElement('div');
                     item.className = `conflict-item ${type === 'me' ? 'dim' : ''}`;
@@ -13976,21 +13996,53 @@ ${description}
             stApplyAll();
         }
 
+        // Several cells selected in Overview: a change made in the panel is copied to all of them
+        let ovMultiAnchor = null;
+        function ovMultiSyncFrom(el) {
+            if (!el || currentView !== 'overview' || ovSel.size < 2 || !ovMultiAnchor) return;
+            const row = el.closest && el.closest('.param-row[data-param]');
+            if (!row || !el.closest('#ovInspector')) return;
+            const param = row.dataset.param, a = ovMultiAnchor;
+            const val = getControlData(a.type, currentSetup, a.g, a.i)[param];
+            if (val === undefined) return;
+            const actions = [];
+            for (const c of ovSel.values()) {
+                if (c.type !== a.type || (c.g === a.g && c.i === a.i)) continue;
+                const before = { ...getControlData(c.type, currentSetup, c.g, c.i) };
+                if (before[param] === val) continue;
+                const after = { ...before, [param]: val };
+                setControlDataSilent(c.type, currentSetup, c.g, c.i, after);
+                actions.push({ controlType: c.type, setupIdx: currentSetup, group: c.g, index: c.i, before, after });
+            }
+            if (!actions.length) return;
+            const top = undoStack[undoStack.length - 1];
+            if (top && top.type === 'value' && top.controlType === a.type && top.group === a.g && top.index === a.i && top.param === param) {
+                undoStack.pop();
+                const cur = { ...getControlData(a.type, currentSetup, a.g, a.i) };
+                actions.unshift({ controlType: a.type, setupIdx: currentSetup, group: a.g, index: a.i, before: { ...cur, [param]: top.before }, after: cur });
+            }
+            recordUndo({ type: 'batch', description: `Set ${param} (${actions.length})`, actions });
+            markModified();
+            scheduleConflictRebuild();
+        }
         // Overview: edit the clicked cell in the panel on the right, like in the Controller view
         let ovInspKey = null;
         function ovRenderInspector(force) {
             const el = document.getElementById('ovInspector');
             if (!el || currentView !== 'overview') return;
             const n = ovSel.size;
-            const f = n === 1 ? [...ovSel.values()][0] : null;
-            const key = n === 1 ? ovK(f.type, f.g, f.i) + '|' + currentSetup : 'n' + n;
+            const cells = [...ovSel.values()];
+            const oneType = n >= 1 && cells.every(c => c.type === cells[0].type);
+            const f = n === 1 ? cells[0] : (oneType ? (ovFocus && ovSel.has(ovK(ovFocus.type, ovFocus.g, ovFocus.i)) ? ovFocus : cells[0]) : null);
+            ovMultiAnchor = n >= 2 ? f : null;
+            const key = f ? ovK(f.type, f.g, f.i) + '|' + currentSetup + '|' + n : 'n' + n;
             if (!force && key === ovInspKey) return;
             ovInspKey = key;
             el.innerHTML = '';
-            if (n !== 1) {
+            if (!f) {
                 el.innerHTML = n === 0
                     ? '<div class="cv-ins-title">Nothing selected</div><div class="cv-ins-note">Click a cell to edit it here. Delete restores the factory value.</div>'
-                    : `<div class="cv-ins-title">${n} cells selected</div><div class="cv-ins-note">Copy and paste them with the bar at the bottom. Delete restores the factory values.</div>`;
+                    : `<div class="cv-ins-title">${n} cells selected</div><div class="cv-ins-note">They are of different kinds. Select cells of one kind to edit them together.</div>`;
                 return;
             }
             if (f.type === 'encoder' || f.type === 'push') encoderGroup = f.g; else faderGroup = f.g;
@@ -14001,6 +14053,12 @@ ${description}
                 card = t === 'encoder' ? createEncoderCard(i) : t === 'push' ? createPushCard(i)
                      : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
             } finally { cvInspBuilding = false; }
+            if (n >= 2) {
+                const note = document.createElement('div');
+                note.className = 'cv-ins-note';
+                note.textContent = `${n} cells selected. What you change here is applied to all of them.`;
+                el.insertBefore(note, el.firstChild);
+            }
             el.appendChild(card);
             stApplyAll();
         }
