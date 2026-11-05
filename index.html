@@ -3460,14 +3460,6 @@
         .cv-node.active .cv-txt, .cv-node.active .cv-arrow, .cv-node.active .cv-lab { color: var(--text); }
 
         .logo-wrap { display: flex; flex-direction: column; justify-content: center; }
-        .footnote { margin: 1.5rem 1.5rem 2.2rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.72rem; line-height: 1.6; color: var(--text-dim); }
-        .footnote a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-        .footnote a:hover { opacity: 0.7; }
-        .fn-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-        .fn-author { font-family: var(--font-sans); font-size: 0.8rem; color: var(--text); }
-        .fn-off { font-family: var(--font-mono); font-size: 0.66rem; }
-        .fn-small { font-size: 0.68rem; }
-        body.batch-open .footnote { margin-bottom: calc(2.2rem + var(--batch-h, 0px)); }
 
         /* icon buttons: no frame */
         .ico-btn, .ico-btn:hover, .ico-btn:disabled { border: none; background: none; padding: 0.35rem 0.4rem; color: var(--text-dim); display: inline-flex; align-items: center; }
@@ -3931,12 +3923,6 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <p>Expected file size: 100,640 bytes (all 18 setups)</p>
         </div>
     </main>
-    <footer class="footnote">
-        <div class="fn-row"><span class="fn-author">Unofficial tool by <a href="https://www.instagram.com/omi_i_am/" target="_blank" rel="noopener">Omi Makarenko</a></span>
-            <span class="fn-off">Runs entirely in your browser. Your setups are not sent anywhere.</span></div>
-        <div class="fn-small">v<span id="versionFoot"></span> &middot; Fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne, MIT licence &middot; <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
-            Not affiliated with or endorsed by Faderfox. The dump format was worked out by the community.</div>
-    </footer>
     
 
     
@@ -14754,7 +14740,6 @@ ${description}
         
         // Set version display in footer
         document.getElementById('versionDisplay').textContent = CURRENT_EDITOR_VERSION;
-        document.getElementById('versionFoot').textContent = CURRENT_EDITOR_VERSION;
         
         ensureFactoryBuf();
         initializeEditor();
