@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UC4 Mom</title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('uc4_mom_theme') || 'dark'; } catch (e) {}</script>
-    <style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
         /* System fonts - no external dependencies for offline support */
         
         :root {
@@ -3371,6 +3374,107 @@
         .ov-table td.ov-cell.conflict-dim { box-shadow: inset 0 0 0 1px var(--warning); }
         .ov-table td.ov-cell.ov-sel { outline: 2px solid var(--accent); outline-offset: -2px; }
     </style>
+    <style id="t1-signature">
+        /* Shared look with T1 Backup Digger: warm neutral greys, olive fill, Manrope / IBM Plex, soft panels */
+        :root {
+            --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+            --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            --font-display: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --bg-glow: radial-gradient(1100px 500px at 15% -10%, #232323 0%, transparent 60%);
+            --bg-dark: #19191a; --bg-panel: #212123; --bg-control: #29292b; --bg-input: #29292b;
+            --border: #343436; --border-light: #46464a;
+            --text: #edeff1; --text-dim: #b7bcc2; --text-muted: #878c93;
+            --accent: #7f9a5a; --accent-dim: #8ca863; --emphasis: #ffffff; --btn-text: #16171a;
+            --tab-bg: #29292b; --field-bg: #19191a; --chip-bg: #36363a; --chip-hover: #46464a;
+            --encoder: #7aa7c9; --push: #a994cc; --green-btn: #9fc079; --fader: #d19a68;
+            --st-f-bg: #2c3924; --st-f-text: #8a9c7c;
+            --st-s-bg: #7f9a5a; --st-s-text: #182208; --st-s-tree: #a9c482;
+            --st-n-bg: #d7dade; --st-n-text: #16171a; --st-n-tree: #d7dade;
+        }
+        html[data-theme="light"] {
+            --bg-glow: radial-gradient(1100px 500px at 15% -10%, #ffffff 0%, transparent 60%);
+            --bg-dark: #f2f2f1; --bg-panel: #ffffff; --bg-control: #eeeeed; --bg-input: #eeeeed;
+            --border: #d7d7d5; --border-light: #bdbdbb;
+            --text: #1b1c1d; --text-dim: #4b4f54; --text-muted: #80858b;
+            --accent: #56742f; --accent-dim: #46612a; --emphasis: #000000; --btn-text: #f5f5f4;
+            --tab-bg: #ffffff; --field-bg: #eeeeed; --chip-bg: #dcdcda; --chip-hover: #cdcdcb;
+            --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
+            --st-f-bg: #dfe6d3; --st-f-text: #5c6b4d;
+            --st-s-bg: #7a9a54; --st-s-text: #182208; --st-s-tree: #4a6a26;
+            --st-n-bg: #2b2d30; --st-n-text: #f5f5f4; --st-n-tree: #2b2d30;
+        }
+        body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
+        input, select, textarea, td.ov-cell, .cv-sum, .st-chip, .gb-chip, .step-btn, .cv-el, .proj-name, .logo-pop { font-family: var(--font-mono); }
+        .header, .nav-bar { background: transparent; }
+        .header { border-bottom: 1px solid var(--border); }
+        .nav-bar { border-bottom: none; }
+
+        /* logo: a boxed tag and a name, as in T1 Backup Digger */
+        .logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.01em; text-transform: none; color: var(--text); display: flex; align-items: center; gap: 0.55rem; }
+        .logo .uc-tag { font-family: var(--font-mono); font-weight: 600; font-size: 0.82rem; letter-spacing: 0.02em; border: 1.5px solid var(--text); border-radius: 5px; padding: 2px 6px 1px; line-height: 1.3; color: var(--text); }
+        .logo span { font-weight: 700; }
+
+        .logo-sub { font-size: 0.72rem; line-height: 1.5; color: var(--text-dim); margin-top: 0.25rem; }
+        .logo-sub .by a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 2px; }
+        .logo-sub .by a:hover { color: var(--text); }
+
+        /* theme switch */
+        .theme-toggle { --tw: 40px; --th: 22px; --tp: 3px; width: var(--tw); height: var(--th); border-radius: 999px; flex: none; padding: 0; background: var(--bg-control); border: 1px solid var(--border); position: relative; cursor: pointer; transition: background-color 0.2s; align-self: center; }
+        .theme-toggle .thumb { position: absolute; top: var(--tp); left: var(--tp); width: calc(var(--th) - 2 * var(--tp) - 2px); height: calc(var(--th) - 2 * var(--tp) - 2px); border-radius: 50%; background: var(--text); transition: left 0.2s ease, background-color 0.2s; }
+        html[data-theme="light"] .theme-toggle .thumb { left: calc(var(--tw) - var(--th) + var(--tp)); }
+        .theme-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+        /* buttons and fields: soft corners */
+        .btn, .view-btn, .import-dropdown-btn { border-radius: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; border-color: var(--border); }
+        .btn:hover { border-color: var(--border-light); color: var(--text); background: var(--bg-input); }
+        .btn-primary, .btn-primary:hover { background: var(--emphasis); color: var(--btn-text); border-color: var(--emphasis); }
+        .btn-primary:hover { filter: brightness(0.92); }
+        .view-toggle { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        .view-btn { border: none; margin-left: 0; border-radius: 0; background: var(--bg-control); color: var(--text-dim); }
+        .view-btn + .view-btn { border-left: 1px solid var(--border); }
+        .view-btn:hover { background: var(--bg-input); color: var(--text); }
+        .view-btn.active { background: var(--emphasis); color: var(--btn-text); }
+        #deviceToggle .view-btn, #cheatToggle .view-btn { color: var(--text); }
+        #cheatToggle .view-btn { }
+        :where(input[type="text"], input[type="number"], select, textarea) { border-radius: 7px; border: 1px solid var(--border); }
+        :where(input, select, textarea):focus { outline: 2px solid var(--text-dim); outline-offset: 0; }
+        .gb-chip, .st-chip, .step-btn { border-radius: 5px; }
+        .nav-label, label.field, .conflict-filters-label, .cv-ins-cap { font-family: var(--font-mono); letter-spacing: 0.06em; }
+
+        /* panels: no frames, 12px corners */
+        .group-block, .cv-tree, .cv-inspector, .overview-container .ov-sec, .setup-manager-modal, .modal-dialog, .conflict-filters, .conflict-panel, .proj-pop, .logo-pop, .batch-bar { border: none; border-radius: 12px; }
+        .group-block.enc, .group-block.fad { border-top: none; }
+        .group-block, .cv-tree, .cv-inspector { background: var(--bg-panel); }
+        .gb-body, .ov-sec-body { border-radius: 0 0 12px 12px; }
+        .setup-manager-modal, .modal-dialog { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
+        .setup-manager-header { border-radius: 12px 12px 0 0; background: var(--bg-panel); }
+        .batch-bar { border-radius: 12px 12px 0 0; }
+        .cv-device { border: none; border-radius: 12px; }
+        .ov-table td.ov-cell, .cv-el { border-radius: 0; }
+        .ov-table { border-spacing: 3px; }
+        .select-wrapper select { border-radius: 8px; }
+        .cv-node.active { background: var(--st-s-bg); color: var(--st-s-text); }
+        .cv-node { border-radius: 6px; margin: 0 0.3rem; }
+        .cv-el.st-saved .cv-lab-in::placeholder { color: var(--st-s-text) !important; opacity: 0.8 !important; }
+        .cv-el.st-fresh .cv-lab-in::placeholder { color: var(--st-n-text) !important; opacity: 0.8 !important; }
+        .cv-el.st-factory .cv-lab-in::placeholder { color: var(--st-f-text) !important; opacity: 1 !important; }
+        .cv-node.active .cv-txt, .cv-node.active .cv-arrow, .cv-node.active .cv-lab { color: var(--st-s-text); }
+
+        .logo-wrap { display: flex; flex-direction: column; justify-content: center; }
+        .footnote { margin: 1.5rem 1.5rem 2.2rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.72rem; line-height: 1.6; color: var(--text-dim); }
+        .footnote a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+        .footnote a:hover { opacity: 0.7; }
+        .fn-row { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+        .fn-author { font-family: var(--font-sans); font-size: 0.8rem; color: var(--text); }
+        .fn-off { font-family: var(--font-mono); font-size: 0.66rem; }
+        .fn-small { font-size: 0.68rem; }
+        body.batch-open .footnote { margin-bottom: calc(2.2rem + var(--batch-h, 0px)); }
+
+        /* values: factory is the quiet green-grey, saved is the olive fill, changed is the light mark */
+        .ov-table th.ov-col.st-saved { color: var(--st-s-tree); }
+        .ov-table th.ov-col.st-factory { color: var(--text-muted); }
+        .guide-body h1, .guide-body h2, .setup-manager-title, .gb-label, .cv-ins-title { font-family: var(--font-display); font-weight: 700; }
+    </style>
 </head>
 <body>
 <div id="guidePanel" class="setup-manager-overlay guide-overlay" style="display:none" aria-hidden="true" onclick="if (event.target === this) guideToggle(false)">
@@ -3629,7 +3733,8 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
     
     <header class="header">
         <div class="logo-wrap">
-            <div class="logo">UC4 <span>Mom</span></div>
+            <div class="logo"><span class="uc-tag">UC4</span> Mom</div>
+            <div class="logo-sub">Editor for the Faderfox UC4<br><span class="by">Unofficial tool by <a href="https://www.instagram.com/omi_i_am/" target="_blank" rel="noopener">Omi Makarenko</a></span></div>
             <div class="logo-pop">UC4 Mom v<span id="versionDisplay">1.2.0</span><br>
                 <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
                 Fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne</div>
@@ -3687,7 +3792,7 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">Reset</button>
             <span class="btn-divider"></span>
             <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
-            <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Switch light/dark theme">Light</button>
+            <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
         </div>
     </header>
     
@@ -3746,6 +3851,12 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <p>Expected file size: 100,640 bytes (all 18 setups)</p>
         </div>
     </main>
+    <footer class="footnote">
+        <div class="fn-row"><span class="fn-author">Unofficial tool by <a href="https://www.instagram.com/omi_i_am/" target="_blank" rel="noopener">Omi Makarenko</a></span>
+            <span class="fn-off">Runs entirely in your browser. Your setups are not sent anywhere.</span></div>
+        <div class="fn-small">v<span id="versionFoot"></span> &middot; Fork of <a href="https://github.com/thegdyne/uc4-sysex-editor" target="_blank" rel="noopener">UC4 SysEx Editor</a> by thegdyne, MIT licence &middot; <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
+            Not affiliated with or endorsed by Faderfox. The dump format was worked out by the community.</div>
+    </footer>
     
 
     
@@ -14510,7 +14621,7 @@ ${description}
             try { localStorage.setItem('uc4_mom_theme', t); } catch (e) {}
             const b = document.getElementById('themeBtn');
             if (b) {
-                b.textContent = t === 'light' ? 'Dark' : 'Light';
+                b.setAttribute('aria-checked', t === 'light' ? 'true' : 'false');
                 b.title = t === 'light' ? 'Switch to the dark theme' : 'Switch to the light theme';
             }
         }
@@ -14524,6 +14635,7 @@ ${description}
         
         // Set version display in footer
         document.getElementById('versionDisplay').textContent = CURRENT_EDITOR_VERSION;
+        document.getElementById('versionFoot').textContent = CURRENT_EDITOR_VERSION;
         
         ensureFactoryBuf();
         initializeEditor();
