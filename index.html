@@ -3313,6 +3313,10 @@
         .setup-card.st-factory { background: var(--st-f-bg); }
         .setup-card.st-saved { background: var(--st-s-bg); }
         .setup-card.st-fresh { background: var(--st-n-bg); }
+        .cv-sum { font-size: 0.68rem; color: var(--text-dim); margin-top: 0.1rem; }
+        .cv-el.st-factory .cv-sum { color: var(--st-f-text); }
+        .cv-el.st-saved .cv-sum { color: var(--st-s-text); opacity: 0.85; }
+        .cv-el.st-fresh .cv-sum { color: var(--st-n-text); opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -5655,6 +5659,8 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             if (typeof batchSel !== 'undefined') batchSel.clear();
             if (typeof cv !== 'undefined' && cv.multi) { cv.multi.clear(); cv.multiKeys.clear(); }
             currentSetup = parseInt(idx);
+            const sel = document.getElementById('setupSelect');
+            if (sel && sel.value !== String(currentSetup)) sel.value = String(currentSetup);
             updateGroupNames();
             updateLibrarySourceBadge();
             // Rebuild conflict map for new setup
@@ -13109,7 +13115,8 @@ ${description}
             return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs} st-${stControl(currentSetup, type, g, idx)}" data-type="${type}" data-idx="${idx}" onclick="cvElClick(event, '${type}', ${idx})" title="${escapeHtml(cvDefaultName(type, idx) + ' - ' + sum)}">
                 ${visual}
                 <input type="text" class="cv-lab-in" maxlength="60" placeholder="${escapeHtml(cvDefaultName(type, idx))}" value="${escapeHtml(label)}"
-                    onclick="event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})"></div>`;
+                    onmousedown="if (event.ctrlKey || event.metaKey || event.shiftKey) event.preventDefault()" onclick="if (!(event.ctrlKey || event.metaKey || event.shiftKey)) event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})">
+                <div class="cv-sum">${escapeHtml(sum.trim())}</div></div>`;
         }
 
         function cvLabelInput(input, type, idx) {
@@ -13179,7 +13186,9 @@ ${description}
                     }
                 }
             }
+            const top = el.scrollTop;
             el.innerHTML = h;
+            el.scrollTop = top;
         }
 
         function cvRenderInspector() {
@@ -13234,12 +13243,17 @@ ${description}
                 cv.open.add(`s${currentSetup}`); cv.open.add(`s${currentSetup}e`); cv.open.add(`s${currentSetup}f`);
                 cv.lastSetup = currentSetup;
             }
+            const oldTree = document.getElementById('cvTree');
+            const treeTop = oldTree ? oldTree.scrollTop : (cv.treeTop || 0), pageTop = window.scrollY;
             const main = document.getElementById('mainContent');
             main.innerHTML = `<div class="cv">
                 <aside class="cv-tree" id="cvTree"></aside>
                 <section class="cv-main" id="cvPanel"></section>
                 <aside class="cv-inspector" id="cvInspector"></aside></div>`;
             cvRenderTree(); cvRenderPanel(); cvRenderInspector(); stApplyAll();
+            document.getElementById('cvTree').scrollTop = treeTop;
+            document.getElementById('cvTree').addEventListener('scroll', (e) => { cv.treeTop = e.target.scrollTop; });
+            window.scrollTo(0, pageTop);
             cvBindDrag(document.getElementById('cvPanel'));
             const insp = document.getElementById('cvInspector');
             const refresh = () => setTimeout(() => { cvRenderPanel(); }, 0);
