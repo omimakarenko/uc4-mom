@@ -3545,6 +3545,10 @@
         .tools-block { gap: 0.5rem; }
         .tools-bot { margin-top: 0; }
         .act-main .device-status, .tools-bot { position: relative; top: 3px; }
+        .act-main { row-gap: 0; }
+        .act-main .device-status { top: 0; height: 2.1rem; line-height: 1.5rem; border-top: none; border-radius: 0 0 8px 8px; align-self: start; }
+        .act-main .device-status .dev-connect { top: 0.45rem; }
+        .header > .tools-block { align-self: flex-end; }
 </style>
 </head>
 <body>
@@ -3857,7 +3861,8 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
                 <div class="mod-note" id="modNote"></div>
                 <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)"><span id="deviceStatusText">UC4: not connected</span><button type="button" class="dev-connect" id="connectBtn" onclick="event.stopPropagation(); midiConnect()" title="Connect to the UC4 (the browser asks for MIDI access)">Connect</button></div>
             </div>
-            <div class="tools-block">
+        </div>
+        <div class="tools-block">
                 <div class="tools-top">
             <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
             <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
@@ -3868,7 +3873,6 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <button class="btn ico-btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
                 </div>
             </div>
-        </div>
     </header>
     
     <nav class="nav-bar">
