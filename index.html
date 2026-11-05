@@ -3512,6 +3512,24 @@
         :root, html[data-theme="light"] { --encoder: var(--text-dim); --push: var(--text-dim); --fader: var(--text-dim); }
         :root { --green-btn: #44dd66; }
         html[data-theme="light"] { --green-btn: #1f9a3f; }
+
+        /* header, compact: narrower buttons, Guide + theme over a divider over Undo/Redo/Reset */
+        .header { gap: 0.8rem 1.2rem; }
+        .act-main { grid-template-columns: auto auto auto; gap: 0.2rem 0.4rem; }
+        .act-main .import-dropdown, .act-main .import-dropdown-btn { width: auto; }
+        .act-main .import-dropdown-btn { justify-content: center; padding-left: 0.7rem; padding-right: 0.7rem; }
+        .view-btn { padding: 0.5rem 0.7rem; }
+        #deviceToggle .view-btn { width: auto; }
+        #cheatToggle .view-btn { width: auto; padding-left: 0.7rem; padding-right: 0.7rem; }
+        .tools-block { display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; align-self: flex-start; }
+        .tools-top, .tools-bot { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
+        .tools-sep { height: 1px; background: var(--border); }
+        .tools-bot .ico-btn { padding: 0.2rem 0.3rem; }
+        .file-actions { gap: 0.6rem; }
+        .act-main .device-status { grid-column: 2 / span 2; width: auto; justify-self: start; }
+        #deviceToggle, #cheatToggle { justify-self: start; }
+        .act-main .device-status { width: max-content; min-width: 100%; overflow: visible; }
+        .act-main .device-status #deviceStatusText { overflow: visible; }
 </style>
 </head>
 <body>
@@ -3825,12 +3843,18 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
                 <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)"><span id="deviceStatusText">UC4: not connected</span><button type="button" class="dev-connect" id="connectBtn" onclick="event.stopPropagation(); midiConnect()" title="Connect to the UC4 (the browser asks for MIDI access)">Connect</button></div>
             </div>
             <span class="btn-divider"></span>
+            <div class="tools-block">
+                <div class="tools-top">
+            <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
+            <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
+                </div>
+                <div class="tools-sep"></div>
+                <div class="tools-bot">
             <button class="btn ico-btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
             <button class="btn ico-btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
             <button class="btn ico-btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
-            <span class="btn-divider"></span>
-            <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
-            <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
+                </div>
+            </div>
         </div>
     </header>
     
