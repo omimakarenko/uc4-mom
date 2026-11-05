@@ -3535,6 +3535,12 @@
         .act-main .device-status #deviceStatusText { overflow: hidden; }
         #deviceToggle { justify-self: stretch; }
         #deviceToggle .view-btn { flex: 1; min-width: 5.5rem; }
+        /* theme switch: vertical, same height and frame as Guide */
+        .tools-top { align-items: stretch; }
+        .theme-toggle { --tw: 1.5rem; width: var(--tw); height: auto; align-self: stretch; border-radius: 999px; background: var(--bg-control); border: 1px solid var(--border); }
+        .theme-toggle .thumb { top: var(--tp); left: var(--tp); width: calc(var(--tw) - 2 * var(--tp) - 2px); height: calc(var(--tw) - 2 * var(--tp) - 2px); transition: top 0.2s ease, background-color 0.2s; }
+        html[data-theme="light"] .theme-toggle .thumb { left: var(--tp); top: calc(100% - var(--tw) + var(--tp)); }
+        .tools-bot { margin-top: 0.1rem; }
 </style>
 </head>
 <body>
@@ -3847,13 +3853,11 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
                 <div class="mod-note" id="modNote"></div>
                 <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)"><span id="deviceStatusText">UC4: not connected</span><button type="button" class="dev-connect" id="connectBtn" onclick="event.stopPropagation(); midiConnect()" title="Connect to the UC4 (the browser asks for MIDI access)">Connect</button></div>
             </div>
-            <span class="btn-divider"></span>
             <div class="tools-block">
                 <div class="tools-top">
             <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
             <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
                 </div>
-                <div class="tools-sep"></div>
                 <div class="tools-bot">
             <button class="btn ico-btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
             <button class="btn ico-btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
