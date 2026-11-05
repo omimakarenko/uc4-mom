@@ -3028,10 +3028,15 @@
         .cv-node .cv-lab { color: var(--text-muted); margin-left: 0.3rem; }
         .cv-arrow { width: 0.9rem; text-align: center; color: var(--text-muted); flex-shrink: 0; }
         .cv-main { min-width: 0; }
-        .cv.cv-two { grid-template-columns: 240px minmax(0, 1fr); }
+        .gb-cur { flex: 1; font-size: 0.8rem; color: var(--text); padding: 0 0.5rem; }
+        .cv-bar { display: flex; margin-bottom: 0.4rem; }
+        .cv.tree-off.cv-two { grid-template-columns: minmax(0, 1fr); }
+        .cv.tree-off.cv-three { grid-template-columns: minmax(0, 1fr) 300px; }
+        .cv.tree-off .cv-tree { display: none; }
+        .cv.cv-two { grid-template-columns: 200px minmax(0, 1fr); }
         .cv.cv-three { grid-template-columns: 240px minmax(0, 1fr) 300px; }
         @media (max-width: 1300px) { .cv.cv-three { grid-template-columns: 200px minmax(0, 1fr) 280px; } }
-        @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 200px minmax(0, 1fr); } }
+        @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 170px minmax(0, 1fr); } }
         .cv-head { display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.6rem; }
         .cv-head b { color: var(--text); }
         .cv-device { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.9rem 1rem 0.4rem; }
@@ -13048,7 +13053,7 @@ ${description}
             const head = document.createElement('div');
             head.className = 'gb-head';
             head.innerHTML = `<div class="gb-label">${isEnc ? 'Encoders &amp; Enc.Buttons' : 'Faders &amp; Green Buttons'}</div>
-                <div class="gb-tabs">${tabs}</div>
+                <div class="gb-cur st-${stGroup(currentSetup, isEnc ? 'e' : 'f', active)}" title="Group ${active + 1}, name on the UC4: ${escapeHtml(getGroupName(currentSetup, active))}">${active + 1} ${escapeHtml(getGroupName(currentSetup, active))}</div>
                 <button type="button" class="gb-chip" data-block="${kind}" onclick="batchBlockChannel('${kind}')" title="Select Chan of every control in this group">All Chan</button>
                 <button type="button" class="gb-ico ${(gMeta.label || gMeta.description) ? 'has' : ''}" onclick="gbEditToggle('${kind}')" title="Group name, label and description">&#9998;</button>
                 <button type="button" class="gb-ico gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>`;
@@ -13330,6 +13335,18 @@ ${description}
             tree.id = 'cvTree';
             wrap.appendChild(tree);
             wrap.appendChild(body);
+            if (cv.treeOff === undefined) cv.treeOff = false;
+            const bar = document.createElement('div');
+            bar.className = 'cv-bar';
+            const tb = document.createElement('button');
+            tb.type = 'button'; tb.className = 'gb-chip';
+            tb.title = 'Show or hide the tree';
+            const sync = () => { tb.innerHTML = cv.treeOff ? '&#9656; Tree' : '&#9662; Tree'; wrap.classList.toggle('tree-off', !!cv.treeOff); };
+            tb.onclick = () => { cv.treeOff = !cv.treeOff; sync(); };
+            bar.appendChild(tb);
+            main.appendChild(bar);
+            wrap.classList.toggle('tree-off', !!cv.treeOff);
+            sync();
             if (withInspector) {
                 wrap.className = 'cv cv-three';
                 const insp = document.createElement('aside');
@@ -13725,7 +13742,13 @@ ${description}
                     const row = sel.closest('.param-row');
                     let fv;
                     try { fv = factoryParam(type, g, i, row.dataset.param); } catch (e) { return; }
-                    for (const o of sel.options) if (String(o.value) === String(fv) && !/default\)$/.test(o.textContent)) o.textContent += ' (default)';
+                    let shown = null;
+                    for (const o of sel.options) if (String(o.value) === String(fv)) shown = o.textContent;
+                    if (shown !== null) {
+                        const d = document.createElement('option');
+                        d.value = 'default'; d.textContent = `Default: ${shown}`;
+                        sel.insertBefore(d, sel.firstChild);
+                    }
                 });
             });
             document.querySelectorAll('#cvPanel .cv-el').forEach(el => {
