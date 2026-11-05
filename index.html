@@ -5831,7 +5831,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             const allSetups = Array.from({ length: 18 }, (_, i) => i);
             afterSetupStateMutation(allSetups);
         
-            renderFocusedView();
+            renderCurrentView();
         }
         
         function exportSysEx() {
@@ -7912,10 +7912,13 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 return;
             }
             
-            FACTORY_TEMPLATES = [];
-            for (let setupIdx = 0; setupIdx < 18; setupIdx++) {
-                FACTORY_TEMPLATES[setupIdx] = captureSetupSnapshot(setupIdx);
-            }
+            const take = () => {
+                const t = [];
+                for (let setupIdx = 0; setupIdx < 18; setupIdx++) t.push(captureSetupSnapshot(setupIdx));
+                return t;
+            };
+            // the factory is factory_default.syx, not whatever file was imported
+            FACTORY_TEMPLATES = (typeof factoryBuf !== 'undefined' && factoryBuf ? ovWithBuf(factoryBuf, take) : null) || take();
             
             // Initialize Ableton hashes for auto-labeling
             initAbletonHashes();
@@ -9730,7 +9733,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             rebuildConflictMap();
             
             loadMetaFromStorage();
-            renderFocusedView();
+            renderCurrentView();
         }
         
         async function initializeEditor() {
@@ -13013,6 +13016,7 @@ ${description}
             main.appendChild(encBlock);
             main.appendChild(fadBlock);
             syncBatchUI();
+            stApplyAll();
         }
 
 
@@ -13610,6 +13614,12 @@ ${description}
                 if (r.ok) {
                     factoryBuf = new Uint8Array(await r.arrayBuffer());
                     stCache.fresh = false;
+                    if (rawBuffer && sectionIndex) {
+                        abletonHashesInitialized = false;
+                        initFactoryTemplates();
+                        differsFromFactoryCache.clear();
+                        checkAllAbletonLabels();
+                    }
                     if (rawBuffer) { renderCurrentView(); refreshTreeIfAny(); }
                 }
             } catch (e) {}
@@ -13816,6 +13826,7 @@ ${description}
                 td.classList.toggle('ov-clip', !!inClip);
             });
             ovRenderBar();
+            stApplyAll();
         }
 
         function ovRenderBar() {
