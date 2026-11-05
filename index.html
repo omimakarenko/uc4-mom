@@ -3317,6 +3317,22 @@
         .cv-el.st-factory .cv-sum { color: var(--st-f-text); }
         .cv-el.st-saved .cv-sum { color: var(--st-s-text); opacity: 0.85; }
         .cv-el.st-fresh .cv-sum { color: var(--st-n-text); opacity: 0.85; }
+
+        /* ---- Overview in the same style as Focused ---- */
+        .ov-section { border: none; background: var(--tab-bg); margin-bottom: 1.25rem; }
+        .ov-sec-head { background: var(--bg-dark); padding: 0.55rem 0.75rem 0.5rem; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; color: var(--text); gap: 0.6rem; }
+        .ov-sec-head:hover { color: var(--text); }
+        .ov-sec-head .ov-arrow { order: 2; margin-left: auto; width: auto; font-size: 1.5rem; line-height: 1; color: var(--text-muted); }
+        .ov-sec-head:hover .ov-arrow { color: var(--accent); }
+        .ov-sec-body { padding: 0.5rem 0.75rem 0.75rem; }
+        .ov-table { border-collapse: separate; border-spacing: 3px; width: 100%; font-size: 0.75rem; }
+        .ov-table th, .ov-table td { border: none; }
+        .ov-table th { background: transparent; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 0.8rem; color: var(--text-dim); }
+        .ov-table th .group-name { text-transform: none; color: inherit; font-size: inherit; }
+        .ov-table td.ov-cell { border-radius: 4px; }
+        .ov-table td.ov-cell.conflict { box-shadow: inset 0 0 0 2px var(--warning); }
+        .ov-table td.ov-cell.conflict-dim { box-shadow: inset 0 0 0 1px var(--warning); }
+        .ov-table td.ov-cell.ov-sel { outline: 2px solid var(--accent); outline-offset: -2px; }
     </style>
 </head>
 <body>
@@ -5427,6 +5443,42 @@ ${last ? `Last Error:
         // MIDI Channel Helpers
         function chDisp(ch0) { return (ch0 | 0) + 1; }
         
+        // One notation everywhere: channel, message, number (a note, a program range, ...), and for buttons the mode.
+        function ctlText(type, d) {
+            const ch = `ch${d.channel}`;
+            const range = () => `${Math.min(d.min, d.max)}-${Math.max(d.min, d.max)}`;
+            if (type === 'encoder') {
+                switch (d.type) {
+                    case 0: return `${ch} rel1 ${d.cc}`;
+                    case 1: return `${ch} rel2 ${d.cc}`;
+                    case 2: return `${ch} CC ${d.cc}`;
+                    case 3: return `${ch} PC ${range()}`;
+                    case 4: return `${ch} CC ${d.cc}+`;
+                    case 5: return `${ch} PB`;
+                    case 6: return `${ch} AT`;
+                    default: return `${ch} ??`;
+                }
+            }
+            if (type === 'fader') {
+                switch (d.type) {
+                    case 0: return `${ch} CC ${d.cc}`;
+                    case 1: return `${ch} PC ${range()}`;
+                    case 2: return `${ch} PB`;
+                    case 3: return `${ch} AT`;
+                    default: return `${ch} ??`;
+                }
+            }
+            if (type === 'fader9') return `${ch} CC ${d.cc}`;
+            const mode = d.mode ? 'tgl' : 'mom';
+            switch (d.typeNibble) {
+                case 0x00: return 'off';
+                case 0x10: return `${ch} N ${d.cc} ${mode}`;
+                case 0x20: return `${ch} CC ${d.cc} ${mode}`;
+                case 0x30: return `${ch} PC ${d.cc} ${mode}`;
+                case 0x40: return `${ch} AT ${mode}`;
+                default: return `${ch} ??`;
+            }
+        }
         function formatEncoderCell(data) {
             const typeMap = {
                 0: 'r1', 1: 'r2', 2: 'CC', 3: 'PC', 4: 'Hi', 5: 'PB', 6: 'AT'
@@ -13087,11 +13139,11 @@ ${description}
 
         function cvSummary(type, g, idx, setup) {
             const cs = setup == null ? currentSetup : setup;
-            if (type === 'encoder') { const d = getEncoderData(cs, g, idx); return `ch${d.channel} ${cvEncSummary(d)}`; }
-            if (type === 'push') { const d = getPushData(cs, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
-            if (type === 'green') { const d = getGreenData(cs, g, idx); return `ch${d.channel} ${cvBtnSummary(d)}`; }
-            if (type === 'fader') { const d = getFaderData(cs, g, idx); return `ch${d.channel} ${cvFaderSummary(d)}`; }
-            const d = getFader9Data(cs, g); return `ch${d.channel} CC ${d.cc}`;
+            if (type === 'encoder') return ctlText('encoder', getEncoderData(cs, g, idx));
+            if (type === 'push') return ctlText('push', getPushData(cs, g, idx));
+            if (type === 'green') return ctlText('green', getGreenData(cs, g, idx));
+            if (type === 'fader') return ctlText('fader', getFaderData(cs, g, idx));
+            return ctlText('fader9', getFader9Data(cs, g));
         }
         function cvDefaultName(type, idx) {
             return { encoder: `Encoder ${idx + 1}`, push: `Enc.Button ${idx + 1}`, green: `Green Button ${idx + 1}`, fader: `Fader ${idx + 1}`, fader9: 'Fader 9' }[type];
@@ -13632,10 +13684,7 @@ ${description}
         const ovSecOf = (type) => OV_SECTIONS.find(x => x.type === type);
 
         function ovCellText(type, data) {
-            if (type === 'encoder') return formatEncoderCell(data);
-            if (type === 'fader') return formatFaderCell(data);
-            if (type === 'fader9') return `${chDisp(data.channel - 1)}:CC ${data.cc}`;
-            return formatButtonCell(data);
+            return ctlText(type, data);
         }
 
         function renderOverview() {
