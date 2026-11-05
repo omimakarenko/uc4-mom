@@ -3375,7 +3375,7 @@
         .ov-table td.ov-cell.ov-sel { outline: 2px solid var(--accent); outline-offset: -2px; }
     </style>
     <style id="t1-signature">
-        /* Shared look with T1 Backup Digger: warm neutral greys, olive fill, Manrope / IBM Plex, soft panels */
+        /* Shared look with T1 Backup Digger: warm neutral greys, Manrope / IBM Plex, soft panels (its green pads are Torso's own and stay there) */
         :root {
             --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
             --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -3384,11 +3384,11 @@
             --bg-dark: #19191a; --bg-panel: #212123; --bg-control: #29292b; --bg-input: #29292b;
             --border: #343436; --border-light: #46464a;
             --text: #edeff1; --text-dim: #b7bcc2; --text-muted: #878c93;
-            --accent: #7f9a5a; --accent-dim: #8ca863; --emphasis: #ffffff; --btn-text: #16171a;
+            --accent: #d7dade; --accent-dim: #b7bcc2; --emphasis: #ffffff; --btn-text: #16171a;
             --tab-bg: #29292b; --field-bg: #19191a; --chip-bg: #36363a; --chip-hover: #46464a;
             --encoder: #7aa7c9; --push: #a994cc; --green-btn: #9fc079; --fader: #d19a68;
-            --st-f-bg: #2c3924; --st-f-text: #8a9c7c;
-            --st-s-bg: #7f9a5a; --st-s-text: #182208; --st-s-tree: #a9c482;
+            --st-f-bg: #202022; --st-f-text: #70747b;
+            --st-s-bg: #36363a; --st-s-text: #e8e9ec; --st-s-tree: #e8e9ec;
             --st-n-bg: #d7dade; --st-n-text: #16171a; --st-n-tree: #d7dade;
         }
         html[data-theme="light"] {
@@ -3396,11 +3396,11 @@
             --bg-dark: #f2f2f1; --bg-panel: #ffffff; --bg-control: #eeeeed; --bg-input: #eeeeed;
             --border: #d7d7d5; --border-light: #bdbdbb;
             --text: #1b1c1d; --text-dim: #4b4f54; --text-muted: #80858b;
-            --accent: #56742f; --accent-dim: #46612a; --emphasis: #000000; --btn-text: #f5f5f4;
+            --accent: #2b2d30; --accent-dim: #4b4f54; --emphasis: #000000; --btn-text: #f5f5f4;
             --tab-bg: #ffffff; --field-bg: #eeeeed; --chip-bg: #dcdcda; --chip-hover: #cdcdcb;
             --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
-            --st-f-bg: #dfe6d3; --st-f-text: #5c6b4d;
-            --st-s-bg: #7a9a54; --st-s-text: #182208; --st-s-tree: #4a6a26;
+            --st-f-bg: #f1f1ef; --st-f-text: #9a9ea4;
+            --st-s-bg: #dcdcda; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
             --st-n-bg: #2b2d30; --st-n-text: #f5f5f4; --st-n-tree: #2b2d30;
         }
         body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
@@ -3449,16 +3449,17 @@
         .setup-manager-modal, .modal-dialog { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
         .setup-manager-header { border-radius: 12px 12px 0 0; background: var(--bg-panel); }
         .batch-bar { border-radius: 12px 12px 0 0; }
+        html[data-theme="light"] .ov-table td.ov-cell.st-fresh { background: var(--st-n-bg); color: var(--st-n-text); }
         .cv-device { border: none; border-radius: 12px; }
         .ov-table td.ov-cell, .cv-el { border-radius: 0; }
         .ov-table { border-spacing: 3px; }
         .select-wrapper select { border-radius: 8px; }
-        .cv-node.active { background: var(--st-s-bg); color: var(--st-s-text); }
+        .cv-node.active { background: var(--bg-control); color: var(--text); }
         .cv-node { border-radius: 6px; margin: 0 0.3rem; }
         .cv-el.st-saved .cv-lab-in::placeholder { color: var(--st-s-text) !important; opacity: 0.8 !important; }
         .cv-el.st-fresh .cv-lab-in::placeholder { color: var(--st-n-text) !important; opacity: 0.8 !important; }
         .cv-el.st-factory .cv-lab-in::placeholder { color: var(--st-f-text) !important; opacity: 1 !important; }
-        .cv-node.active .cv-txt, .cv-node.active .cv-arrow, .cv-node.active .cv-lab { color: var(--st-s-text); }
+        .cv-node.active .cv-txt, .cv-node.active .cv-arrow, .cv-node.active .cv-lab { color: var(--text); }
 
         .logo-wrap { display: flex; flex-direction: column; justify-content: center; }
         .footnote { margin: 1.5rem 1.5rem 2.2rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.72rem; line-height: 1.6; color: var(--text-dim); }
@@ -3470,7 +3471,7 @@
         .fn-small { font-size: 0.68rem; }
         body.batch-open .footnote { margin-bottom: calc(2.2rem + var(--batch-h, 0px)); }
 
-        /* values: factory is the quiet green-grey, saved is the olive fill, changed is the light mark */
+        /* values: factory is quiet, saved is a clear grey, changed is the light mark. Green is only for the green buttons */
         .ov-table th.ov-col.st-saved { color: var(--st-s-tree); }
         .ov-table th.ov-col.st-factory { color: var(--text-muted); }
         .guide-body h1, .guide-body h2, .setup-manager-title, .gb-label, .cv-ins-title { font-family: var(--font-display); font-weight: 700; }
