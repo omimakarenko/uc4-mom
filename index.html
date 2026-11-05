@@ -13028,7 +13028,7 @@ ${description}
                 <button type="button" class="gb-ico gb-collapse" onclick="toggleBlock('${kind}')" title="Collapse / expand">${blockCollapsed[kind] ? '&#9656;' : '&#9662;'}</button>`;
             const edit = document.createElement('div');
             edit.className = 'gb-edit';
-            edit.innerHTML = `<input type="text" class="gb-uc4" maxlength="4" value="${escapeHtml(getGroupName(currentSetup, active).trim())}" title="Name on the UC4 display (4 characters)" onchange="gbGroupName(this, '${kind}')">
+            edit.innerHTML = `<input type="text" class="gb-uc4" maxlength="4" value="${escapeHtml(getGroupName(currentSetup, active).trim())}" title="UC4 name, 4 characters. The UC4 keeps one name per group number, so the encoder half and the fader half share it. Labels are separate." onchange="gbGroupName(this, '${kind}')">
                 <input type="text" maxlength="60" placeholder="Group label" value="${escapeHtml(gMeta.label)}" title="Saved in the project, not on the UC4"
                     oninput="noteSet('${gk}','${active}','label',this.value)">
                 <textarea rows="2" maxlength="1000" placeholder="Group description" title="Saved in the project, not on the UC4"
@@ -13235,7 +13235,7 @@ ${description}
                         const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
                         const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
                         const nm = getGroupName(i, g);
-                        h += `<div class="cv-node st-${stGroup(i, half, g)} ${active ? 'active' : ''}" data-st="g|${i}|${half}|${g}" ${pad(2)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
+                        h += `<div class="cv-node st-${stGroup(i, half, g)} ${active ? 'active' : ''}" data-st="g|${i}|${half}|${g}" ${pad(2)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename. UC4 name, 4 characters: the other half has the same group number and shares it">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
                     }
                 }
             }
@@ -13277,7 +13277,7 @@ ${description}
                     oninput="noteSet('${spec.scope}','${spec.key}','label',this.value); cvAfterNote()"></div>
                 <div class="cv-ins-field"><textarea rows="4" placeholder="Description" maxlength="1000"
                     oninput="noteSet('${spec.scope}','${spec.key}','description',this.value)">${escapeHtml(dsc)}</textarea></div>
-                ${(kind === 'enc' || kind === 'fad') ? `<div class="cv-ins-field"><div class="cv-ins-cap">Name on the UC4 display (4 characters)</div>
+                ${(kind === 'enc' || kind === 'fad') ? `<div class="cv-ins-field"><div class="cv-ins-cap">UC4 name (4 characters, shared with the other half)</div>
                     <input type="text" class="cv-uc4name" maxlength="4" value="${escapeHtml(getGroupName(currentSetup, kind === 'enc' ? encoderGroup : faderGroup).trim())}"
                         onchange="cvInspectorGroupName(this, '${kind}')"></div>` : ''}`;
         }
