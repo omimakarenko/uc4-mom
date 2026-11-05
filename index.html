@@ -3015,11 +3015,9 @@
         .nav-bar .nav-section:has(#encoderGroupTabs), .nav-bar .nav-section:has(#faderGroupTabs) { display: none; }
         .view-toggle .view-btn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
     
-        /* Guide: drops down from the top */
-        .guide-panel { position: fixed; left: 0; right: 0; top: 0; z-index: 950; max-height: 80vh; display: flex; flex-direction: column; background: var(--bg-panel); border-bottom: 1px solid var(--accent); box-shadow: 0 8px 30px rgba(0,0,0,0.45); transform: translateY(-105%); transition: transform 0.25s ease; visibility: hidden; }
-        .guide-panel.open { transform: none; visibility: visible; }
-        .guide-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
-        .guide-body { overflow: auto; padding: 0.5rem 1.25rem 2rem; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.55; color: var(--text); }
+        /* Guide: a window like the Setup Manager */
+        .guide-modal { max-width: 900px; }
+        .guide-body { overflow: auto; padding: 0.5rem 1.5rem 2rem; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.55; color: var(--text); }
         .guide-body > * { max-width: 820px; margin-left: auto; margin-right: auto; }
         .guide-body h1 { font-size: 1.6rem; margin: 0.8rem auto 0.4rem; }
         .guide-body h2 { font-size: 1.15rem; margin: 1.8rem auto 0.6rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
@@ -3032,13 +3030,19 @@
         .guide-body th, .guide-body td { border: 1px solid var(--border); padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
         .guide-body th { background: var(--bg-input); }
 
-        #deviceToggle .view-btn { white-space: nowrap; }
+        #deviceToggle .view-btn, #cheatToggle .view-btn { white-space: nowrap; }
+        #cheatToggle { margin-left: 0.3rem; }
+        #setupSelect { width: 220px; }
+        .cv-link { padding: 0.2rem 0.5rem; display: inline-flex; align-items: center; }
+        .cv-link svg { width: 1rem; height: 1rem; }
+        .cv-link.on { background: var(--accent); color: var(--bg-dark); }
+        .cv-bar { gap: 0.4rem; }
         .view-row { display: flex; align-items: center; gap: 0.6rem; }
         .view-lab { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
 
         /* Controller view */
         body[data-view="controller"] #notesBar { display: none; }
-        .cv { display: grid; grid-template-columns: 240px minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
+        .cv { display: grid; grid-template-columns: 220px minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
         .cv-tree, .cv-inspector { background: var(--bg-panel); border: 1px solid var(--border); position: sticky; top: 0.5rem; max-height: calc(100vh - 210px); overflow: auto; }
         .cv-tree { padding: 0.4rem 0; }
         .cv-node { display: flex; align-items: center; gap: 0.3rem; padding: 0.22rem 0.5rem; font-size: 0.75rem; cursor: pointer; color: var(--text-dim); white-space: nowrap; overflow: hidden; }
@@ -3052,13 +3056,14 @@
         .gb-cur { flex: 1; font-size: 0.8rem; color: var(--text); padding: 0 0.5rem; }
         .cv-bar { display: flex; margin-bottom: 0.4rem; }
         .cv.tree-off.cv-two { grid-template-columns: minmax(0, 1fr); }
+        .cv.tree-off:not(.cv-two):not(.cv-ovw) { grid-template-columns: minmax(0, 1fr) 300px; }
         .cv.tree-off.cv-three { grid-template-columns: minmax(0, 1fr) 300px; }
         .cv.tree-off .cv-tree { display: none; }
-        .cv.cv-two { grid-template-columns: 200px minmax(0, 1fr); }
+        .cv.cv-two { grid-template-columns: 220px minmax(0, 1fr); }
         .cv.cv-ovw { grid-template-columns: minmax(0, 1fr) 300px; }
         .cv.cv-three { grid-template-columns: 240px minmax(0, 1fr) 300px; }
         @media (max-width: 1300px) { .cv.cv-three { grid-template-columns: 200px minmax(0, 1fr) 280px; } }
-        @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 170px minmax(0, 1fr); } }
+        @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 180px minmax(0, 1fr); } }
         .cv-head { display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.6rem; }
         .cv-head b { color: var(--text); }
         .cv-device { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.9rem 1rem 0.4rem; }
@@ -3190,12 +3195,13 @@
         .ov-legend .l-new { background: rgba(90, 160, 255, 0.35); }
         
         /* header: two columns, the notes live under their buttons */
-        .act-main { display: grid; grid-template-columns: 8.2rem auto; gap: 0.2rem 0.5rem; align-items: center; }
+        .act-main { display: grid; grid-template-columns: 7.4rem auto auto; gap: 0.2rem 0.5rem; align-items: center; }
         .act-row { display: contents; }
         .act-main .import-dropdown, .act-main .import-dropdown-btn { width: 100%; }
-        #deviceToggle .view-btn { width: 7.4rem; text-align: center; }
+        #deviceToggle .view-btn { width: 6.2rem; text-align: center; }
+        #cheatToggle .view-btn { width: 6.6rem; text-align: center; padding-left: 0.3rem; padding-right: 0.3rem; }
         .mod-note { height: 1.5rem; line-height: 1.5rem; }
-        .act-main .device-status { display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; padding: 0 0.5rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .act-main .device-status { grid-column: 2 / 4; display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; padding: 0 0.5rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
         /* no bottom status bar: the unsaved note and the connection status live in the header */
         .status-bar { display: none !important; }
@@ -3367,9 +3373,10 @@
     </style>
 </head>
 <body>
-<div id="guidePanel" class="guide-panel" aria-hidden="true">
-    <div class="guide-bar"><span>Guide</span><button type="button" class="btn" onclick="guideToggle(false)">Close</button></div>
-    <div class="guide-body"><!--GUIDE_START-->
+<div id="guidePanel" class="setup-manager-overlay guide-overlay" style="display:none" aria-hidden="true" onclick="if (event.target === this) guideToggle(false)">
+    <div class="setup-manager-modal guide-modal">
+        <div class="setup-manager-header"><span class="setup-manager-title">Guide</span><button class="setup-manager-close" onclick="guideToggle(false)">&times;</button></div>
+        <div class="guide-body"><!--GUIDE_START-->
 <h1>UC4 Mom guide</h1>
 <p>A browser editor for the Faderfox UC4. Everything runs in your browser. Use Chrome or Edge to talk to the UC4 over USB.</p>
 <h2>How the UC4 is organised</h2>
@@ -3600,6 +3607,7 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
 <li>The dump format is not documented by Faderfox. It was worked out by the community (see uc4-tool by vehka). UC4 Mom is an independent fork of UC4 SysEx Editor by thegdyne.</li>
 </ul>
 <!--GUIDE_END--></div>
+    </div>
 </div>
 
     <div id="toastContainer" class="toast-container"></div>
@@ -3665,6 +3673,8 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <div class="view-toggle" id="deviceToggle">
                 <button class="view-btn" id="downloadBtn" onclick="openReceiveDialog()" title="Get setups from the UC4">Download</button>
                 <button class="view-btn" id="uploadBtn" onclick="openUploadDialog()" title="Send setups to the UC4">Upload</button>
+            </div>
+            <div class="view-toggle" id="cheatToggle">
                 <button class="view-btn" id="cheatSheetBtn" onclick="showCheatSheetDialog()" title="Printable cheat sheets of your setups">Cheat sheet</button>
             </div>
                 </div>
@@ -3683,7 +3693,6 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
     
     <nav class="nav-bar">
         <div class="nav-section">
-            <span class="nav-label">Setup</span>
             <div class="select-wrapper">
                 <select id="setupSelect" onchange="selectSetup(this.value)" disabled>
                     <option value="">--</option>
@@ -3694,24 +3703,19 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
             <span id="libraryBtn" hidden></span>
         </div>
         
-        <div class="nav-section">
-            <label class="link-groups-toggle" title="When on, picking a group on one half picks the same group number on the other half">
-                <input type="checkbox" id="linkGroupsCheckbox" onchange="toggleLinkGroups(this.checked)">
-                <span class="nav-label">Link groups</span>
-            </label>
-        </div>
-        
-        <div class="nav-section st-legend" id="stLegend">
-            <span class="st-chip st-factory" title="Still the factory value">factory</span>
-            <span class="st-chip st-saved" title="Set before this session (loaded, restored or saved)">saved</span>
-            <span class="st-chip st-fresh" title="Changed in this session">changed</span>
-        </div>
+        <input type="checkbox" id="linkGroupsCheckbox" hidden onchange="toggleLinkGroups(this.checked)">
 
         <div class="nav-section setup-note" id="setupNote">
             <input type="text" id="setupLabelIn" placeholder="Setup label" maxlength="24" title="Saved in the project, not on the UC4"
                 oninput="noteSet('setup','','label',this.value)">
             <textarea id="setupDescIn" rows="1" placeholder="Setup description" maxlength="1000" title="Saved in the project, not on the UC4"
                 oninput="noteSet('setup','','description',this.value); autoGrow(this)"></textarea>
+        </div>
+
+        <div class="nav-section st-legend" id="stLegend">
+            <span class="st-chip st-factory" title="Still the factory value">factory</span>
+            <span class="st-chip st-saved" title="Set before this session (loaded, restored or saved)">saved</span>
+            <span class="st-chip st-fresh" title="Changed in this session">changed</span>
         </div>
 
         <div class="nav-section">
@@ -6217,13 +6221,13 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function guideToggle(force) {
             const p = document.getElementById('guidePanel');
-            const open = force === undefined ? !p.classList.contains('open') : !!force;
-            p.classList.toggle('open', open);
+            const open = force === undefined ? p.style.display === 'none' : !!force;
+            p.style.display = open ? 'flex' : 'none';
             p.setAttribute('aria-hidden', open ? 'false' : 'true');
             if (open) p.querySelector('.guide-body').scrollTop = 0;
         }
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.getElementById('guidePanel').classList.contains('open')) guideToggle(false);
+            if (e.key === 'Escape' && document.getElementById('guidePanel').style.display !== 'none') guideToggle(false);
         });
 
         function exportJSON() {
@@ -13607,6 +13611,31 @@ ${description}
         }
         function cvAfterNote() { cvRenderTree(); cvRenderPanel(); }
 
+        // Row above the tree views: show or hide the tree, link the groups of the two halves
+        function cvMakeBar(wrap, main) {
+            if (cv.treeOff === undefined) cv.treeOff = false;
+            const bar = document.createElement('div');
+            bar.className = 'cv-bar';
+            const tb = document.createElement('button');
+            tb.type = 'button'; tb.className = 'gb-chip';
+            tb.title = 'Show or hide the tree';
+            const sync = () => { tb.innerHTML = cv.treeOff ? '&#9656; Tree' : '&#9662; Tree'; wrap.classList.toggle('tree-off', !!cv.treeOff); };
+            tb.onclick = () => { cv.treeOff = !cv.treeOff; sync(); };
+            const lk = document.createElement('button');
+            lk.type = 'button'; lk.className = 'gb-chip cv-link' + (linkGroups ? ' on' : '');
+            lk.title = 'Link groups: when on, picking a group on one half picks the same group number on the other half';
+            lk.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
+            lk.onclick = () => {
+                const cb = document.getElementById('linkGroupsCheckbox');
+                cb.checked = !linkGroups;
+                toggleLinkGroups(cb.checked);
+                lk.classList.toggle('on', linkGroups);
+            };
+            bar.appendChild(tb); bar.appendChild(lk);
+            main.appendChild(bar);
+            sync();
+        }
+
         // Focused and Overview share the tree of the Controller view on the left
         function cvWrapWithTree(withInspector) {
             const main = document.getElementById('mainContent');
@@ -13621,18 +13650,7 @@ ${description}
             tree.id = 'cvTree';
             if (!withInspector) wrap.appendChild(tree);
             wrap.appendChild(body);
-            if (cv.treeOff === undefined) cv.treeOff = false;
-            const bar = document.createElement('div');
-            bar.className = 'cv-bar';
-            const tb = document.createElement('button');
-            tb.type = 'button'; tb.className = 'gb-chip';
-            tb.title = 'Show or hide the tree';
-            const sync = () => { tb.innerHTML = cv.treeOff ? '&#9656; Tree' : '&#9662; Tree'; wrap.classList.toggle('tree-off', !!cv.treeOff); };
-            tb.onclick = () => { cv.treeOff = !cv.treeOff; sync(); };
-            bar.appendChild(tb);
-            if (!withInspector) main.appendChild(bar);
-            wrap.classList.toggle('tree-off', !!cv.treeOff);
-            sync();
+            if (!withInspector) cvMakeBar(wrap, main);
             if (withInspector) {
                 wrap.className = 'cv cv-ovw';
                 const insp = document.createElement('aside');
@@ -13669,6 +13687,11 @@ ${description}
                 <aside class="cv-tree" id="cvTree"></aside>
                 <section class="cv-main" id="cvPanel"></section>
                 <aside class="cv-inspector" id="cvInspector"></aside></div>`;
+            const cvEl = main.firstElementChild;
+            const barHost = document.createElement('div');
+            main.insertBefore(barHost, cvEl);
+            cvMakeBar(cvEl, barHost);
+            barHost.firstChild.style.marginBottom = '0.4rem';
             cvRenderTree(); cvRenderPanel(); cvRenderInspector(); stApplyAll();
             document.getElementById('cvTree').scrollTop = treeTop;
             document.getElementById('cvTree').addEventListener('scroll', (e) => { cv.treeTop = e.target.scrollTop; });
