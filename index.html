@@ -3033,9 +3033,9 @@
         #deviceToggle .view-btn, #cheatToggle .view-btn { white-space: nowrap; }
         #cheatToggle { margin-left: 0.3rem; }
         #setupSelect { width: 220px; }
-        .cv-link { padding: 0.2rem 0.5rem; display: inline-flex; align-items: center; }
-        .cv-link svg { width: 1rem; height: 1rem; }
-        .cv-link.on { background: var(--accent); color: var(--bg-dark); }
+        .cv-link { display: inline-flex; align-items: center; padding-bottom: 0; }
+        .cv-link svg { width: 1.05rem; height: 1.05rem; }
+        .cv-link.on { color: var(--accent); }
         .cv-bar { gap: 0.4rem; }
         .view-row { display: flex; align-items: center; gap: 0.6rem; }
         .view-lab { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
@@ -13622,7 +13622,7 @@ ${description}
             const sync = () => { tb.innerHTML = cv.treeOff ? '&#9656; Tree' : '&#9662; Tree'; wrap.classList.toggle('tree-off', !!cv.treeOff); };
             tb.onclick = () => { cv.treeOff = !cv.treeOff; sync(); };
             const lk = document.createElement('button');
-            lk.type = 'button'; lk.className = 'gb-chip cv-link' + (linkGroups ? ' on' : '');
+            lk.type = 'button'; lk.className = 'gb-ico cv-link' + (linkGroups ? ' on' : '');
             lk.title = 'Link groups: when on, picking a group on one half picks the same group number on the other half';
             lk.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
             lk.onclick = () => {
@@ -14294,15 +14294,18 @@ ${description}
             const row = el.closest && el.closest('.param-row[data-param]');
             if (!row || !el.closest('#ovInspector')) return;
             const param = row.dataset.param, a = ovMultiAnchor;
+            const reset = el.value === '' || el.value === 'default';   // cleared field or "Default: ..." -> each cell gets its own factory value
             const val = getControlData(a.type, currentSetup, a.g, a.i)[param];
             if (val === undefined) return;
+            const own = (c) => reset && factoryBuf ? ovWithBuf(factoryBuf, () => getControlData(c.type, currentSetup, c.g, c.i)[param]) : val;
             const actions = [];
             for (const c of ovSel.values()) {
                 if (c.g === a.g && c.i === a.i && c.type === a.type) continue;
                 if (c.type !== a.type && !OV_SHARED.has(param)) continue;
                 const before = { ...getControlData(c.type, currentSetup, c.g, c.i) };
-                if (before[param] === undefined || before[param] === val) continue;
-                const after = { ...before, [param]: val };
+                const v = own(c);
+                if (before[param] === undefined || before[param] === v) continue;
+                const after = { ...before, [param]: v };
                 setControlDataSilent(c.type, currentSetup, c.g, c.i, after);
                 actions.push({ controlType: c.type, setupIdx: currentSetup, group: c.g, index: c.i, before, after });
             }
