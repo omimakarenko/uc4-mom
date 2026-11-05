@@ -3545,6 +3545,12 @@
         .import-dropdown-btn::after { font-size: 0.95rem; opacity: 0.8; line-height: 1; }
         .mod-note { text-align: center; margin-top: 0.3rem; overflow: hidden; overflow-wrap: anywhere; }
         .mod-note { margin-top: 5px; height: 1.5rem; min-height: 0; display: flex; align-items: center; justify-content: center; line-height: 1.05; overflow: visible; align-self: start; }
+        .ov-sec-setup { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-dim); }
+        .ov-sec-setup i { font-style: normal; margin-left: 0.4rem; color: var(--text-muted); }
+        .ov-table th.ov-col { white-space: nowrap; }
+        .ov-glab { display: block; font-size: 0.68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
+        .filter-chip { border-radius: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; border: 1px solid var(--border); }
+        .ov-table th.ov-col { vertical-align: top; }
 </style>
 </head>
 <body>
@@ -14370,7 +14376,7 @@ ${description}
             el.dataset.sec = sec.id;
             const head = document.createElement('div');
             head.className = 'ov-sec-head';
-            head.innerHTML = `<span class="ov-arrow">${ovCollapsed[sec.id] ? '&#9656;' : '&#9662;'}</span><span class="ov-sec-title ${sec.type}">${sec.title}</span>`;
+            head.innerHTML = `<span class="ov-arrow">${ovCollapsed[sec.id] ? '&#9656;' : '&#9662;'}</span><span class="ov-sec-title ${sec.type}">${sec.title}</span><span class="ov-sec-setup">${escapeHtml(setupBaseName(currentSetup))}${setupLabelShown(currentSetup) ? ' <i>' + escapeHtml(setupLabelShown(currentSetup)) + '</i>' : ''}</span>`;
             head.onclick = () => {
                 ovCollapsed[sec.id] = !ovCollapsed[sec.id];
                 try { localStorage.setItem('uc4_mom_ovc', JSON.stringify(ovCollapsed)); } catch (e) {}
@@ -14383,7 +14389,7 @@ ${description}
             table.className = 'overview-table ov-table';
             let h = '<tr><th class="ov-corner"></th>';
             for (let g = 0; g < 8; g++) {
-                h += `<th class="ov-col" data-type="${sec.type}" data-col="${g}" title="Click: select the column. Double-click: rename the group on the UC4">${g + 1} <span class="group-name">${escapeHtml(getGroupName(currentSetup, g))}</span></th>`;
+                h += `<th class="ov-col" data-type="${sec.type}" data-col="${g}" title="Click: select the column. Double-click: rename the group on the UC4">${g + 1} <span class="group-name">${escapeHtml(getGroupName(currentSetup, g))}</span>${(() => { const m = metaSetup(currentSetup, false); const bag = m ? ((sec.type === 'encoder' || sec.type === 'push') ? m.enc : m.fad) : null; const l = bag && bag[String(g)] ? bag[String(g)].label : ''; return l ? `<span class="ov-glab">${escapeHtml(l)}</span>` : ''; })()}</th>`;
             }
             h += '</tr>';
             table.innerHTML = h;
