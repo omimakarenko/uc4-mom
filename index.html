@@ -3204,7 +3204,7 @@
         #deviceToggle .view-btn { width: 6.2rem; text-align: center; }
         #cheatToggle .view-btn { width: 6.6rem; text-align: center; padding-left: 0.3rem; padding-right: 0.3rem; }
         .mod-note { height: 1.5rem; line-height: 1.5rem; }
-        .act-main .device-status { grid-column: 2 / 4; display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; padding: 0 0.5rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .act-main .device-status { grid-column: 2; display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; padding: 0 0.5rem; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
         /* no bottom status bar: the unsaved note and the connection status live in the header */
         .status-bar { display: none !important; }
@@ -3444,7 +3444,8 @@
         /* panels: no frames, 12px corners */
         .group-block, .cv-tree, .cv-inspector, .overview-container .ov-sec, .setup-manager-modal, .modal-dialog, .conflict-filters, .conflict-panel, .proj-pop, .logo-pop, .batch-bar { border: none; border-radius: 12px; }
         .group-block.enc, .group-block.fad { border-top: none; }
-        .group-block, .cv-tree, .cv-inspector { background: var(--bg-panel); }
+        .group-block { background: var(--tab-bg); }
+        .cv-tree, .cv-inspector { background: transparent; }
         .gb-body, .ov-sec-body { border-radius: 0 0 12px 12px; }
         .setup-manager-modal, .modal-dialog { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
         .setup-manager-header { border-radius: 12px 12px 0 0; background: var(--bg-panel); }
@@ -3470,6 +3471,23 @@
         .fn-off { font-family: var(--font-mono); font-size: 0.66rem; }
         .fn-small { font-size: 0.68rem; }
         body.batch-open .footnote { margin-bottom: calc(2.2rem + var(--batch-h, 0px)); }
+
+        /* icon buttons: no frame */
+        .ico-btn, .ico-btn:hover, .ico-btn:disabled { border: none; background: none; padding: 0.35rem 0.4rem; color: var(--text-dim); display: inline-flex; align-items: center; }
+        .ico-btn:hover:not(:disabled) { color: var(--text); }
+        .ico-btn svg { width: 1.15rem; height: 1.15rem; }
+        /* collapsed or open, a block is one object: the title strip has the same background as the block */
+        .gb-head, .ov-sec-head { background: var(--tab-bg); border-radius: 12px 12px 0 0; }
+        .group-block.collapsed, .ov-section.collapsed { border-radius: 12px; }
+        .group-block.collapsed .gb-head, .ov-section.collapsed .ov-sec-head { border-radius: 12px; }
+        /* tree width: drag its right edge */
+        .cv { grid-template-columns: var(--tree-w, 220px) minmax(0, 1fr) 300px; }
+        .cv.cv-two { grid-template-columns: var(--tree-w, 220px) minmax(0, 1fr); }
+        .cv.tree-off.cv-two { grid-template-columns: minmax(0, 1fr); }
+        .cv.tree-off:not(.cv-two):not(.cv-ovw) { grid-template-columns: minmax(0, 1fr) 300px; }
+        .cv.cv-ovw { grid-template-columns: minmax(0, 1fr) 300px; }
+        #setupSelect { width: var(--tree-w, 220px); }
+        body.tree-resizing { cursor: col-resize; user-select: none; }
 
         /* values: factory is quiet, saved is a clear grey, changed is the light mark. Green is only for the green buttons */
         .ov-table th.ov-col.st-saved { color: var(--st-s-tree); }
@@ -3788,9 +3806,9 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
                 <div class="device-status idle" id="deviceStatus" onclick="deviceStatusClick()" title="UC4 connection status (click for details)"><span id="deviceStatusText">UC4: not connected</span><button type="button" class="dev-connect" id="connectBtn" onclick="event.stopPropagation(); midiConnect()" title="Connect to the UC4 (the browser asks for MIDI access)">Connect</button></div>
             </div>
             <span class="btn-divider"></span>
-            <button class="btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">Undo</button>
-            <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">Redo</button>
-            <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">Reset</button>
+            <button class="btn ico-btn" id="undoBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+            <button class="btn ico-btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+            <button class="btn ico-btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
             <span class="btn-divider"></span>
             <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
             <button type="button" class="theme-toggle" id="themeBtn" role="switch" aria-checked="false" aria-label="Switch to light theme" onclick="toggleTheme()" title="Switch light/dark theme"><span class="thumb"></span></button>
@@ -6331,6 +6349,40 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             });
         }
         
+        // drag the right edge of the tree to make it narrower or wider
+        (function () {
+            try { const w = parseInt(localStorage.getItem('uc4_mom_treew'), 10); if (w >= 150 && w <= 480) document.documentElement.style.setProperty('--tree-w', w + 'px'); } catch (e) {}
+            let drag = null;
+            const edge = (e) => {
+                const t = document.querySelector('.cv-tree');
+                if (!t || t.offsetParent === null) return null;
+                const r = t.getBoundingClientRect();
+                return (e.clientY >= r.top && e.clientY <= r.bottom && e.clientX >= r.right - 3 && e.clientX <= r.right + 12) ? { t, r } : null;
+            };
+            document.addEventListener('mousemove', (e) => {
+                if (drag) {
+                    const w = Math.max(150, Math.min(480, Math.round(drag.w0 + e.clientX - drag.x0)));
+                    document.documentElement.style.setProperty('--tree-w', w + 'px');
+                    return;
+                }
+                document.body.style.cursor = edge(e) ? 'col-resize' : '';
+            });
+            document.addEventListener('mousedown', (e) => {
+                if (e.button !== 0) return;
+                const h = edge(e);
+                if (!h) return;
+                e.preventDefault();
+                drag = { x0: e.clientX, w0: h.r.width };
+                document.body.classList.add('tree-resizing');
+            });
+            document.addEventListener('mouseup', () => {
+                if (!drag) return;
+                drag = null;
+                document.body.classList.remove('tree-resizing');
+                try { localStorage.setItem('uc4_mom_treew', String(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tree-w'), 10) || 220)); } catch (e) {}
+            });
+        })();
+
         function guideToggle(force) {
             const p = document.getElementById('guidePanel');
             const open = force === undefined ? p.style.display === 'none' : !!force;
