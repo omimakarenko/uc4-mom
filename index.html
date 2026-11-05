@@ -3015,6 +3015,27 @@
         .nav-bar .nav-section:has(#encoderGroupTabs), .nav-bar .nav-section:has(#faderGroupTabs) { display: none; }
         .view-toggle .view-btn.rx-active { background: var(--accent); color: var(--bg-dark); animation: devPulse 0.8s ease-in-out infinite; }
     
+        /* Guide: drops down from the top */
+        .guide-panel { position: fixed; left: 0; right: 0; top: 0; z-index: 950; max-height: 80vh; display: flex; flex-direction: column; background: var(--bg-panel); border-bottom: 1px solid var(--accent); box-shadow: 0 8px 30px rgba(0,0,0,0.45); transform: translateY(-105%); transition: transform 0.25s ease; visibility: hidden; }
+        .guide-panel.open { transform: none; visibility: visible; }
+        .guide-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+        .guide-body { overflow: auto; padding: 0.5rem 1.25rem 2rem; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.55; color: var(--text); }
+        .guide-body > * { max-width: 820px; margin-left: auto; margin-right: auto; }
+        .guide-body h1 { font-size: 1.6rem; margin: 0.8rem auto 0.4rem; }
+        .guide-body h2 { font-size: 1.15rem; margin: 1.8rem auto 0.6rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
+        .guide-body p, .guide-body li { font-size: 0.92rem; }
+        .guide-body a { color: var(--accent); }
+        .guide-body code { background: var(--bg-input); padding: 0.1rem 0.35rem; font-size: 0.88em; }
+        .guide-body pre { background: var(--bg-input); padding: 0.8rem 1rem; overflow-x: auto; border: 1px solid var(--border); }
+        .guide-body pre code { background: none; padding: 0; }
+        .guide-body table { border-collapse: collapse; width: 100%; margin: 0.8rem auto; font-size: 0.86rem; }
+        .guide-body th, .guide-body td { border: 1px solid var(--border); padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
+        .guide-body th { background: var(--bg-input); }
+
+        #deviceToggle .view-btn { white-space: nowrap; }
+        .view-row { display: flex; align-items: center; gap: 0.6rem; }
+        .view-lab { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+
         /* Controller view */
         body[data-view="controller"] #notesBar { display: none; }
         .cv { display: grid; grid-template-columns: 240px minmax(0, 1fr) 300px; gap: 1rem; align-items: start; }
@@ -3346,6 +3367,241 @@
     </style>
 </head>
 <body>
+<div id="guidePanel" class="guide-panel" aria-hidden="true">
+    <div class="guide-bar"><span>Guide</span><button type="button" class="btn" onclick="guideToggle(false)">Close</button></div>
+    <div class="guide-body"><!--GUIDE_START-->
+<h1>UC4 Mom guide</h1>
+<p>A browser editor for the Faderfox UC4. Everything runs in your browser. Use Chrome or Edge to talk to the UC4 over USB.</p>
+<h2>How the UC4 is organised</h2>
+<pre><code>UC4
+└── 18 setups
+    ├── Encoders &amp; Enc.Buttons      8 groups   (Shift + press an encoder)
+    │     8 encoders, each with its own Enc.Button (the encoder push)
+    └── Faders &amp; Green Buttons      8 groups   (Shift + press a green button)
+          8 faders, Fader 9, 8 green buttons
+</code></pre>
+<ul>
+<li>The two halves switch groups <strong>independently</strong>: you can have encoder group 3 and fader group 1 active together.</li>
+<li>One setup holds 8 x 33 = 264 controls.</li>
+<li>Each group has a 4-character <strong>name</strong> that the UC4 stores (GrP1 ...). Everything else you type here is a <strong>label</strong>.</li>
+</ul>
+<h2>Label, description, name</h2>
+<p>The project name is above the view buttons (click it to rename, the pencil opens the description). The setup label and description are in the setup strip. In Focused, the pencil in a group header opens the 4-character UC4 name, the label and the description of that group. Label edits are part of Undo.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Where it lives</th>
+<th>Limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong> of a group</td>
+<td>on the UC4</td>
+<td>4 characters</td>
+</tr>
+<tr>
+<td><strong>Label</strong> of a setup, group or control</td>
+<td>your project file and this browser, never on the UC4</td>
+<td>24 (setup) / 60 characters</td>
+</tr>
+<tr>
+<td><strong>Description</strong></td>
+<td>your project file</td>
+<td>1000 characters</td>
+</tr>
+</tbody>
+</table>
+<p>The setup label is the same one in the setup list, Setup Manager and the tree.</p>
+<h2>Three views</h2>
+<p>Switch them with the buttons next to <strong>View:</strong> at the top.</p>
+<p><strong>Controller</strong> - a tree on the left (the setups, each with its two halves and their 8 groups), a drawing of the UC4 in the middle, an inspector on the right.
+Click a group in the tree to switch to it. Click a control to edit it. Type a label right under a control. Click a tree node to write its label and description.</p>
+<p><strong>Focused</strong> - the same two halves as two blocks. Every parameter is a row: checkbox, value, minus and plus. Pick the group in the tree on the left. The <strong>Tree</strong> button above the blocks hides the tree when you need the room. Collapse a block with the arrow.</p>
+<p><strong>Overview</strong> - one table per kind of control (rows are controls, columns are groups). It works like a spreadsheet. The panel on the right edits what you click:</p>
+<ul>
+<li>one cell: all its parameters</li>
+<li>several cells of one kind: what you change is applied to all of them</li>
+<li>cells of different kinds: only the parameters they share (Chan and CC)</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Do</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Click</td>
+<td>select one cell</td>
+</tr>
+<tr>
+<td>Shift + click</td>
+<td>select a rectangle</td>
+</tr>
+<tr>
+<td>Ctrl/Cmd + click</td>
+<td>add or remove a cell</td>
+</tr>
+<tr>
+<td>Drag</td>
+<td>select a rectangle</td>
+</tr>
+<tr>
+<td>Click a row or column header</td>
+<td>select the whole row or column</td>
+</tr>
+<tr>
+<td>Ctrl/Cmd + A</td>
+<td>select the whole table</td>
+</tr>
+<tr>
+<td>Ctrl/Cmd + C, Ctrl/Cmd + V</td>
+<td>copy, paste</td>
+</tr>
+<tr>
+<td>Delete, Backspace</td>
+<td>put the factory values back into the selected cells</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>clear the selection</td>
+</tr>
+<tr>
+<td>Double-click, Enter</td>
+<td>open that control in Controller</td>
+</tr>
+</tbody>
+</table>
+<p>Pasting: one copied cell fills every selected cell (set "each next" to add a step to Chan or CC for each cell). A copied block lands with its top-left corner on the top-left selected cell. A paste is one Undo step.</p>
+<p><strong>Reading a cell:</strong> <code>ch1 CC 8</code> is MIDI channel 1, controller number 8. <code>N</code> is a note, <code>PC</code> a program change, <code>PB</code> pitch bend, <code>AT</code> aftertouch, <code>rel1</code> and <code>rel2</code> relative encoder modes. <code>mom</code> and <code>tgl</code> are momentary and toggle buttons. Every view uses the same notation.</p>
+<h2>Colours: factory, saved, changed</h2>
+<p>Everything that can differ is coloured the same way in all views and in the tree:</p>
+<ul>
+<li><strong>factory</strong> - quiet grey. The value is the same as in the UC4 factory setup. Putting a value back to factory makes it grey again, whatever it was before.</li>
+<li><strong>saved</strong> - clear colour. The value differs from the factory but is what you loaded or saved last.</li>
+<li><strong>changed</strong> - bluish. You changed it since the last load, download or save.</li>
+</ul>
+<h2>Defaults</h2>
+<p>An empty or invalid number field gets the factory value back. Every list starts with <strong>Default: ...</strong>, the factory choice. In Overview, <strong>Delete</strong> puts the factory values into the selected cells. Undo brings your values back.</p>
+<h2>Editing fast</h2>
+<ul>
+<li><strong>- and +</strong> next to a value change it by 1 (hold Shift for 10). Hold the button to repeat. For lists they move to the previous or next option.</li>
+<li><strong>Hover a name</strong> (Chan, Type, Mode, Disp ...) to read what it does. For example bPoL shows the value as -63 to +63 around the centre.</li>
+<li><strong>Batch edit:</strong> tick the checkbox of a parameter on several controls, or use the small buttons above a row ("Chan", "CC" ...) to tick it on all 8. A bar opens at the bottom: <strong>Set</strong> gives every ticked value the same number, <strong>- / +</strong> add a step, <strong>Fill</strong> counts up from a start value (50, 51, 52 ...). "All Chan" ticks the channel of a whole group.</li>
+<li><strong>Undo</strong> and <strong>Redo</strong> cover everything, including batch edits and pastes.</li>
+</ul>
+<h2>Download from the UC4 and Upload to it</h2>
+<p><strong>Download</strong> (UC4 to editor)</p>
+<ol>
+<li>Click <strong>Download</strong>, then <strong>Connect MIDI</strong> and allow access with SysEx.</li>
+<li>On the UC4: hold Shift and press Edit twice (setup mode), then hold <strong>encoder 4</strong> for the selected setup or <strong>encoder 8</strong> for all 18.</li>
+<li>The UC4 display counts while it sends. The result appears in the window and in the status line when it is complete. Chrome only shows the result at the end, so there is no progress bar.</li>
+<li><strong>Load into editor</strong> for all 18, or <strong>Put into a setup</strong> for one.</li>
+</ol>
+<p><strong>Upload</strong> (editor to UC4)</p>
+<ol>
+<li>Click <strong>Upload</strong>, <strong>Connect MIDI</strong>.</li>
+<li>On the UC4: setup mode, choose the target setup with <strong>encoder 1</strong>, then <strong>keep holding encoder 7</strong> until the display shows <code>rC00</code>. A short press only shows <code>rEc</code> and the data is ignored.</li>
+<li>Tick "I have a backup", then <strong>Upload Setup N</strong> or <strong>Upload all 18</strong>.</li>
+<li>Success: the display shows the setup number (for example <code>SE06</code>). If it stays on <code>rC00</code>, nothing was stored.</li>
+</ol>
+<p>A single-setup dump is stored in whichever setup is selected on the UC4. Take a full backup first (Download, all 18, then Project &gt; Export SysEx).</p>
+<p>If nothing happens: use Chrome or Edge, close Ableton, SysEx Librarian and other programs that hold the UC4 port, and reconnect the USB cable.</p>
+<h2>Project menu and files</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New</td>
+<td>start again from the factory setups</td>
+</tr>
+<tr>
+<td>Open, Save</td>
+<td>a <strong>project</strong>: the exact UC4 data plus your labels and descriptions</td>
+</tr>
+<tr>
+<td>Save this setup</td>
+<td>a project with just the current setup</td>
+</tr>
+<tr>
+<td>Import SysEx, Export SysEx</td>
+<td>plain UC4 dump files: all 18 setups or one setup</td>
+</tr>
+<tr>
+<td>Import JSON, Export JSON (legacy)</td>
+<td>the file format of the original UC4 SysEx Editor</td>
+</tr>
+<tr>
+<td>Import Setup from Library</td>
+<td>ready-made setups, see below</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cheat sheet</strong> is the button right of Upload: printable pages with the device drawing and your labels, what each control sends, and the descriptions. One screen, one setup or all setups; print to PDF or download HTML.</p>
+<p>Use <strong>Save</strong> for your own work. Use SysEx for other tools (SysEx Librarian ...).</p>
+<p><strong>JSON, legacy:</strong> the JSON files are the same format as in the original UC4 SysEx Editor by thegdyne, so you can move a configuration between this program and the original in both directions. JSON holds the parameters and the setup names only: no project name, no descriptions, no control labels. A project file (<code>.uc4proj.json</code>) is different: it keeps everything and only opens here.</p>
+<p><strong>Same message</strong> (Overview) shows controls that send the same channel and number. This is often on purpose, for example in different groups, so the filters are off until you switch them on.</p>
+<h2>Library</h2>
+<p>Project &gt; <strong>Import Setup from Library</strong>. Pick a config, then pick where it goes in one list:</p>
+<ul>
+<li>a setup number for a one-setup config (<code>8</code>),</li>
+<li>a run for configs that need several setups, for example the Elektron Digitakt II needs two (<code>8-9</code>, <code>9-10</code> ...).</li>
+</ul>
+<p>Setups 17 and 18 are the factory Ableton setups. They are marked "(Ableton)" and you get a warning, but you can still replace them. Undo brings them back.</p>
+<h2>Keys</h2>
+<table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ctrl/Cmd + Z</td>
+<td>undo</td>
+</tr>
+<tr>
+<td>Ctrl/Cmd + Shift + Z, Ctrl/Cmd + Y</td>
+<td>redo</td>
+</tr>
+<tr>
+<td>Ctrl/Cmd + C, V, A</td>
+<td>copy, paste, select all (Overview)</td>
+</tr>
+<tr>
+<td>Arrows, Shift + arrows</td>
+<td>move or extend the selection (Overview)</td>
+</tr>
+<tr>
+<td>Enter</td>
+<td>open the selected cell in Controller (Overview)</td>
+</tr>
+<tr>
+<td>Esc</td>
+<td>clear the selection</td>
+</tr>
+</tbody>
+</table>
+<h2>Good to know</h2>
+<ul>
+<li>The light and dark switch is at the top right.</li>
+<li>Your work is kept in the browser while you edit; <strong>Save</strong> a project to keep it for good.</li>
+<li>A label never reaches the UC4. If you wipe the browser data, labels go with it unless you saved a project.</li>
+<li>The upload progress bar is an estimate. The UC4 does not report progress to the browser.</li>
+<li>The dump format is not documented by Faderfox. It was worked out by the community (see uc4-tool by vehka). UC4 Mom is an independent fork of UC4 SysEx Editor by thegdyne.</li>
+</ul>
+<!--GUIDE_END--></div>
+</div>
+
     <div id="toastContainer" class="toast-container"></div>
     
     <!-- Tooltip element (single global instance) -->
@@ -3377,11 +3633,11 @@
                 <div class="proj-pop" id="projDescPop"><textarea id="projDescIn" rows="5" maxlength="1000" placeholder="Project description"
                     oninput="noteSet('project','','description',this.value); renderNotesBar()"></textarea></div>
             </div>
-            <div class="view-toggle">
+            <div class="view-row"><span class="view-lab">View:</span><div class="view-toggle">
                 <button class="view-btn" id="controllerViewBtn" onclick="setView('controller')">Controller</button>
                 <button class="view-btn active" id="focusedViewBtn" onclick="setView('focused')">Focused</button>
                 <button class="view-btn" id="overviewBtn" onclick="setView('overview')">Overview</button>
-            </div>
+            </div></div>
         </div>
         <div class="file-actions">
             <input type="file" id="sysexInput" accept=".syx" class="hidden-input">
@@ -3398,18 +3654,18 @@
                     <div class="import-dropdown-item" onclick="projectSave('setup'); closeProjectDropdown();">Save this setup</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" onclick="document.getElementById('sysexInput').click(); closeProjectDropdown();" title="All 18 setups or one setup">Import SysEx...</div>
-                    <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeProjectDropdown();">Import JSON...</div>
+                    <div class="import-dropdown-item" id="importJsonItem" onclick="document.getElementById('jsonInput').click(); closeProjectDropdown();">Import JSON (legacy)...</div>
                     <div class="import-dropdown-item" id="browseLibraryItem" onclick="openLibraryModal(); closeProjectDropdown();">Import Setup from Library...</div>
                     <div class="import-dropdown-divider"></div>
                     <div class="import-dropdown-item" id="exportBtn" onclick="exportSysEx(); closeProjectDropdown();">Export SysEx (all)...</div>
                     <div class="import-dropdown-item" onclick="deviceSaveCurrent('one'); closeProjectDropdown();">Export SysEx (this setup)...</div>
-                    <div class="import-dropdown-item" id="cheatSheetItem" onclick="showCheatSheetDialog(); closeProjectDropdown();">Cheat sheet...</div>
-                    <div class="import-dropdown-item" id="exportJsonBtn" onclick="exportJSON(); closeProjectDropdown();">Export JSON...</div>
+                    <div class="import-dropdown-item" id="exportJsonBtn" onclick="exportJSON(); closeProjectDropdown();">Export JSON (legacy)...</div>
                 </div>
             </div>
             <div class="view-toggle" id="deviceToggle">
                 <button class="view-btn" id="downloadBtn" onclick="openReceiveDialog()" title="Get setups from the UC4">Download</button>
                 <button class="view-btn" id="uploadBtn" onclick="openUploadDialog()" title="Send setups to the UC4">Upload</button>
+                <button class="view-btn" id="cheatSheetBtn" onclick="showCheatSheetDialog()" title="Printable cheat sheets of your setups">Cheat sheet</button>
             </div>
                 </div>
                 <div class="mod-note" id="modNote"></div>
@@ -3420,7 +3676,7 @@
             <button class="btn" id="redoBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">Redo</button>
             <button class="btn" id="resetBtn" onclick="confirmReset()" title="Reset to imported SysEx or defaults">Reset</button>
             <span class="btn-divider"></span>
-            <a href="UC4_EDITOR_GUIDE.html" class="btn help-link" target="_blank" title="Usage Guide">Guide</a>
+            <button type="button" class="btn help-link" id="guideBtn" onclick="guideToggle()" title="Usage guide">Guide</button>
             <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Switch light/dark theme">Light</button>
         </div>
     </header>
@@ -5959,6 +6215,17 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             });
         }
         
+        function guideToggle(force) {
+            const p = document.getElementById('guidePanel');
+            const open = force === undefined ? !p.classList.contains('open') : !!force;
+            p.classList.toggle('open', open);
+            p.setAttribute('aria-hidden', open ? 'false' : 'true');
+            if (open) p.querySelector('.guide-body').scrollTop = 0;
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('guidePanel').classList.contains('open')) guideToggle(false);
+        });
+
         function exportJSON() {
             if (!rawBuffer) return;
             
@@ -13998,6 +14265,7 @@ ${description}
 
         // Several cells selected in Overview: a change made in the panel is copied to all of them
         let ovMultiAnchor = null;
+        const OV_SHARED = new Set(['channel', 'cc']);
         function ovMultiSyncFrom(el) {
             if (!el || currentView !== 'overview' || ovSel.size < 2 || !ovMultiAnchor) return;
             const row = el.closest && el.closest('.param-row[data-param]');
@@ -14007,9 +14275,10 @@ ${description}
             if (val === undefined) return;
             const actions = [];
             for (const c of ovSel.values()) {
-                if (c.type !== a.type || (c.g === a.g && c.i === a.i)) continue;
+                if (c.g === a.g && c.i === a.i && c.type === a.type) continue;
+                if (c.type !== a.type && !OV_SHARED.has(param)) continue;
                 const before = { ...getControlData(c.type, currentSetup, c.g, c.i) };
-                if (before[param] === val) continue;
+                if (before[param] === undefined || before[param] === val) continue;
                 const after = { ...before, [param]: val };
                 setControlDataSilent(c.type, currentSetup, c.g, c.i, after);
                 actions.push({ controlType: c.type, setupIdx: currentSetup, group: c.g, index: c.i, before, after });
@@ -14033,16 +14302,14 @@ ${description}
             const n = ovSel.size;
             const cells = [...ovSel.values()];
             const oneType = n >= 1 && cells.every(c => c.type === cells[0].type);
-            const f = n === 1 ? cells[0] : (oneType ? (ovFocus && ovSel.has(ovK(ovFocus.type, ovFocus.g, ovFocus.i)) ? ovFocus : cells[0]) : null);
+            const f = n === 1 ? cells[0] : (n === 0 ? null : (ovFocus && ovSel.has(ovK(ovFocus.type, ovFocus.g, ovFocus.i)) ? ovFocus : cells[0]));
             ovMultiAnchor = n >= 2 ? f : null;
-            const key = f ? ovK(f.type, f.g, f.i) + '|' + currentSetup + '|' + n : 'n' + n;
+            const key = f ? ovK(f.type, f.g, f.i) + '|' + currentSetup + '|' + n + '|' + oneType : 'n' + n;
             if (!force && key === ovInspKey) return;
             ovInspKey = key;
             el.innerHTML = '';
             if (!f) {
-                el.innerHTML = n === 0
-                    ? '<div class="cv-ins-title">Nothing selected</div><div class="cv-ins-note">Click a cell to edit it here. Delete restores the factory value.</div>'
-                    : `<div class="cv-ins-title">${n} cells selected</div><div class="cv-ins-note">They are of different kinds. Select cells of one kind to edit them together.</div>`;
+                el.innerHTML = '<div class="cv-ins-title">Nothing selected</div><div class="cv-ins-note">Click a cell to edit it here. Delete restores the factory value.</div>';
                 return;
             }
             if (f.type === 'encoder' || f.type === 'push') encoderGroup = f.g; else faderGroup = f.g;
@@ -14056,8 +14323,11 @@ ${description}
             if (n >= 2) {
                 const note = document.createElement('div');
                 note.className = 'cv-ins-note';
-                note.textContent = `${n} cells selected. What you change here is applied to all of them.`;
+                note.textContent = oneType ? `${n} cells selected. What you change here is applied to all of them.`
+                    : `${n} cells of different kinds. Only Chan and CC are shared, they are applied to all of them.`;
                 el.insertBefore(note, el.firstChild);
+                if (!oneType) card.querySelectorAll('.param-row[data-param]').forEach(r => { if (!OV_SHARED.has(r.dataset.param)) r.style.display = 'none'; });
+                card.querySelectorAll('.ctl-note, .ctl-label-row').forEach(x => { x.style.display = 'none'; });
             }
             el.appendChild(card);
             stApplyAll();
