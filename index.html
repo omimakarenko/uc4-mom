@@ -3478,8 +3478,7 @@
         .gb-head { align-items: center; padding: 0.5rem 0.75rem; }
         .gb-head > .gb-chip { margin-bottom: 0; }
         .group-block { overflow: hidden; }
-        .group-block.enc { border-top: 3px solid var(--encoder); }
-        .group-block.fad { border-top: 3px solid var(--fader); }
+        .group-block.enc, .group-block.fad { border-top: none; }
         .overview-container { padding: 0; }
         .ov-section { overflow: hidden; }
         .ov-table th.ov-corner, .ov-table th.ov-row { min-width: 0; width: 1.2rem; padding: 0.4rem 0.1rem; }
@@ -3506,21 +3505,10 @@
         /* values: factory is quiet, saved is a clear grey, changed is the light mark. Green is only for the green buttons */
         .ov-table th.ov-col.st-saved { color: var(--st-s-tree); }
         .ov-table th.ov-col.st-factory { color: var(--text-muted); }
-        /* functional colours: control type */
-        .group-block.enc .gb-label { color: var(--encoder); }
-        .group-block.fad .gb-label { color: var(--fader); }
-        .gb-sec-title h3.encoders, .section-title.encoders, .ov-sec-title.encoder { color: var(--encoder); }
-        .gb-sec-title h3.push, .section-title.push, .ov-sec-title.push { color: var(--push); }
-        .gb-sec-title h3.faders, .section-title.faders, .section-title.fader9, .ov-sec-title.fader, .ov-sec-title.fader9 { color: var(--fader); }
-        .gb-sec-title h3.green, .section-title.green, .ov-sec-title.green { color: var(--green-btn); }
-        .control-card.encoder { border-left: 3px solid var(--encoder) !important; border-radius: 0; }
-        .control-card.push { border-left: 3px solid var(--push) !important; border-radius: 0; }
-        .control-card.green { border-left: 3px solid var(--green-btn) !important; border-radius: 0; }
-        .control-card.fader, .fader9-card { border-left: 3px solid var(--fader) !important; border-radius: 0; }
-        .group-block.enc { border-top: 3px solid var(--encoder); }
-        .group-block.fad { border-top: 3px solid var(--fader); }
-        .guide-body h1, .guide-body h2, .setup-manager-title, .gb-label, .cv-ins-title { font-family: var(--font-display); font-weight: 700; }
-    </style>
+        /* headers stay neutral: no type colours in titles */
+        .group-block.enc .gb-label, .group-block.fad .gb-label, .gb-sec-title h3, .section-title, .overview-section-title { color: var(--text); border-color: var(--border); }
+        .ov-table th.ov-col.st-fresh { color: var(--text); }
+</style>
 </head>
 <body>
 <div id="guidePanel" class="setup-manager-overlay guide-overlay" style="display:none" aria-hidden="true" onclick="if (event.target === this) guideToggle(false)">
