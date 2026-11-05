@@ -3251,7 +3251,6 @@
         .group-block .param-input.with-step, .cv-inspector .param-input.with-step { gap: 2px; }
         /* focused: no outlines around cards, group header looks like tabs */
         .group-block { border: none; background: var(--bg-panel); }
-        .group-block.enc, .group-block.fad { border-top: none; }
         .group-block .control-card, .cv-inspector .control-card { border: none; background: transparent; }
         .group-block .control-card:hover { border: none; }
         .group-block .control-header { border-bottom: none; }
@@ -3385,9 +3384,9 @@
             --border: #343436; --border-light: #46464a;
             --text: #edeff1; --text-dim: #b7bcc2; --text-muted: #878c93;
             --accent: #d7dade; --accent-dim: #b7bcc2; --emphasis: #ffffff; --btn-text: #16171a;
-            --tab-bg: #29292b; --field-bg: #19191a; --chip-bg: #36363a; --chip-hover: #46464a;
-            --encoder: #7aa7c9; --push: #a994cc; --green-btn: #9fc079; --fader: #d19a68;
-            --st-f-bg: #202022; --st-f-text: #70747b;
+            --tab-bg: #212123; --field-bg: #19191a; --chip-bg: #36363a; --chip-hover: #46464a;
+            --encoder: #00aaff; --push: #aa66ff; --green-btn: #44dd66; --fader: #ff8844;
+            --st-f-bg: #2a2a2c; --st-f-text: #70747b;
             --st-s-bg: #36363a; --st-s-text: #e8e9ec; --st-s-tree: #e8e9ec;
             --st-n-bg: #d7dade; --st-n-text: #16171a; --st-n-tree: #d7dade;
         }
@@ -3442,8 +3441,7 @@
         .nav-label, label.field, .conflict-filters-label, .cv-ins-cap { font-family: var(--font-mono); letter-spacing: 0.06em; }
 
         /* panels: no frames, 12px corners */
-        .group-block, .cv-tree, .cv-inspector, .overview-container .ov-sec, .setup-manager-modal, .modal-dialog, .conflict-filters, .conflict-panel, .proj-pop, .logo-pop, .batch-bar { border: none; border-radius: 12px; }
-        .group-block.enc, .group-block.fad { border-top: none; }
+        .group-block, .cv-tree, .cv-inspector, .ov-section, .setup-manager-modal, .modal-dialog, .conflict-filters, .conflict-panel, .proj-pop, .logo-pop, .batch-bar { border: none; border-radius: 12px; }
         .group-block { background: var(--tab-bg); }
         .cv-tree, .cv-inspector { background: transparent; }
         .gb-body, .ov-sec-body { border-radius: 0 0 12px 12px; }
@@ -3478,6 +3476,23 @@
         .ico-btn svg { width: 1.15rem; height: 1.15rem; }
         /* collapsed or open, a block is one object: the title strip has the same background as the block */
         .gb-head, .ov-sec-head { background: var(--tab-bg); border-radius: 12px 12px 0 0; }
+        .gb-head { align-items: center; padding: 0.5rem 0.75rem; }
+        .gb-head > .gb-chip { margin-bottom: 0; }
+        .group-block { overflow: hidden; }
+        .group-block.enc { border-top: 3px solid var(--encoder); }
+        .group-block.fad { border-top: 3px solid var(--fader); }
+        .overview-container { padding: 0; }
+        .ov-section { overflow: hidden; }
+        .ov-table th.ov-corner, .ov-table th.ov-row { min-width: 0; width: 1.2rem; padding: 0.4rem 0.1rem; }
+        .ov-table th.ov-col, .ov-table td.ov-cell { min-width: 0; }
+        .ov-table th.ov-col { padding: 0.3rem 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ov-table td.ov-cell { padding: 0.4rem 0.2rem; }
+        .ov-sec-body { overflow-x: visible; padding: 0.5rem 0.6rem 0.7rem; }
+        .ov-table { table-layout: fixed; }
+        #ovSide { position: sticky; top: 0.5rem; align-self: start; display: flex; flex-direction: column; gap: 0.8rem; }
+        #ovSide .cv-inspector { position: static; }
+        #ovSide .conflict-filters { flex-direction: column; align-items: flex-start; gap: 0.35rem; margin: 0; padding: 0 0.75rem; background: none; border-radius: 0; }
+        #ovSide .conflict-filters-label { margin: 0 0 0.1rem; }
         .group-block.collapsed, .ov-section.collapsed { border-radius: 12px; }
         .group-block.collapsed .gb-head, .ov-section.collapsed .ov-sec-head { border-radius: 12px; }
         /* tree width: drag its right edge */
@@ -13823,7 +13838,12 @@ ${description}
                 const refresh = () => setTimeout(() => { renderCurrentView(); }, 0);
                 insp.addEventListener('change', (e) => { ovMultiSyncFrom(e.target); refresh(); });
                 insp.addEventListener('click', (e) => { if (e.target.closest('.step-btn')) { const el = e.target.closest('.param-input').querySelector('input[type="number"], select'); ovMultiSyncFrom(el); refresh(); } });
-                wrap.appendChild(insp);
+                const side = document.createElement('div');
+                side.id = 'ovSide';
+                side.appendChild(insp);
+                const dup = body.querySelector('.conflict-filters');
+                if (dup) side.appendChild(dup);
+                wrap.appendChild(side);
             }
             main.appendChild(wrap);
             if (cv.lastSetup !== currentSetup) {
