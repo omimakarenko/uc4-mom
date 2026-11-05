@@ -3028,6 +3028,10 @@
         .cv-node .cv-lab { color: var(--text-muted); margin-left: 0.3rem; }
         .cv-arrow { width: 0.9rem; text-align: center; color: var(--text-muted); flex-shrink: 0; }
         .cv-main { min-width: 0; }
+        .cv.cv-two { grid-template-columns: 240px minmax(0, 1fr); }
+        .cv.cv-three { grid-template-columns: 240px minmax(0, 1fr) 300px; }
+        @media (max-width: 1300px) { .cv.cv-three { grid-template-columns: 200px minmax(0, 1fr) 280px; } }
+        @media (max-width: 1100px) { .cv.cv-two { grid-template-columns: 200px minmax(0, 1fr); } }
         .cv-head { display: flex; gap: 1rem; align-items: baseline; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.6rem; }
         .cv-head b { color: var(--text); }
         .cv-device { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 10px; padding: 0.9rem 1rem 0.4rem; }
@@ -5822,10 +5826,13 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             if (!rawBuffer) return;
             if (currentView === 'focused') {
                 renderFocusedView();
+                cvWrapWithTree();
             } else if (currentView === 'controller') {
                 renderControllerView();
             } else {
                 renderOverview();
+                cvWrapWithTree(true);
+                ovRenderInspector(true);
             }
             renderBatchBar();
             stApplyAll();
@@ -5940,7 +5947,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 clearSession();
                 isModified = false;
                 markBaseline();
-                if (currentView === 'overview') renderOverview();
+                if (currentView === 'overview') renderCurrentView();
                 updateStatus('loaded', 'Exported successfully');
                 showToast('SysEx exported', 'success');
             });
@@ -7305,7 +7312,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
             
             // Re-render overview if in that view
             if (currentView === 'overview') {
-                renderOverview();
+                renderCurrentView();
             }
         }
         
@@ -12634,7 +12641,7 @@ ${description}
             promptFilename(base + '.uc4proj.json', kind === 'device' ? 'Save project (whole device)' : `Save Setup ${currentSetup + 1} as project`, (filename) => {
                 const text = JSON.stringify(project, null, 1);
                 downloadBytes(new TextEncoder().encode(text), filename);
-                if (kind === 'device') { isModified = false; markBaseline(); updateStatus('loaded', 'Saved'); if (currentView === 'overview') renderOverview(); }
+                if (kind === 'device') { isModified = false; markBaseline(); updateStatus('loaded', 'Saved'); if (currentView === 'overview') renderCurrentView(); }
                 showToast(`Saved ${filename}`, 'success');
             });
         }
@@ -13309,6 +13316,42 @@ ${description}
         }
         function cvAfterNote() { cvRenderTree(); cvRenderPanel(); }
 
+        // Focused and Overview share the tree of the Controller view on the left
+        function cvWrapWithTree(withInspector) {
+            const main = document.getElementById('mainContent');
+            const body = document.createElement('section');
+            body.className = 'cv-main';
+            body.id = 'viewBody';
+            while (main.firstChild) body.appendChild(main.firstChild);
+            const wrap = document.createElement('div');
+            wrap.className = 'cv cv-two';
+            const tree = document.createElement('aside');
+            tree.className = 'cv-tree';
+            tree.id = 'cvTree';
+            wrap.appendChild(tree);
+            wrap.appendChild(body);
+            if (withInspector) {
+                wrap.className = 'cv cv-three';
+                const insp = document.createElement('aside');
+                insp.className = 'cv-inspector';
+                insp.id = 'ovInspector';
+                const refresh = () => setTimeout(() => { renderCurrentView(); }, 0);
+                insp.addEventListener('change', refresh);
+                insp.addEventListener('click', (e) => { if (e.target.closest('.step-btn')) refresh(); });
+                wrap.appendChild(insp);
+            }
+            main.appendChild(wrap);
+            if (cv.lastSetup !== currentSetup) {
+                cv.open.add(`s${currentSetup}`); cv.open.add(`s${currentSetup}e`); cv.open.add(`s${currentSetup}f`);
+                cv.lastSetup = currentSetup;
+            }
+            const keepNode = cv.node; cv.node = null;
+            cvRenderTree();
+            cv.node = keepNode;
+            tree.scrollTop = cv.treeTop || 0;
+            tree.addEventListener('scroll', (e) => { cv.treeTop = e.target.scrollTop; });
+        }
+
         function renderControllerView() {
             if (!cv.sel && !cv.node) cv.node = { kind: 'setup' };
             if (cv.lastSetup !== currentSetup) {
@@ -13597,6 +13640,7 @@ ${description}
         }
         function stMerge(a, b) { return a === 'fresh' || b === 'fresh' ? 'fresh' : (a === 'saved' || b === 'saved' ? 'saved' : 'factory'); }
         function stRule(cur, base, fac) {
+            if (fac != null && cur === fac) return 'factory';
             if (base != null && cur !== base) return 'fresh';
             if (fac == null) return 'saved';
             return cur !== fac ? 'saved' : 'factory';
@@ -13675,6 +13719,14 @@ ${description}
                 const whole = stControl(su, type, g, i);
                 const ps = stParams(su, type, g, i);
                 card.querySelectorAll('.param-row[data-param]').forEach(row => stSet(row, ps[row.dataset.param] || whole));
+                card.querySelectorAll('.param-row[data-param] select').forEach(sel => {
+                    if (sel.dataset.defDone) return;
+                    sel.dataset.defDone = '1';
+                    const row = sel.closest('.param-row');
+                    let fv;
+                    try { fv = factoryParam(type, g, i, row.dataset.param); } catch (e) { return; }
+                    for (const o of sel.options) if (String(o.value) === String(fv) && !/default\)$/.test(o.textContent)) o.textContent += ' (default)';
+                });
             });
             document.querySelectorAll('#cvPanel .cv-el').forEach(el => {
                 const type = el.dataset.type, i = +el.dataset.idx;
@@ -13897,6 +13949,36 @@ ${description}
                 td.classList.toggle('ov-clip', !!inClip);
             });
             ovRenderBar();
+            ovRenderInspector();
+            stApplyAll();
+        }
+
+        // Overview: edit the clicked cell in the panel on the right, like in the Controller view
+        let ovInspKey = null;
+        function ovRenderInspector(force) {
+            const el = document.getElementById('ovInspector');
+            if (!el || currentView !== 'overview') return;
+            const n = ovSel.size;
+            const f = n === 1 ? [...ovSel.values()][0] : null;
+            const key = n === 1 ? ovK(f.type, f.g, f.i) + '|' + currentSetup : 'n' + n;
+            if (!force && key === ovInspKey) return;
+            ovInspKey = key;
+            el.innerHTML = '';
+            if (n !== 1) {
+                el.innerHTML = n === 0
+                    ? '<div class="cv-ins-title">Nothing selected</div><div class="cv-ins-note">Click a cell to edit it here. Delete restores the factory value.</div>'
+                    : `<div class="cv-ins-title">${n} cells selected</div><div class="cv-ins-note">Copy and paste them with the bar at the bottom. Delete restores the factory values.</div>`;
+                return;
+            }
+            if (f.type === 'encoder' || f.type === 'push') encoderGroup = f.g; else faderGroup = f.g;
+            const t = f.type, i = f.i;
+            cvInspBuilding = true;
+            let card;
+            try {
+                card = t === 'encoder' ? createEncoderCard(i) : t === 'push' ? createPushCard(i)
+                     : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
+            } finally { cvInspBuilding = false; }
+            el.appendChild(card);
             stApplyAll();
         }
 
