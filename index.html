@@ -3265,6 +3265,54 @@
         .group-block .param-input input, .group-block .param-input select, .group-block .step-btn,
         .group-block .ctl-note input, .group-block .ctl-note textarea, .group-block .ctl-note-btn, .gb-edit input, .gb-edit textarea { background: var(--field-bg); }
         .group-block .step-btn:hover { background: var(--accent); }
+
+        /* ---- value states: factory (quiet), saved (clear), fresh (bluish) ---- */
+        :root {
+            --st-f-bg: #15151a; --st-f-text: #6c6c79;
+            --st-s-bg: #30303a; --st-s-text: #e6e6ee;
+            --st-n-bg: #1f4272; --st-n-text: #d6e8ff; --st-n-tree: #7db4ff;
+        }
+        html[data-theme="light"] {
+            --st-f-bg: #f3f4f7; --st-f-text: #9ca2af;
+            --st-s-bg: #c9ced8; --st-s-text: #171a21;
+            --st-n-bg: #cbe0ff; --st-n-text: #0f3a80; --st-n-tree: #1f63c9;
+        }
+        .st-legend { margin-left: auto; gap: 0.35rem; }
+        .st-chip { font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 3px; }
+        .st-chip.st-factory { background: var(--st-f-bg); color: var(--st-f-text); }
+        .st-chip.st-saved { background: var(--st-s-bg); color: var(--st-s-text); }
+        .st-chip.st-fresh { background: var(--st-n-bg); color: var(--st-n-text); }
+        .ov-legend { display: none; }
+        .ov-table td.ov-cell.st-factory { background: var(--st-f-bg); color: var(--st-f-text); }
+        .ov-table td.ov-cell.st-saved { background: var(--st-s-bg); color: var(--st-s-text); }
+        .ov-table td.ov-cell.st-fresh { background: var(--st-n-bg); color: var(--st-n-text); }
+        .ov-table td.ov-cell.ov-sel { outline: 2px solid var(--accent); outline-offset: -2px; }
+        .ov-table th.ov-col.st-factory { color: var(--st-f-text); }
+        .ov-table th.ov-col.st-saved { color: var(--st-s-text); }
+        .ov-table th.ov-col.st-fresh { color: var(--st-n-tree); }
+        .param-row.st-factory .param-input input, .param-row.st-factory .param-input select { background: var(--st-f-bg); color: var(--st-f-text); }
+        .param-row.st-saved .param-input input, .param-row.st-saved .param-input select { background: var(--st-s-bg); color: var(--st-s-text); }
+        .param-row.st-fresh .param-input input, .param-row.st-fresh .param-input select { background: var(--st-n-bg); color: var(--st-n-text); }
+        .cv-el.st-factory, .cv-el.st-factory.sel { background: var(--st-f-bg); }
+        .cv-el.st-saved, .cv-el.st-saved.sel { background: var(--st-s-bg); }
+        .cv-el.st-fresh, .cv-el.st-fresh.sel { background: var(--st-n-bg); }
+        .cv-el.st-factory .cv-lab-in { color: var(--st-f-text); }
+        .cv-el.st-saved .cv-lab-in { color: var(--st-s-text); }
+        .cv-el.st-fresh .cv-lab-in { color: var(--st-n-text); }
+        .cv-el.st-factory .cv-lab-in::placeholder { color: var(--st-f-text); }
+        .cv-el.st-saved .cv-lab-in::placeholder { color: var(--st-s-text); opacity: 0.7; }
+        .cv-el.st-fresh .cv-lab-in::placeholder { color: var(--st-n-text); opacity: 0.7; }
+        .cv-node.st-factory .cv-txt { color: var(--st-f-text); }
+        .cv-node.st-saved .cv-txt { color: var(--text); }
+        .cv-node.st-fresh .cv-txt { color: var(--st-n-tree); }
+        .gb-tab.st-factory { color: var(--st-f-text); }
+        .gb-tab.st-saved { color: var(--text); }
+        .gb-tab.st-fresh { color: var(--st-n-tree); }
+        .gb-tab.st-factory .gb-num, .gb-tab.st-saved .gb-num, .gb-tab.st-fresh .gb-num { color: inherit; }
+        .gb-tab.active { font-weight: 700; }
+        .setup-card.st-factory { background: var(--st-f-bg); }
+        .setup-card.st-saved { background: var(--st-s-bg); }
+        .setup-card.st-fresh { background: var(--st-n-bg); }
     </style>
 </head>
 <body>
@@ -3367,6 +3415,12 @@
             </label>
         </div>
         
+        <div class="nav-section st-legend" id="stLegend">
+            <span class="st-chip st-factory" title="Still the factory value">factory</span>
+            <span class="st-chip st-saved" title="Set before this session (loaded, restored or saved)">saved</span>
+            <span class="st-chip st-fresh" title="Changed in this session">changed</span>
+        </div>
+
         <div class="nav-section setup-note" id="setupNote">
             <input type="text" id="setupLabelIn" placeholder="Setup label" maxlength="24" title="Saved in the project, not on the UC4"
                 oninput="noteSet('setup','','label',this.value)">
@@ -4414,6 +4468,8 @@ ${last ? `Last Error:
             
             encodeValue(rawBuffer, bnk.dataOffset, loc.actualValueIdx, value);
             dirtyBanks.add(`${setupIdx}-${loc.actualSecId}-${loc.actualBank}`);
+            if (typeof stCache !== 'undefined') stCache.fresh = false;
+            if (typeof stRefreshSoon === 'function') stRefreshSoon();
             if (!suppressModified) markModified();
         }
         
@@ -5695,6 +5751,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 renderOverview();
             }
             renderBatchBar();
+            stApplyAll();
         }
         
         // ============================================================
@@ -8146,7 +8203,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function createSetupCard(setupIdx) {
             const card = document.createElement('div');
-            card.className = 'setup-card';
+            card.className = 'setup-card st-' + stSetup(setupIdx);
             card.dataset.setup = setupIdx;
             card.tabIndex = 0;
             
@@ -8163,7 +8220,6 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
                 <div class="setup-card-label ${label ? '' : 'no-label'}">${label || '(no label)'}</div>
                 <div class="setup-card-channel">
                     <span>${primaryCh}</span>
-                    ${modified ? '<span class="setup-card-modified" title="Differs from factory">●</span>' : ''}
                 </div>
             `;
             
@@ -12895,7 +12951,7 @@ ${description}
             block.dataset.block = kind;
             const tabs = Array.from({ length: 8 }, (_, g) => {
                 const name = getGroupName(currentSetup, g);
-                return `<button type="button" class="gb-tab ${g === active ? 'active' : ''}" onclick="${selFn}(${g})"
+                return `<button type="button" class="gb-tab st-${stGroup(currentSetup, isEnc ? 'e' : 'f', g)} ${g === active ? 'active' : ''}" data-g="${g}" onclick="${selFn}(${g})"
                     title="Group ${g + 1}, name on the UC4: ${escapeHtml(name)}"><span class="gb-num">${g + 1}</span>${escapeHtml(name)}</button>`;
             }).join('');
             const gk = isEnc ? 'enc' : 'fad';
@@ -13046,7 +13102,7 @@ ${description}
             else visual = `<div class="cv-hfader"><span class="cv-hcap"></span></div>`;
             const sel = cvIsSelected(type, idx) ? ' sel' : '';
             const bs = cvHasBatch(type, idx) && !cv.multi.size ? ' bsel' : '';
-            return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs}" data-type="${type}" data-idx="${idx}" onclick="cvElClick(event, '${type}', ${idx})" title="${escapeHtml(cvDefaultName(type, idx) + ' - ' + sum)}">
+            return `<div class="cv-el ${type}${extraClass || ''}${sel}${bs} st-${stControl(currentSetup, type, g, idx)}" data-type="${type}" data-idx="${idx}" onclick="cvElClick(event, '${type}', ${idx})" title="${escapeHtml(cvDefaultName(type, idx) + ' - ' + sum)}">
                 ${visual}
                 <input type="text" class="cv-lab-in" maxlength="60" placeholder="${escapeHtml(cvDefaultName(type, idx))}" value="${escapeHtml(label)}"
                     onclick="event.stopPropagation()" onfocus="cvSelectEl('${type}', ${idx})" oninput="cvLabelInput(this, '${type}', ${idx})"></div>`;
@@ -13103,11 +13159,11 @@ ${description}
                 const isCur = i === currentSetup;
                 const lab = setupLabelShown(i);
                 const sid = `s${i}`;
-                h += `<div class="cv-node ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" ${pad(0)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt" data-id="${sid}" title="Click twice to rename">${lab ? `Setup ${i + 1} <span class="cv-lab">${escapeHtml(lab)}</span>` : escapeHtml(setupBaseName(i))}</span></div>`;
+                h += `<div class="cv-node st-${stSetup(i)} ${isCur ? 'cur' : ''} ${isCur && node === 'setup' ? 'active' : ''}" data-st="s|${i}" ${pad(0)} onclick="cvClickNode('${sid}')">${arrow(sid, true)}<span class="cv-txt" data-id="${sid}" title="Click twice to rename">${lab ? `Setup ${i + 1} <span class="cv-lab">${escapeHtml(lab)}</span>` : escapeHtml(setupBaseName(i))}</span></div>`;
                 if (!cv.open.has(sid)) continue;
                 for (const [half, title, gcur] of [['e', 'Encoders &amp; Enc.Buttons', encoderGroup], ['f', 'Faders &amp; Green Buttons', faderGroup]]) {
                     const fid = `s${i}${half}`;
-                    h += `<div class="cv-node" ${pad(1)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
+                    h += `<div class="cv-node st-${stHalf(i, half)}" data-st="h|${i}|${half}" ${pad(1)} onclick="cvToggle('${fid}')">${arrow(fid, true)}<span class="cv-txt">${title}</span></div>`;
                     if (!cv.open.has(fid)) continue;
                     for (let g = 0; g < 8; g++) {
                         const active = isCur && g === gcur;
@@ -13115,7 +13171,7 @@ ${description}
                         const bag = meta ? (half === 'e' ? meta.enc : meta.fad) : null;
                         const gl = bag && bag[String(g)] ? bag[String(g)].label : '';
                         const nm = getGroupName(i, g);
-                        h += `<div class="cv-node ${active ? 'active' : ''}" ${pad(2)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
+                        h += `<div class="cv-node st-${stGroup(i, half, g)} ${active ? 'active' : ''}" data-st="g|${i}|${half}|${g}" ${pad(2)} onclick="cvLeaf(${i}, '${half}', ${g})"><span class="cv-arrow"></span><span class="cv-txt" data-id="g${i}${half}${g}" title="Click twice to rename (4 characters, stored on the UC4)">${g + 1} ${escapeHtml(nm)}${gl ? ` <span class="cv-lab">${escapeHtml(gl)}</span>` : ''}</span></div>`;
                     }
                 }
             }
@@ -13139,6 +13195,7 @@ ${description}
                          : t === 'green' ? createGreenCard(i) : t === 'fader' ? createFaderCard(i) : createFader9Card();
                 } finally { cvInspBuilding = false; }
                 el.appendChild(card);
+                stApplyAll();
                 return;
             }
             const kind = cv.node && cv.node.kind !== 'project' ? cv.node.kind : 'setup';
@@ -13178,7 +13235,7 @@ ${description}
                 <aside class="cv-tree" id="cvTree"></aside>
                 <section class="cv-main" id="cvPanel"></section>
                 <aside class="cv-inspector" id="cvInspector"></aside></div>`;
-            cvRenderTree(); cvRenderPanel(); cvRenderInspector();
+            cvRenderTree(); cvRenderPanel(); cvRenderInspector(); stApplyAll();
             cvBindDrag(document.getElementById('cvPanel'));
             const insp = document.getElementById('cvInspector');
             const refresh = () => setTimeout(() => { cvRenderPanel(); }, 0);
@@ -13426,37 +13483,138 @@ ${description}
         let ovCollapsed = {};
         try { ovCollapsed = JSON.parse(localStorage.getItem('uc4_mom_ovc')) || {}; } catch (e) { ovCollapsed = {}; }
 
-        // factory (quiet) / saved (clear) / changed since the last load or save (bluish)
-        let baselineBuf = null;   // what was loaded or last saved
+        // ---- value states, used everywhere ----
+        // factory = still the factory value, saved = set before this session (loaded, restored or saved),
+        // fresh = changed in this session
+        let baselineBuf = null;   // what was loaded, restored or last saved
         let factoryBuf = null;    // factory_default.syx
+        const ST_TYPES = [['encoder', 8, 'e'], ['push', 8, 'e'], ['fader', 8, 'f'], ['fader9', 1, 'f'], ['green', 8, 'f']];
+        const stCache = { fresh: false, sig: null, ctl: new Map(), grp: new Map(), half: new Map(), setup: new Map(), json: new Map() };
         function ovWithBuf(buf, fn) {
             if (!buf) return null;
             const pm = previewMode, pb = previewBuffer;
             previewBuffer = buf; previewMode = true;
             try { return fn(); } finally { previewMode = pm; previewBuffer = pb; }
         }
+        function stSig(buf) {
+            if (!buf) return 0;
+            let h = buf.length | 0;
+            for (let i = 0; i < buf.length; i++) h = (Math.imul(h, 31) + buf[i]) | 0;
+            return h;
+        }
+        function stMerge(a, b) { return a === 'fresh' || b === 'fresh' ? 'fresh' : (a === 'saved' || b === 'saved' ? 'saved' : 'factory'); }
+        function stRule(cur, base, fac) {
+            if (base != null && cur !== base) return 'fresh';
+            if (fac == null) return 'saved';
+            return cur !== fac ? 'saved' : 'factory';
+        }
+        function stState() {
+            if (!rawBuffer || !sectionIndex) return stCache;
+            if (stCache.fresh) return stCache;
+            const sig = stSig(rawBuffer) + '|' + stSig(baselineBuf) + '|' + stSig(factoryBuf);
+            stCache.fresh = true; queueMicrotask(() => { stCache.fresh = false; });
+            if (stCache.sig === sig) return stCache;
+            const readAll = (buf) => {
+                const m = new Map();
+                const run = () => {
+                    for (let su = 0; su < 18; su++) {
+                        for (const [type, n] of ST_TYPES) for (let g = 0; g < 8; g++) for (let i = 0; i < n; i++)
+                            m.set(`${su}|${type}|${g}|${i}`, JSON.stringify(getControlData(type, su, g, i)));
+                        for (let g = 0; g < 8; g++) m.set(`${su}|name|${g}`, getGroupName(su, g));
+                    }
+                };
+                if (buf === rawBuffer) { const pm = previewMode; previewMode = false; try { run(); } finally { previewMode = pm; } } else ovWithBuf(buf, run);
+                return m;
+            };
+            const cur = readAll(rawBuffer), base = baselineBuf ? readAll(baselineBuf) : null, fac = factoryBuf ? readAll(factoryBuf) : null;
+            const ctl = new Map(), grp = new Map(), half = new Map(), setup = new Map(), json = new Map();
+            for (const [k, v] of cur) {
+                const st = stRule(v, base ? base.get(k) : null, fac ? fac.get(k) : null);
+                ctl.set(k, st);
+                if (!k.includes('|name|')) json.set(k, [v, base ? base.get(k) : null, fac ? fac.get(k) : null]);
+            }
+            for (let su = 0; su < 18; su++) {
+                let sAll = 'factory';
+                for (const h of ['e', 'f']) {
+                    let hAll = 'factory';
+                    for (let g = 0; g < 8; g++) {
+                        let a = ctl.get(`${su}|name|${g}`);
+                        for (const [type, n, hh] of ST_TYPES) if (hh === h) for (let i = 0; i < n; i++) a = stMerge(a, ctl.get(`${su}|${type}|${g}|${i}`));
+                        grp.set(`${su}|${h}|${g}`, a);
+                        hAll = stMerge(hAll, a);
+                    }
+                    half.set(`${su}|${h}`, hAll);
+                    sAll = stMerge(sAll, hAll);
+                }
+                setup.set(su, sAll);
+            }
+            stCache.sig = sig; stCache.ctl = ctl; stCache.grp = grp; stCache.half = half; stCache.setup = setup; stCache.json = json;
+            return stCache;
+        }
+        function stControl(su, type, g, i) { return stState().ctl.get(`${su}|${type}|${g}|${type === 'fader9' ? 0 : i}`) || 'factory'; }
+        function stGroup(su, half, g) { return stState().grp.get(`${su}|${half}|${g}`) || 'factory'; }
+        function stHalf(su, half) { return stState().half.get(`${su}|${half}`) || 'factory'; }
+        function stSetup(su) { return stState().setup.get(su) || 'factory'; }
+        function stHalfOf(type) { return (type === 'encoder' || type === 'push') ? 'e' : 'f'; }
+        // per parameter of one control: { channel: 'fresh', cc: 'saved', ... }
+        function stParams(su, type, g, i) {
+            const e = stState().json.get(`${su}|${type}|${g}|${type === 'fader9' ? 0 : i}`);
+            const out = {};
+            if (!e) return out;
+            const [c, b, f] = e.map(x => x == null ? null : JSON.parse(x));
+            for (const k of Object.keys(c)) out[k] = stRule(JSON.stringify(c[k]), b ? JSON.stringify(b[k]) : null, f ? JSON.stringify(f[k]) : null);
+            return out;
+        }
+        const ST_CLASSES = ['st-factory', 'st-saved', 'st-fresh'];
+        function stSet(el, st) { if (!el) return; for (const c of ST_CLASSES) if (c !== 'st-' + st) el.classList.remove(c); el.classList.add('st-' + st); }
         function ovStates() {
             const st = new Map();
-            for (const sec of OV_SECTIONS) {
-                for (let g = 0; g < 8; g++) {
-                    for (let i = 0; i < sec.rows; i++) {
-                        const read = () => JSON.stringify(getControlData(sec.type, currentSetup, g, i));
-                        const cur = read();
-                        const base = baselineBuf ? ovWithBuf(baselineBuf, read) : cur;
-                        const fac = factoryBuf ? ovWithBuf(factoryBuf, read) : cur;
-                        st.set(`${sec.type}|${g}|${i}`, cur !== base ? 'fresh' : (cur !== fac ? 'saved' : 'factory'));
-                    }
-                }
-            }
+            for (const sec of OV_SECTIONS) for (let g = 0; g < 8; g++) for (let i = 0; i < sec.rows; i++)
+                st.set(`${sec.type}|${g}|${i}`, stControl(currentSetup, sec.type, g, i));
             return st;
         }
-        function markBaseline() { if (rawBuffer) baselineBuf = new Uint8Array(rawBuffer); }
+        // paint every visible thing in place (no rebuild, so typing and selections survive)
+        function stApplyAll() {
+            if (!rawBuffer) return;
+            const su = currentSetup;
+            document.querySelectorAll('.control-card[data-ctype], .fader9-card[data-ctype]').forEach(card => {
+                const type = card.dataset.ctype, g = +card.dataset.group, i = +card.dataset.idx;
+                const whole = stControl(su, type, g, i);
+                const ps = stParams(su, type, g, i);
+                card.querySelectorAll('.param-row[data-param]').forEach(row => stSet(row, ps[row.dataset.param] || whole));
+            });
+            document.querySelectorAll('#cvPanel .cv-el').forEach(el => {
+                const type = el.dataset.type, i = +el.dataset.idx;
+                stSet(el, stControl(su, type, cvGroupOf(type), i));
+            });
+            document.querySelectorAll('#cvTree .cv-node[data-st]').forEach(n => {
+                const k = n.dataset.st.split('|');
+                stSet(n, k[0] === 's' ? stSetup(+k[1]) : k[0] === 'h' ? stHalf(+k[1], k[2]) : stGroup(+k[1], k[2], +k[3]));
+            });
+            document.querySelectorAll('.group-block .gb-tab[data-g]').forEach(t => {
+                stSet(t, stGroup(su, t.closest('.group-block').classList.contains('enc') ? 'e' : 'f', +t.dataset.g));
+            });
+            document.querySelectorAll('td.ov-cell').forEach(td => stSet(td, stControl(su, td.dataset.type, +td.dataset.group, +td.dataset.index)));
+            document.querySelectorAll('th.ov-col').forEach(th => stSet(th, stGroup(su, stHalfOf(th.dataset.type), +th.dataset.col)));
+            document.querySelectorAll('.setup-card[data-setup]').forEach(c => stSet(c, stSetup(+c.dataset.setup)));
+        }
+        let stTimer = null;
+        function stRefreshSoon() {
+            if (stTimer) return;
+            stTimer = setTimeout(() => { stTimer = null; try { stApplyAll(); } catch (e) { console.warn(e); } }, 40);
+        }
+        function markBaseline() { if (rawBuffer) { baselineBuf = new Uint8Array(rawBuffer); stCache.fresh = false; stRefreshSoon(); } }
         async function ensureFactoryBuf() {
             try {
                 const r = await fetch('factory_default.syx');
-                if (r.ok) { factoryBuf = new Uint8Array(await r.arrayBuffer()); if (currentView === 'overview') renderOverview(); }
+                if (r.ok) {
+                    factoryBuf = new Uint8Array(await r.arrayBuffer());
+                    stCache.fresh = false;
+                    if (rawBuffer) { renderCurrentView(); refreshTreeIfAny(); }
+                }
             } catch (e) {}
         }
+        function refreshTreeIfAny() { if (document.getElementById('cvTree')) cvRenderTree(); }
         const ovK = (t, g, i) => `${t}|${g}|${i}`;
         const ovSecOf = (type) => OV_SECTIONS.find(x => x.type === type);
 
@@ -13487,7 +13645,7 @@ ${description}
                     Other groups
                     <span class="count" id="meCount">${conflicts.mutuallyExclusive.size}</span>
                 </div>
-                <span class="ov-legend"><span><i class="l-fac"></i>factory</span><span><i class="l-sav"></i>saved</span><span><i class="l-new"></i>changed</span></span>`;
+`;
             container.appendChild(filters);
 
             const states = ovStates();
