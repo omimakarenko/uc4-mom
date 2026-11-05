@@ -4322,7 +4322,7 @@ ${last ? `Last Error:
                 
                 'display.OFF': "Nothing shown.",
                 'display.Std': "Value 0-127. Default.",
-                'display.bPoL': "Value -63 to +63.",
+                'display.bPoL': "Bipolar: the display shows the value relative to the centre, from -63 to +63 (0 in the middle). Good for pan, balance or EQ.",
                 
                 'faderMode.Jump': "Sends at once. Values can jump.",
                 'faderMode.Snap': "Waits until it reaches the value. No jumps.",
@@ -5573,10 +5573,29 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         // Update Functions (with undo support)
         // ============================================================
         
+        // Empty or invalid input -> factory default for that parameter
+        function factoryParam(type, group, idx, param) {
+            if (!factoryBuf) return 0;
+            return ovWithBuf(factoryBuf, () => {
+                const d = type === 'encoder' ? getEncoderData(currentSetup, group, idx)
+                    : type === 'push' ? getPushData(currentSetup, group, idx)
+                    : type === 'green' ? getGreenData(currentSetup, group, idx)
+                    : type === 'fader' ? getFaderData(currentSetup, group, idx)
+                    : getFader9Data(currentSetup, group);
+                return d[param];
+            });
+        }
+        function parseOrFactory(value, type, group, idx, param) {
+            const n = parseInt(value, 10);
+            if (!isNaN(n)) return n;
+            setTimeout(() => { if (typeof renderCurrentView === 'function') renderCurrentView(); }, 0);
+            return factoryParam(type, group, idx, param);
+        }
+
         function updateEncoder(idx, param, value) {
             const data = getEncoderData(currentSetup, encoderGroup, idx);
             const before = data[param];
-            const after = parseInt(value, 10);
+            const after = parseOrFactory(value, 'encoder', encoderGroup, idx, param);
             
             if (before === after) return; // No change
             
@@ -5602,7 +5621,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         function updatePush(idx, param, value) {
             const data = getPushData(currentSetup, encoderGroup, idx);
             const before = data[param];
-            const after = parseInt(value, 10);
+            const after = parseOrFactory(value, 'push', encoderGroup, idx, param);
             
             if (before === after) return;
             
@@ -5628,7 +5647,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         function updateGreen(idx, param, value) {
             const data = getGreenData(currentSetup, faderGroup, idx);
             const before = data[param];
-            const after = parseInt(value, 10);
+            const after = parseOrFactory(value, 'green', faderGroup, idx, param);
             
             if (before === after) return;
             
@@ -5654,7 +5673,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         function updateFader(idx, param, value) {
             const data = getFaderData(currentSetup, faderGroup, idx);
             const before = data[param];
-            const after = parseInt(value, 10);
+            const after = parseOrFactory(value, 'fader', faderGroup, idx, param);
             
             if (before === after) return;
             
@@ -5680,7 +5699,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         function updateFader9(param, value) {
             const data = getFader9Data(currentSetup, faderGroup);
             const before = data[param];
-            const after = parseInt(value, 10);
+            const after = parseOrFactory(value, 'fader9', faderGroup, 0, param);
             
             if (before === after) return;
             
@@ -13964,6 +13983,25 @@ ${description}
         }
 
         // ---- keyboard ----
+        function ovRestoreFactory() {
+            const cells = [...ovSel.values()];
+            if (!cells.length || !factoryBuf) return;
+            const actions = [];
+            for (const c of cells) {
+                const before = { ...getControlData(c.type, currentSetup, c.g, c.i) };
+                const after = ovWithBuf(factoryBuf, () => ({ ...getControlData(c.type, currentSetup, c.g, c.i) }));
+                if (JSON.stringify(before) === JSON.stringify(after)) continue;
+                setControlDataSilent(c.type, currentSetup, c.g, c.i, after);
+                actions.push({ controlType: c.type, setupIdx: currentSetup, group: c.g, index: c.i, before, after });
+            }
+            if (!actions.length) { showToast('Already factory', 'info'); return; }
+            recordUndo({ type: 'batch', description: `Restore factory (${actions.length})`, actions });
+            markModified();
+            scheduleConflictRebuild();
+            renderCurrentView();
+            showToast(`Restored factory ${actions.length}`, 'success');
+        }
+
         function ovKeydown(e, ctrlKey) {
             const k = e.key;
             if (ctrlKey && (k === 'c' || k === 'C') && !e.shiftKey) { e.preventDefault(); ovCopy(); return; }
@@ -13978,6 +14016,7 @@ ${description}
                 ovPaint();
                 return;
             }
+            if (k === 'Delete' || k === 'Backspace') { e.preventDefault(); ovRestoreFactory(); return; }
             if (k === 'Escape') {
                 if (ovSel.size) { ovClearSelection(); ovPaint(); } else if (ovClip) { ovClip = null; ovPaint(); }
                 return;
