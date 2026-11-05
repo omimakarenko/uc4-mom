@@ -3397,8 +3397,8 @@
             --accent: #2b2d30; --accent-dim: #4b4f54; --emphasis: #000000; --btn-text: #f5f5f4;
             --tab-bg: #f2f2f0; --field-bg: #ffffff; --chip-bg: #d3d3d1; --chip-hover: #c4c4c2;
             --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
-            --st-f-bg: #e7e7e5; --st-f-text: #8a8e94;
-            --st-s-bg: #d0d0ce; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
+            --st-f-bg: #ffffff; --st-f-text: #8a8e94;
+            --st-s-bg: #dcdcda; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
             --st-n-bg: #cbe0ff; --st-n-text: #0f3a80; --st-n-tree: #1f63c9;
         }
         body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
@@ -3542,7 +3542,7 @@
         .act-main .device-status .dev-connect { top: 0.45rem; }
         .header > .tools-block { align-self: flex-end; }
         .mod-note { white-space: normal; height: auto; min-height: 1.5rem; line-height: 1.15; width: 0; min-width: 100%; align-self: start; }
-        .import-dropdown-btn::after { font-size: 0.95rem; opacity: 0.8; line-height: 1; }
+        .import-dropdown-btn::after { font-size: 1.2rem; opacity: 0.8; line-height: 1; }
         .mod-note { text-align: center; margin-top: 0.3rem; overflow: hidden; overflow-wrap: anywhere; }
         .mod-note { margin-top: 5px; height: 1.5rem; min-height: 0; display: flex; align-items: center; justify-content: center; line-height: 1.05; overflow: visible; align-self: start; }
         .ov-sec-setup { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text-dim); }
@@ -3572,6 +3572,8 @@
         /* checkboxes: a ghost tick hints that they can be ticked */
         .batch-cb:not(:checked)::after { content: ''; position: absolute; left: 0.38rem; top: 0.14rem; width: 0.25rem; height: 0.5rem; border: solid var(--text-muted); border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0.28; }
         .batch-cb:not(:checked):hover::after { opacity: 0.8; }
+        html[data-theme="light"] .btn, html[data-theme="light"] .view-btn, html[data-theme="light"] .view-toggle, html[data-theme="light"] .help-link, html[data-theme="light"] .import-dropdown-btn, html[data-theme="light"] .theme-toggle { border-color: #a6a6a4; }
+        html[data-theme="light"] .view-toggle .view-btn { border-color: transparent; }
 </style>
 </head>
 <body>
