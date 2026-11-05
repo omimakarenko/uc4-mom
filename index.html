@@ -14286,6 +14286,13 @@ ${description}
             stApplyAll();
         }
 
+        // Clicking a cell while a field in the Overview panel is being edited: commit the edit first,
+        // so it still goes to every cell of the selection that was edited
+        document.addEventListener('mousedown', (e) => {
+            const a = document.activeElement;
+            if (a && a.closest && a.closest('#ovInspector') && !e.target.closest('#ovInspector')) a.blur();
+        }, true);
+
         // Several cells selected in Overview: a change made in the panel is copied to all of them
         let ovMultiAnchor = null;
         const OV_SHARED = new Set(['channel', 'cc']);
