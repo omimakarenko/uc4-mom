@@ -3551,6 +3551,14 @@
         .ov-glab { display: block; font-size: 0.68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; }
         .filter-chip { border-radius: 8px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.04em; border: 1px solid var(--border); }
         .ov-table th.ov-col { vertical-align: top; }
+        /* Focused: when the block is narrow the cards wrap 8 -> 4 -> 2 -> 1 per row instead of scrolling */
+        .gb-body { container-type: inline-size; }
+        .gb-row8 { overflow-x: visible; }
+        @container (max-width: 1330px) { .gb-row8 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @container (max-width: 660px) { .gb-row8 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @container (max-width: 330px) { .gb-row8 { grid-template-columns: minmax(0, 1fr); } }
+        /* a thin divider between the sections of a block */
+        .gb-sec + .gb-sec { border-top: 1px solid var(--border); padding-top: 1rem; }
 </style>
 </head>
 <body>
