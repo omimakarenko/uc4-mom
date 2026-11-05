@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Double:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yuyu&display=swap" rel="stylesheet">
 <style>
         /* System fonts - no external dependencies for offline support */
         
@@ -3398,7 +3400,7 @@
             --tab-bg: #f2f2f0; --field-bg: #ffffff; --chip-bg: #d3d3d1; --chip-hover: #c4c4c2;
             --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
             --st-f-bg: #ffffff; --st-f-text: #8a8e94;
-            --st-s-bg: #dcdcda; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
+            --st-s-bg: #e9e9e7; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
             --st-n-bg: #cbe0ff; --st-n-text: #0f3a80; --st-n-tree: #1f63c9;
         }
         body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
@@ -3574,6 +3576,13 @@
         .batch-cb:not(:checked):hover::after { opacity: 0.8; }
         html[data-theme="light"] .btn, html[data-theme="light"] .view-btn, html[data-theme="light"] .view-toggle, html[data-theme="light"] .help-link, html[data-theme="light"] .import-dropdown-btn, html[data-theme="light"] .theme-toggle { border-color: #a6a6a4; }
         html[data-theme="light"] .view-toggle .view-btn { border-color: transparent; }
+        /* logo: UC4 in Bitcount, Mom in Yuyu, no frame */
+        .logo .uc-tag { font-family: 'Bitcount Prop Double', var(--font-mono); font-weight: 500; font-size: 1.9rem; letter-spacing: 0; border: none; padding: 0; line-height: 1; border-radius: 0; }
+        .logo .logo-mom { font-family: 'Yuyu', var(--font-display); font-weight: 400; font-size: 2rem; letter-spacing: 0; line-height: 1; }
+        .logo { gap: 0.6rem; }
+        /* a thin line between Download and Upload */
+        #deviceToggle .view-btn + .view-btn { border-left: 1px solid var(--border-light); }
+        html[data-theme="light"] #deviceToggle .view-btn + .view-btn { border-left: 1px solid #a6a6a4; }
 </style>
 </head>
 <body>
@@ -3833,7 +3842,7 @@ Click a group in the tree to switch to it. Click a control to edit it. Type a la
     
     <header class="header">
         <div class="logo-wrap">
-            <div class="logo"><span class="uc-tag">UC4</span> Mom</div>
+            <div class="logo"><span class="uc-tag">UC4</span><span class="logo-mom">Mom</span></div>
             <div class="logo-sub">Editor for the Faderfox UC4<br><span class="by">Unofficial tool by <a href="https://www.instagram.com/omi_i_am/" target="_blank" rel="noopener">Omi Makarenko</a></span></div>
             <div class="logo-pop">UC4 Mom v<span id="versionDisplay">1.2.0</span><br>
                 <a href="https://github.com/omimakarenko/uc4-mom" target="_blank" rel="noopener">GitHub</a><br>
