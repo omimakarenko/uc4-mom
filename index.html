@@ -450,8 +450,7 @@
         .tt-opt b { color: var(--accent); min-width: 3.3rem; flex-shrink: 0; }
         .tt-opt span { color: var(--text-dim); }
         .group-block { border: 1px solid var(--border); background: var(--bg-panel); margin-bottom: 1.25rem; }
-        .group-block.enc { border-top: 3px solid var(--encoder); }
-        .group-block.fad { border-top: 3px solid var(--fader); }
+        .group-block.enc, .group-block.fad { border-top: none; }
         .gb-head { display: flex; align-items: center; gap: 0.9rem; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
         .group-block.collapsed .gb-head { border-bottom: none; }
         .gb-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
@@ -3385,10 +3384,10 @@
             --text: #edeff1; --text-dim: #b7bcc2; --text-muted: #878c93;
             --accent: #d7dade; --accent-dim: #b7bcc2; --emphasis: #ffffff; --btn-text: #16171a;
             --tab-bg: #212123; --field-bg: #19191a; --chip-bg: #36363a; --chip-hover: #46464a;
-            --encoder: #00aaff; --push: #aa66ff; --green-btn: #44dd66; --fader: #ff8844;
+            --encoder: #7aa7c9; --push: #a994cc; --green-btn: #9fc079; --fader: #d19a68;
             --st-f-bg: #2a2a2c; --st-f-text: #70747b;
             --st-s-bg: #36363a; --st-s-text: #e8e9ec; --st-s-tree: #e8e9ec;
-            --st-n-bg: #d7dade; --st-n-text: #16171a; --st-n-tree: #d7dade;
+            --st-n-bg: #1f4272; --st-n-text: #d6e8ff; --st-n-tree: #7db4ff;
         }
         html[data-theme="light"] {
             --bg-glow: radial-gradient(1100px 500px at 15% -10%, #ffffff 0%, transparent 60%);
@@ -3400,7 +3399,7 @@
             --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
             --st-f-bg: #f1f1ef; --st-f-text: #9a9ea4;
             --st-s-bg: #dcdcda; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
-            --st-n-bg: #2b2d30; --st-n-text: #f5f5f4; --st-n-tree: #2b2d30;
+            --st-n-bg: #cbe0ff; --st-n-text: #0f3a80; --st-n-tree: #1f63c9;
         }
         body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
         input, select, textarea, td.ov-cell, .cv-sum, .st-chip, .gb-chip, .step-btn, .cv-el, .proj-name, .logo-pop { font-family: var(--font-mono); }
@@ -3507,6 +3506,19 @@
         /* values: factory is quiet, saved is a clear grey, changed is the light mark. Green is only for the green buttons */
         .ov-table th.ov-col.st-saved { color: var(--st-s-tree); }
         .ov-table th.ov-col.st-factory { color: var(--text-muted); }
+        /* functional colours: control type */
+        .group-block.enc .gb-label { color: var(--encoder); }
+        .group-block.fad .gb-label { color: var(--fader); }
+        .gb-sec-title h3.encoders, .section-title.encoders, .ov-sec-title.encoder { color: var(--encoder); }
+        .gb-sec-title h3.push, .section-title.push, .ov-sec-title.push { color: var(--push); }
+        .gb-sec-title h3.faders, .section-title.faders, .section-title.fader9, .ov-sec-title.fader, .ov-sec-title.fader9 { color: var(--fader); }
+        .gb-sec-title h3.green, .section-title.green, .ov-sec-title.green { color: var(--green-btn); }
+        .control-card.encoder { border-left: 3px solid var(--encoder) !important; border-radius: 0; }
+        .control-card.push { border-left: 3px solid var(--push) !important; border-radius: 0; }
+        .control-card.green { border-left: 3px solid var(--green-btn) !important; border-radius: 0; }
+        .control-card.fader, .fader9-card { border-left: 3px solid var(--fader) !important; border-radius: 0; }
+        .group-block.enc { border-top: 3px solid var(--encoder); }
+        .group-block.fad { border-top: 3px solid var(--fader); }
         .guide-body h1, .guide-body h2, .setup-manager-title, .gb-label, .cv-ins-title { font-family: var(--font-display); font-weight: 700; }
     </style>
 </head>
@@ -14335,7 +14347,7 @@ ${description}
             el.dataset.sec = sec.id;
             const head = document.createElement('div');
             head.className = 'ov-sec-head';
-            head.innerHTML = `<span class="ov-arrow">${ovCollapsed[sec.id] ? '&#9656;' : '&#9662;'}</span><span>${sec.title}</span>`;
+            head.innerHTML = `<span class="ov-arrow">${ovCollapsed[sec.id] ? '&#9656;' : '&#9662;'}</span><span class="ov-sec-title ${sec.type}">${sec.title}</span>`;
             head.onclick = () => {
                 ovCollapsed[sec.id] = !ovCollapsed[sec.id];
                 try { localStorage.setItem('uc4_mom_ovc', JSON.stringify(ovCollapsed)); } catch (e) {}
