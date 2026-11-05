@@ -3391,14 +3391,14 @@
         }
         html[data-theme="light"] {
             --bg-glow: radial-gradient(1100px 500px at 15% -10%, #ffffff 0%, transparent 60%);
-            --bg-dark: #f2f2f1; --bg-panel: #ffffff; --bg-control: #eeeeed; --bg-input: #eeeeed;
+            --bg-dark: #e4e4e2; --bg-panel: #f2f2f0; --bg-control: #d3d3d1; --bg-input: #ffffff;
             --border: #d7d7d5; --border-light: #bdbdbb;
             --text: #1b1c1d; --text-dim: #4b4f54; --text-muted: #80858b;
             --accent: #2b2d30; --accent-dim: #4b4f54; --emphasis: #000000; --btn-text: #f5f5f4;
-            --tab-bg: #ffffff; --field-bg: #eeeeed; --chip-bg: #dcdcda; --chip-hover: #cdcdcb;
+            --tab-bg: #f2f2f0; --field-bg: #ffffff; --chip-bg: #d3d3d1; --chip-hover: #c4c4c2;
             --encoder: #1f6a9e; --push: #6a45a6; --green-btn: #3f7d1f; --fader: #b4561a;
-            --st-f-bg: #f1f1ef; --st-f-text: #9a9ea4;
-            --st-s-bg: #dcdcda; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
+            --st-f-bg: #e7e7e5; --st-f-text: #8a8e94;
+            --st-s-bg: #d0d0ce; --st-s-text: #1b1c1d; --st-s-tree: #1b1c1d;
             --st-n-bg: #cbe0ff; --st-n-text: #0f3a80; --st-n-tree: #1f63c9;
         }
         body { background: var(--bg-glow), var(--bg-dark); background-attachment: fixed; font-family: var(--font-sans); transition: background-color 0.2s, color 0.2s; }
@@ -3559,6 +3559,19 @@
         @container (max-width: 330px) { .gb-row8 { grid-template-columns: minmax(0, 1fr); } }
         /* a thin divider between the sections of a block */
         .gb-sec + .gb-sec { border-top: 1px solid var(--border); padding-top: 1rem; }
+        /* Controller: no filled squares; state shows as text colour, and non-empty elements get an outline round the text area */
+        .cv-el.st-factory, .cv-el.st-factory.sel, .cv-el.st-saved, .cv-el.st-saved.sel, .cv-el.st-fresh, .cv-el.st-fresh.sel { background: transparent; }
+        .cv-el.st-saved .cv-lab-in, .cv-el.st-fresh .cv-lab-in { border-radius: 5px 5px 0 0; border: 1px solid var(--border-light); border-bottom: none; background: transparent; }
+        .cv-el.st-saved .cv-sum, .cv-el.st-fresh .cv-sum { border: 1px solid var(--border-light); border-top: none; border-radius: 0 0 5px 5px; width: 100%; max-width: 130px; box-sizing: border-box; padding: 0.1rem 0.2rem 0.15rem; margin-top: 0; }
+        .cv-el.st-fresh .cv-lab-in, .cv-el.st-fresh .cv-sum { border-color: var(--st-n-tree); }
+        .cv-el.wide.st-saved .cv-sum, .cv-el.wide.st-fresh .cv-sum { max-width: 260px; }
+        /* light theme: buttons a notch darker than the page, fields white */
+        html[data-theme="light"] .gb-chip, html[data-theme="light"] .batch-cb, html[data-theme="light"] .step-btn { background: var(--bg-control); }
+        html[data-theme="light"] .gb-chip.on, html[data-theme="light"] .batch-cb:checked { background: var(--accent); }
+        html[data-theme="light"] .batch-cb:hover, html[data-theme="light"] .gb-chip:hover { background: var(--border-light); }
+        /* checkboxes: a ghost tick hints that they can be ticked */
+        .batch-cb:not(:checked)::after { content: ''; position: absolute; left: 0.38rem; top: 0.14rem; width: 0.25rem; height: 0.5rem; border: solid var(--text-muted); border-width: 0 2px 2px 0; transform: rotate(45deg); opacity: 0.28; }
+        .batch-cb:not(:checked):hover::after { opacity: 0.8; }
 </style>
 </head>
 <body>
@@ -8733,7 +8746,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function closeSetupManager() {
             setupManagerOpen = false;
-            const overlay = document.querySelector('.setup-manager-overlay');
+            const overlay = document.querySelector('.setup-manager-overlay:not(.guide-overlay)');
             if (overlay) {
                 overlay.remove();
             }
@@ -8741,7 +8754,7 @@ Acc: ${accs[data.acc] || '?'}, Display: ${disps[data.display] || '?'}`;
         
         function renderSetupManager() {
             // Remove existing overlay
-            const existing = document.querySelector('.setup-manager-overlay');
+            const existing = document.querySelector('.setup-manager-overlay:not(.guide-overlay)');
             if (existing) existing.remove();
             
             const overlay = document.createElement('div');
@@ -14881,7 +14894,7 @@ ${description}
                     <label><input type="radio" name="csScope" value="setup"> This setup (8 pages)</label>
                     <label><input type="radio" name="csScope" value="all"> All setups (144 pages)</label>
                 </div>
-                <div class="modal-actions"><button class="btn" id="csClose">Close</button><button class="btn" id="csDl">Download HTML</button><button class="btn btn-primary" id="csPrint">Print / PDF</button></div></div>`;
+                <div class="modal-actions"><button class="btn" id="csClose">Close</button><button class="btn" id="csDl">Download HTML</button><button class="btn" id="csOpen">Open in new tab</button><button class="btn btn-primary" id="csPrint">Print / PDF</button></div></div>`;
             document.body.appendChild(overlay);
             const scope = () => overlay.querySelector('input[name="csScope"]:checked').value;
             overlay.querySelector('#csClose').onclick = () => overlay.remove();
@@ -14890,6 +14903,12 @@ ${description}
                 const sc = scope();
                 const base = fileSafe(projectMeta.label, 'uc4') + '_cheatsheet' + (sc === 'screen' ? `_setup${currentSetup + 1}` : sc === 'setup' ? `_setup${currentSetup + 1}_all` : '_all');
                 downloadBytes(new TextEncoder().encode(csBuildHtml(sc, true)), base + '.html');
+                overlay.remove();
+            };
+            overlay.querySelector('#csOpen').onclick = () => {
+                const w = window.open('', '_blank');
+                if (!w) { showToast('The browser blocked the new window', 'error'); return; }
+                w.document.open(); w.document.write(csBuildHtml(scope(), true)); w.document.close();
                 overlay.remove();
             };
             overlay.querySelector('#csPrint').onclick = () => {
